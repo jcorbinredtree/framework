@@ -37,11 +37,10 @@ class Template extends PHPSTLTemplate
      */
     public function __construct()
     {
-        global $current, $config;
-        
         $this->compiler = 'FrameworkCompiler';
 
-        Compiler::setCompileDirectory(PolicyManager::getTemplatesPolicy());
+        $policy = PolicyManager::getInstance();
+        Compiler::setCompileDirectory($policy->getTemplatesDir());
         Compiler::setCompilerClass('FrameworkCompiler');
     }
     
@@ -53,7 +52,7 @@ class Template extends PHPSTLTemplate
      */
     public function fetch($template)
     {
-        global $config, $current;
+        global $current;
         
         $fullPath = ($template[0] == '/') ? $template : "$current->path/$template";
         $fullPath = preg_replace('|[/](?:[^/]+)[/](?:[.]{2})[/]|', '/', $fullPath);

@@ -201,7 +201,7 @@ class Application
     static public function autoLoad($class)
     {
         global $config, $database, $current;
-
+                
         if (!$config) { return false; }
 
         if (!Application::$map) {
@@ -565,6 +565,11 @@ class Application
         require_once "$config->fwAbsPath/lib/database/IDatabaseObject.php";
         require_once "$config->fwAbsPath/lib/database/DatabaseObject.php";
         require_once "$config->fwAbsPath/lib/application/ApplicationItem.php";
+        require_once "$config->fwAbsPath/lib/policies/ILocationPolicy.php";
+        require_once "$config->fwAbsPath/lib/policies/DefaultLocationPolicy.php";
+        require_once "$config->fwAbsPath/lib/policies/ILinkPolicy.php";
+        require_once "$config->fwAbsPath/lib/policies/DefaultLinkPolicy.php";                
+        require_once "$config->fwAbsPath/lib/policies/PolicyManager.php";
     }
 
     /**
@@ -576,6 +581,15 @@ class Application
         global $config, $database;
 
         Application::requireMinimum();
+        
+        Main::startSession();    
+
+        /*
+         * This function should be defined in the site's index.php
+         */
+        if (function_exists('onConfig')) {
+            onConfig($config);
+        }        
 
         /**
          * Two of three global variables. The entire
@@ -591,14 +605,46 @@ class Application
         $database = new Database();
         $database->log = $database->time = $config->isDebugMode();
 
-        Main::startSession();
         LifeCycleManager::onInitialize();
 
         $config->info("==> Framework v" . $config->getVersion() . ": New Request from " . Params::server('REMOTE_ADDR') .' - ' . Params::server('REQUEST_URI') . ' <==');
 
         $handledUrl = LifeCycleManager::onURLRewrite();
-        if (!$handledUrl && $config->sefLinks) {
-            Main::parseSefLinks();
+        if (!$handledUrl) {
+            $mappings = $config->getUrlMappings();
+            $url = preg_replace('|^' . $config->absUriPath . '[/]?|i', '', Params::server('REQUEST_URI'));
+            if ($url) {
+                foreach ($mappings as $key => $map) {
+                    if ($key == $url) {
+                        $_REQUEST[AppConstants::COMPONENT_KEY] = $_GET[AppConstants::COMPONENT_KEY] = $map[0];
+                        $_REQUEST[AppConstants::ACTION_KEY] = $_GET[AppConstants::ACTION_KEY] = $map[1];                        
+                        if (count($map) > 2) {
+                            $sets = explode(',', 'null,' . $map[2]);
+                            foreach ($sets as $set) {
+                                if ($set == 'null') {
+                                    continue;
+                                }
+                                
+                                $args = explode('=', $set);
+                                
+                                $_REQUEST[$args[0]] = $_GET[$args[0]] = $args[1];
+                            }
+                        }
+                        
+                        if (count($map) > 3) {
+                            $_REQUEST[AppConstants::STAGE_KEY] = $_GET[AppConstants::STAGE_KEY] = $map[3];
+                        }
+
+                        $handledUrl = true;                        
+                        break;
+                    }
+                }
+            }
+            
+            if (!$handledUrl) {
+                $policy = PolicyManager::getInstance();
+                $policy->parse();
+            }
         }
 
         $config->initalize();

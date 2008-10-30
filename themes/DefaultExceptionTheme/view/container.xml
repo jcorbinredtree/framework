@@ -14,9 +14,13 @@
                     <t:notices />
 
 					<div id = "main">
+                        <h1>@{=get_class(${this.layout.content})}: ${=this.layout.content.getMessage()}</h1>
 						<ul>
-							<c:forEach list = "${this.layout.content}" var = "frame">
-								<li>${=frame['file']} (${=frame['line]})</li>
+                            <li>${=this.layout.content.getFile()} (${=this.layout.content.getLine()})</li>      
+							<c:forEach list = "${this.layout.content.getTrace()}" var = "frame">
+                                <c:if test = "@{array_key_exists('file', ${frame})}">
+                                    <li>${=frame['file']} (${=frame['line']})</li>
+                                </c:if>
 							</c:forEach>
 						</ul>							
 					</div>

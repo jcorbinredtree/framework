@@ -42,10 +42,6 @@ require dirname(__FILE__) . '/Config.php';
 $config = new Config();
 require "$config->fwAbsPath/lib/application/Application.php";
 
-if (function_exists('onConfig')) {
-    onConfig($config);
-}
-
 try {
     Application::start();
 }
@@ -56,6 +52,8 @@ catch (Exception $ex) {
     $layout = new LayoutDescription();
     $layout->content = $ex;    
     $theme->onDisplay($layout);
+    
+    print $theme->getBuffer();
 }
 
 if ($config->isDebugMode()) {

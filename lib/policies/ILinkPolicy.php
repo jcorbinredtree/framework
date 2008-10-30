@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ILocationPolicy interface definition
+ * ILinkPolicy interface definition
  *
  * PHP version 5
  *
@@ -26,37 +26,20 @@
  */
 
 /**
- * Defines a location policy. An implementation of this policy may be set to change the 
+ * Defines a link policy. An implementation of this policy may be set to change the 
  * framework's standard behavior.
  *
  * @category     Policies
  * @package      Core
  */
-interface ILocationPolicy
+interface ILinkPolicy
 {
     /**
-     * Gets the location of the compiled templates directory.
-     * This directory should be writable.
+     * Parse the current request and populate the superglobals
      *
-     * @return string the location of the templates directory.
+     * @return  void
      */
-    public function getTemplatesDir();
-    
-    /**
-     * Gets the location of the logs directory.
-     * This directory should be writable.
-     *
-     * @return string the location of the logs directory.
-     */
-    public function getLogsDir();
-    
-    /**
-     * Implements the log policy based on the current conditions.
-     * This method should configure the global logger at Config#log
-     * 
-     * @return void
-     */
-    public function logs();
+    public function parse();
 }
 
 ?>

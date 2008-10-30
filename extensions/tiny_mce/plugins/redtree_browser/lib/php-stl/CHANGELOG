@@ -1,9 +1,0 @@
-v1.2
-=============================
-- Changed Compiler.php to allow namespaces that are not directly related to php-stl elements.
-- Added :cdata to CoreTag
-- Added :dump to CoreTag
-- Added :next and :break to CoreTag for loop processing
-- Added :countries to HTMLTag
-- Added a varStatus attribute to :forEach
-- Added LoopTagStatus class

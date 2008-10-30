@@ -1,0 +1,28 @@
+<template xmlns:c = "class://CoreTag" xmlns:t = "class://ThemeTag" xmlns:f = "class://FrameworkTag">
+    <c:doctype type="xhtml 1.1" />
+    <html>
+            <head>
+                    <link href = "${=config.absUri}/themes/DefaultTheme/view/css/container.css" type = "text/css" rel = "stylesheet" />
+                    <t:head />
+            </head>
+            <body>
+                    <t:warnings />
+                    <t:notices />
+                    <div id = "main-container">
+                      <div id = "left">
+                          <div id= "nav">
+                              <ul>
+                                  <c:forEach list = "${this.layout.getLeftNavigation()}" var = "item">
+                                      <li><a href = "${=item.href}">${=item.label}</a></li>
+                                  </c:forEach>
+                              </ul>
+                          </div>
+                      </div>
+
+                      <div id = "center">
+                        <p>content</p>
+                      </div>                                        
+                   </div>
+            </body>
+    </html>
+</template>

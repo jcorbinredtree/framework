@@ -157,27 +157,28 @@ class Config
     private $defaultExceptionTheme = 'DefaultExceptionTheme';
     
     /**
-     * The location policy for files
+     * The default admin theeme
      *
      * @var string
      */
-    private $locationPolicy = 'DefaultLocationPolicy';
+    private $defaultAdminTheme = 'DefaultAdminTheme';
 
     /**
      * @return string
      */
-    public function getLocationPolicy()
+    public function getDefaultAdminTheme ()
     {
-        return $this->locationPolicy;
+        return $this->defaultAdminTheme;
     }
 
     /**
-     * @param string $locationPolicy
+     * @param string $defaultAdminTheme
      */
-    public function setLocationPolicy($locationPolicy)
+    public function setDefaultAdminTheme($defaultAdminTheme)
     {
-        $this->locationPolicy = $locationPolicy;
+        $this->defaultAdminTheme = $defaultAdminTheme;
     }
+    
     /**
      * @return string
      */
@@ -252,9 +253,9 @@ class Config
     /**
      * @param Log $log
      */
-    public function setLog ($log)
+    public function setLog (Log &$log)
     {
-        $this->log = $log;
+        $this->log =& $log;
     }
     
     /**
@@ -326,8 +327,8 @@ class Config
             return;
         }
 
-        $logDir = $this->getLogDir();
-        $this->log = &Log::singleton('file', $logDir . '/' . date('Y-m-d') . '.test.log', '', null, ($this->debug ? PEAR_LOG_DEBUG : PEAR_LOG_WARNING));
+        $policy = PolicyManager::getInstance();
+        $policy->logs();
         $this->test = true;
     }
 
@@ -381,8 +382,8 @@ class Config
     {
         $this->debug = $val;
         
-        $logDir = $this->getLogDir();
-        $this->log = & Log::singleton('file', $logDir . '/' . date('Y-m-d') . '.log', '', null, ($this->debug ? PEAR_LOG_DEBUG : PEAR_LOG_WARNING));
+        $policy = PolicyManager::getInstance();
+        $policy->logs();
     }
 
     /**
@@ -397,26 +398,45 @@ class Config
 
     /**
      * Returns an associtive array of url mappings. The map must be in format:
-     * page => array(<component>, <action>, [<stage>], [<args>])
+     * page => array(<component>, <action>, [<args>], [<stage>])
      *
      * <args> should be given as <name>=<value>&<name>=<value>, such that a complete map would
      * look like:
      *
      * array(
-     * 	'other-file.html' => array('Documents', Document::ACTION_GET, Stage::VIEW, 'id=1&name=file')
+     *  'other-file.html' => array('Documents', Document::ACTION_GET, 'id=1&name=file', Stage::VIEW)
      * );
      *
      * @return array of mappings
      */
     public function getUrlMappings()
-    {
-        throw new NotDocumentedException();        
+    {     
         return $this->urlMappings;
     }
+
+    /**
+     * Add a mapping in the format:
+     * array(
+     *  'other-file.html' => array('Documents', Document::ACTION_GET, 'id=1&name=file', Stage::VIEW)
+     * );
+     *
+     * @see Config#getUrlMappings()
+     * @param string $key
+     * @param array $mapping
+     * @return void
+     */
+    public function addUrlMapping($url, $mapping)
+    {
+        $this->urlMappings[$url] = $mapping;
+    }
     
+    /**
+     * Gets the mailer options that comprise a new mailer object
+     * 
+     * @return array
+     */
     public function getMailerOptions()
     {
-        throw new NotDocumentedException();
         return $this->mailerOptions;
     }
 
@@ -457,22 +477,6 @@ class Config
     public $absUriPath = null;
     
     /**
-     * Get the log directory we're writing to.
-     *
-     * @return string
-     */
-    public function getLogDir()
-    {
-        if (!class_exists($this->getLocationPolicy())) {
-            require_once "$this->fwAbsPath/lib/policies/ILocationPolicy.php"; 
-            require_once "$this->fwAbsPath/lib/policies/DefaultLocationPolicy.php"; 
-        }
-        
-        $policy = $this->getLocationPolicy();
-		return call_user_func(array($policy, 'logs'));
-    }
-    
-    /**
      * Constructor; Sets up a lot of vars & such
      *
      * @access public
@@ -490,18 +494,8 @@ class Config
         /* (kinda hacky) */
         $this->absPath = preg_replace('|[/]SITE[/]framework$|', '', $this->fwAbsPath);
         $this->absUriPath = dirname($_SERVER['PHP_SELF']);
-
-        $logDir = $this->getLogDir();
-        if (file_exists($logDir)) {
-            if (!is_writable($logDir)) {
-                throw new Exception('The log directory exists, but is not writable');
-            }
-            
-            $this->log = & Log::singleton('file', $logDir . '/' . date('Y-m-d') . '.log', '', null, ($this->debug ? PEAR_LOG_DEBUG : PEAR_LOG_WARNING));
-        }
-        else {
-            $this->log = & Log::singleton('null');
-        }        
+        
+        $this->log =& Log::singleton('null');
     }
 
     /**

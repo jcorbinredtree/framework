@@ -1,33 +1,97 @@
 <?php
 
-class PolicyManager
+class PolicyManager implements ILocationPolicy, ILinkPolicy
 {
+    private static $instance = null;
+    
+    /**
+     * The location policy
+     *
+     * @var ILocationPolicy
+     */
+    private $locationPolicy = null;
+    
+    /**
+     * The link policy
+     *
+     * @var ILinkPolicy
+     */
+    private $linkPolicy = null;
+    
     public function get($policy)
     {
-        global $config;
-        
         switch ($policy) {
             case 'location':
-                return $config->getLocationPolicy();
-                break;
+                return $this->locationPolicy;
+            case 'link':
+                return $this->linkPolicy;
             default:
                 return null;
         }
     }
     
-    public static function getTemplatesPolicy()
+    public function set($policy, $handler)
     {
-        $policy = PolicyManager::get('location');
-        return call_user_func(array($policy, 'templates'));
+        switch ($policy) {
+            case 'link':
+                if (!($handler instanceof ILinkPolicy)) {
+                    throw new IllegalArgumentException("handler for $policy does not adhere to ILinkPolicy");
+                }
+                
+                $this->linkPolicy = $handler;
+            case 'location':
+                if (!($handler instanceof ILocationPolicy)) {
+                    throw new IllegalArgumentException("handler for $policy does not adhere to ILocationPolicy");
+                }
+                
+                $this->locationPolicy = $handler;
+            default:
+                throw new IllegalArgumentException("unknown policy $policy");
+        }
     }
     
-    public static function getLogsPolicy()
+    public function getTemplatesDir()
     {
-        $policy = PolicyManager::get('location');
-        return call_user_func(array($policy, 'logs'));
+        return $this->locationPolicy->getTemplatesDir();
     }
     
-    private function __construct() {}
+    public function getLogsDir()
+    {
+        return $this->locationPolicy->getLogsDir();
+    }
+    
+    public function logs()
+    {
+        $this->locationPolicy->logs();
+    }
+
+    /**
+     * @see ILinkPolicy::parse()
+     *
+     */
+    public function parse ()
+    {
+        $this->linkPolicy->parse();
+    }
+    
+    /**
+     * Gets a PolicyManager instance
+     *
+     * @return PolicyManager
+     */
+    public static function getInstance()
+    {
+        if (!PolicyManager::$instance) {
+            PolicyManager::$instance = new PolicyManager();
+        }
+        
+        return PolicyManager::$instance;
+    }
+    
+    private function __construct() {
+        $this->locationPolicy = new DefaultLocationPolicy();
+        $this->linkPolicy = new DefaultLinkPolicy();
+    }
 }
 
 ?>
