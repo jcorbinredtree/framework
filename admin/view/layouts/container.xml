@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template xmlns:c = "class://CoreTag" xmlns:t = "class://ThemeTag" xmlns:a = "class://AdministrationTag">   
+    <html>
+        <head>
+            <t:title default = "Administration" />
+            <t:scripts />
+            <t:stylesheets />
+            <link href = "${=config.absUri}/admin/view/css/container.css" rel = "stylesheet" type = "text/css" />
+            <t:head />
+            <script type = "text/javascript">
+                function print() {
+                    window.open("${=config.absUri}/admin/view/layouts/print.php","pop","resizable=0,width=600,height=700");
+                }            
+            </script>
+        </head>
+        <body class = "yui-skin-sam">
+            <div id = "main-container"> 
+                <div id = "tab-container">
+                    <ul>
+                    <c:forEach list = "${this.layout.providerDescriptions}" var = "description">      
+                        <c:if test = "${description.parent}">
+                            <c:continue />
+                        </c:if>
+                      
+                        <c:set var = "class" value = "" />
+                        <c:if test = "${description.active}">
+                            <c:set var = "class" value = "active" />
+                        </c:if>
+                        
+                        <li class = "${=class}">
+                            <c:if test = "${description.icon}">
+                                <img src = "${=config.absUri}/admin/view/icons/${=description.icon}" alt = "${=description.name}" />
+                            </c:if>
+                                                 
+                            <c:set var = "actions" value = "${description.getActions()}" />                            
+                            <c:if test = "${description.default} || @{count(${actions})} == 1">
+                                <c:set var = "provider" value = "" />
+                                <c:set var = "action" value = "" />
+                                                                            
+                                <c:if test = "${description.default}">                            
+                                    <c:set var = "provider" value = "${description.default[0]}" />
+                                    <c:set var = "action" value = "${description.default[1]}" />
+                                </c:if>
+                                <c:else>
+                                    <c:set var = "provider" value = "${actions[0][0]}" />
+                                    <c:set var = "action" value = "${actions[0][1]}" />                                
+                                </c:else>
+                                
+                                <a href = "${=action.getURI(${provider.getClass()})}">${=description.name}</a>
+                            </c:if>
+                            <c:else>
+                                <a:link driver = "AdministrationDriver" action = "1" args = "provider=${description.name}">${=description.name}</a:link>
+                            </c:else>                               
+                        </li>
+                    </c:forEach>
+                        <li><img src = "${=config.absUri}/admin/view/icons/house_go.png" alt = "${=description.name}" />
+                            <a:link driver = "AdministrationDriver" action = "2">Log Off</a:link>
+                        </li>
+                    </ul>
+                </div>
+            
+                <div id = "content-container">
+                    <div id = "subnav">
+                        <c:if test = "${this.layout.activeTopLevelSection} &amp;&amp; ${this.layout.activeTopLevelSection.hasChildren()}">
+                            <ul>
+                                <c:forEach list = "${this.layout.activeTopLevelSection.children}" var = "child">
+                                    <c:set var = "class" value = "" />
+                                    <c:if test = "${child.active}">
+                                        <c:set var = "class" value = "active" />
+                                    </c:if>
+                                    
+                                    <li class = "${=class}">
+                                        <c:if test = "${child.icon}">
+                                            <img src = "${=config.absUri}/admin/view/icons/${=child.icon}" alt = "${=child.name}" />
+                                        </c:if>
+                                                                
+                                        <c:set var = "actions" value = "${child.getActions()}" />
+                                        <c:if test = "${child.default} || @{count(${actions})} == 1">
+                                            <c:set var = "provider" value = "" />
+                                            <c:set var = "action" value = "" />
+                                                                                        
+                                            <c:if test = "${child.default}">
+                                                <c:set var = "provider" value = "${child.default[0]}" />
+                                                <c:set var = "action" value = "${child.default[1]}" />                                            
+                                            </c:if>
+                                            <c:else>
+                                                <c:set var = "provider" value = "${actions[0][0]}" />
+                                                <c:set var = "action" value = "${actions[0][1]}" />
+                                            </c:else>
+                                            
+                                            <a href = "${=action.getURI(${provider.getClass()})}">${=child.name}</a>
+                                        </c:if>
+                                        <c:else>                                                                
+                                            <a:link driver = "AdministrationDriver" action = "1" args = "provider=${child.name}">${=child.name}</a:link>
+                                        </c:else>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </c:if>   
+                    </div>             
+                
+                <!-- 
+                    <div id = "print"><a href = "#" onclick = "print()"><img src = "${=config.absUri}/admin/view/icons/printer.png" alt = "Print This Page" /></a></div>
+                     -->                
+                    <div id = "content">                                            
+                        <t:breadcrumbs />
+                    
+                        <t:warnings />
+                        <t:notices />                  
+                    
+                        <c:if test = "${current.component}">
+                            ${=current.component.getBuffer()}
+                        </c:if>
+                   </div>
+                </div>
+            </div>
+        </body>
+    </html>
+</template>

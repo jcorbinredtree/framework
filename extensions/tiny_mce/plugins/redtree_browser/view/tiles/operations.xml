@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+    <ul>
+        <li><a href = "javascript:dms.onAddFolder();"><img src = "${=config.absUri}/icons/folder_add.png" alt = "add folder" /> Add Folder</a></li>
+    </ul>
+</template>

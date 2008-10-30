@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template xmlns:c = "class://CoreTag" xmlns:f = "class://FrameworkTag">
+	<div class = "login">
+		<div class = "title"><c:out value = "Log in to Your Account" i18n = "i18n" /></div>
+	
+        <f:href component = "Login" action = "login" stage = "Stage::PERFORM" var = "href" />
+		<form action = "${=href}" method = "post">
+    	    <table class = "login-table">
+    		   <tr>
+    		       <th><label for = "user"><c:out value = "User Name" i18n = "i18n" /></label></th>
+    	    	   <td><input type = "text" name = "user" id = "user" maxlength = "75" /></td>
+    	     </tr>
+    	     <tr>
+    	       <th><label for = "pass"><c:out value = "Password" i18n = "i18n" /></label></th>
+    	       <td><input type = "password" name = "pass" id = "pass" maxlength = "50" /></td>
+    	     </tr>
+    	     <tr>
+    	       <td style = "text-align: center;" colspan = "2">
+    	       	<c:out value = "Login" i18n = "i18n" var = "login" />
+    	       	<input type = "submit" class = "button" value = "${=login}" />
+    	       </td>
+    	     </tr>
+    	    </table>
+	   </form>
+       
+       <p>
+        <c:if test = "Config::ALLOW_FORGOT_PASSWORD">
+            <f:link component = "Login" action = "Login::ACTION_FORGOT_PASSWORD">Forgot your password?</f:link>
+        </c:if>
+       
+        <c:if test = "Config::ALLOW_SIGNUP">
+            Not a member? <f:link component = "Login" action = "Login::ACTION_SIGNUP">Register now</f:link>.
+        </c:if>
+       </p>       
+	</div>
+</template>

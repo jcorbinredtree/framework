@@ -1,0 +1,298 @@
+<?php
+
+/**
+ * Params class definition
+ *
+ * PHP version 5
+ *
+ * LICENSE: The contents of this file are subject to the Mozilla Public License Version 1.1
+ * (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * 
+ * The Original Code is Red Tree Systems Code.
+ *
+ * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
+ *
+ * @category     Utils
+ * @author       Red Tree Systems, LLC <support@redtreesystems.com>
+ * @copyright    2007 Red Tree Systems, LLC
+ * @license      MPL 1.1
+ * @version      1.1
+ * @link         http://framework.redtreesystems.com
+ */
+
+/**
+ * This is a static class to ease parameter handling. Note that
+ * if magic_quotes_gpc is on, this will stripslashes() where
+ * applicable.
+ *
+ * @static
+ * @package        Utils
+ */
+class Params
+{
+    const VALIDATE_EMPTY = 0;
+    const VALIDATE_NUMERIC = 1;
+    const VALIDATE_EMAIL = 2;
+    const VALIDATE_EMAIL_BLACKLIST = 3;
+    
+    /**
+     * Constructor; Private
+     *
+     * @access private
+     * @return Params new instance
+     */
+    private function __construct()
+    {
+
+    }
+
+    
+    /**
+     * Used primarly for populating a custom object from the given array.
+     * This converts the standard _ param notation to the camel case object
+     * notation. This method can be used to create properties that don't
+     * exist, effectivly creating a parameter object. 
+     *
+     * @static
+     * @access public
+     * @param array $array the associative array you wish to use to populate the object
+     * @param object $object the object you wish to be populated
+     * @param boolean $copyNonExistant defaults to false, which is to say
+     * do not create properties - only populate existing properties
+     * @return void
+     */
+    static public function arrayToObject(&$array, &$object, $copyNonExistant=false)
+    {
+        $op = null;
+        
+        if (!is_array($array)) {
+            $op = get_object_vars($array);
+        }
+        else {
+            $op =& $array;
+        }
+        
+        if (!is_array($op)) {
+            throw new Exception("bad param for $array");
+        }
+        
+        foreach ($op as $name => $value) {
+            $property = preg_replace_callback('/_(\w)/', create_function('$x', 'return strtoupper($x[0][1]);'), $name);
+            
+            if ($copyNonExistant || property_exists($object, $property)) {
+                $object->$property = $value;
+            }
+        }
+    }
+    
+    /**
+     * Validates the given keys, adding errors to $current as required
+     * 
+     * @param mixed $mixed an object or associtive array on which to validate
+     * @param array $validation an associtive array of key/warning pairs.
+     * The warning may be an array which holds other arrays 
+     * where the first element specifies how to
+     * validate the key, and the second element is the warning.
+     * which parameters were invalid.
+     * @return boolean true if we passed validation, false otherwise 
+     */
+    static public function validate(&$mixed, $validation)
+    {
+        $toss = array();
+        return Params::validateEx($mixed, $validation, $toss);
+    }
+        
+    /**
+     * Validates the given keys, adding errors to $current as required
+     * 
+     * @param mixed $mixed an object or associtive array on which to validate
+     * @param array $validation an associtive array of key/warning pairs.
+     * The warning may be an array which holds other arrays 
+     * where the first element specifies how to
+     * validate the key, and the second element is the warning.
+     * @param array $moreInfo an array to hold extended information, such as
+     * which parameters were invalid.
+     * @return boolean true if we passed validation, false otherwise 
+     */
+    static public function validateEx(&$mixed, $validation, &$moreInfo)    
+    {    
+        global $current, $config;
+        
+        $passed = true;
+        $array = (is_object($mixed) ? get_object_vars($mixed) : $mixed);
+
+        foreach ($validation as $key => $deep) {
+            $deep = (is_array($deep) ? $deep : array(array(Params::VALIDATE_EMPTY, $deep)));
+            
+            foreach ($deep as $specification) {
+                list($type, $message) = $specification;
+                $value = $array[$key];
+            
+                switch ($type) {
+                    case Params::VALIDATE_EMPTY:
+                        if (!trim($value)) {
+                            $current->addWarning($message);
+                            array_push($moreInfo, $key);
+                            
+                            $passed = false;
+                            continue;
+                        }
+                        
+                        break;
+                    case Params::VALIDATE_NUMERIC:
+                        if ($value && (!is_numeric($value))) {
+                            $current->addWarning($message);
+                            array_push($moreInfo, $key);
+                            
+                            $passed = false;
+                            continue;    
+                        }
+                        
+                        break;
+                    case Params::VALIDATE_EMAIL:
+                        if ($value && (!Email::IsValid($array[$key]))) {
+                            $current->addWarning($message);
+                            array_push($moreInfo, $key);                              
+                                                                                    
+                            $passed = false;
+                            continue;    
+                        }
+                                                
+                        break;
+                    case Params::VALIDATE_EMAIL_BLACKLIST:
+                        if ($value && Email::IsValid($value) && (Email::IsBlackListed($value))) {
+                            $current->addWarning($message);
+                            array_push($moreInfo, $key);
+                                                                                    
+                            $passed = false;
+                            continue;    
+                        }
+                                                
+                        break;                        
+                }
+            }
+        }
+        
+        return $passed;
+    }
+    
+    /**
+     * Safely gets a variable from $array. If $key does not exist,
+     * $default is provided.
+     *
+     * @param array $array the array
+     * @param string $name the array key
+     * @param mixed $default the default value to supply if $name
+     * does not exist in the array. defaults to null
+     * @return mixed the value for key $name
+     */    
+    static public function generic($array, $key, $default=null)
+    {
+        $value = (isset($array[$key]) ? $array[$key] : $default);
+        if ($value && get_magic_quotes_gpc()) {
+            if (is_array($value)) {
+                $newArray = array();
+                foreach ($value as $item) {
+                    array_push($newArray, stripslashes($item));
+                }
+            }
+            else {
+                $value = stripslashes($value);
+            }
+        }
+        
+        return $value;
+    }
+
+    /**
+     * Safely gets a $_POST variable. If $name does not exist,
+     * $default is provided.
+     *
+     * @param string $name the array key
+     * @param mixed $default the default value to supply if $name
+     * does not exist in the array. defaults to null
+     * @return mixed the value for key $name
+     */
+    static public function post($name, $default=null)
+    {
+        return Params::Generic($_POST, $name, $default);
+    }
+
+    /**
+     * Safely gets a $_GET variable. If $name does not exist,
+     * $default is provided.
+     *
+     * @param string $name the array key
+     * @param mixed $default the default value to supply if $name
+     * does not exist in the array. defaults to null
+     * @return mixed the value for key $name
+     */    
+    static public function get($name, $default=null)
+    {
+        return Params::Generic($_GET, $name, $default);
+    }
+
+    /**
+     * Safely gets a $_REQUEST variable. If $name does not exist,
+     * $default is provided.
+     *
+     * @param string $name the array key
+     * @param mixed $default the default value to supply if $name
+     * does not exist in the array. defaults to null
+     * @return mixed the value for key $name
+     */    
+    static public function request($name, $default=null)
+    {
+        return Params::Generic($_REQUEST, $name, $default);
+    }
+
+    /**
+     * Safely gets a $_SESSION variable. If $name does not exist,
+     * $default is provided.
+     *
+     * @param string $name the array key
+     * @param mixed $default the default value to supply if $name
+     * does not exist in the array. defaults to null
+     * @return mixed the value for key $name
+     */    
+    static public function session($name, $default=null)
+    {
+        return (isset($_SESSION[$name]) ? $_SESSION[$name] : $default);
+    }
+
+    /**
+     * Safely gets a $_SERVER variable. If $name does not exist,
+     * $default is provided.
+     *
+     * @param string $name the array key
+     * @param mixed $default the default value to supply if $name
+     * does not exist in the array. defaults to null
+     * @return mixed the value for key $name
+     */    
+    static public function server($name, $default=null)
+    {
+        return (isset($_SERVER[$name]) ? $_SERVER[$name] : $default);
+    }
+
+     /**
+     * Safely gets a $_COOKIE variable. If $name does not exist,
+     * $default is provided.
+     *
+     * @param string $name the array key
+     * @param mixed $default the default value to supply if $name
+     * does not exist in the array. defaults to null
+     * @return mixed the value for key $name
+     */
+    static public function cookie($name, $default=null)
+    {
+        return (isset($_COOKIE[$name]) ? $_COOKIE[$name] : $default);
+    }
+
+}
+
+?>

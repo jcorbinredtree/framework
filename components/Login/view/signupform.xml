@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template xmlns:c = "class://CoreTag" xmlns:f = "class://FrameworkTag">
+  <div class = "login-signup">
+  <h2 style = "text-align:center;">Sign Up</h2>
+
+  <f:form type = "validate">
+  	<c:out value = "Sign Up" i18n = "i18n" var = "buttonLabel" />
+    <table class = "login-signup-table">
+	<c:forEach list = "${this.definition}" var = "def">
+		<c:set var = "property,label" value = "@{each(${def})}" />
+        <tr>
+        <th><label id = "${=property}">${=label}</label></th>
+            <td><input type = "text" name = "${=property}" id = "${=property}" 
+                value = "${=this.user.$property}" /></td>
+        </tr>
+	</c:forEach>
+        <tr>
+            <th><label id = "captcha">Please type the pass phrase</label></th>
+            <td><f:href component = "Login" action = "Login::ACTION_CAPTCHA" var = "img" />
+                <input type = "text" name = "captcha" id = "captcha" />
+                <img src = "${=img}" alt = "CAPTCHA" /> </td>
+        </tr>    
+        <tr>
+            <td style = "text-align: center;" colspan = "2"><input class = "button" type = "submit" value = "${=buttonLabel}" /></td>
+        </tr>
+      </table>
+   </f:form>
+</div>
+</template>

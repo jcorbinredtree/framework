@@ -1,0 +1,254 @@
+body {
+    background-color: #3E0806;
+    font-family: Verdana;
+    font-size: 12px;
+}
+
+img {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;   
+}
+
+table {
+    border-collapse: collapse;    
+}
+
+th {
+    vertical-align: top;
+    text-align: right;
+    color: #000000;   
+    font-size: 12px;
+}
+
+td {
+    text-align: left; 
+    color: #000000;     
+    font-size: 11px;
+    padding-left: 15px;
+}
+
+textarea {
+    width: 100%;
+}    
+
+fieldset {
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+legend {
+    font-weight: bold;
+}        
+
+textarea {
+    width: 500px;
+    height: 300px;   
+}
+
+table.results,table#projects, table#clients, table#milestones, table#tasks, table#users {
+    width: 100%;   
+}    
+
+table.results tr:hover, table#projects tr:hover, table#clients tr:hover, table#milestones tr:hover, table#tasks tr:hover, table#users tr:hover {
+    background-color: #D0DFD0;
+}    
+
+table.results th,table#projects th, table#clients th, table#milestones th, table#tasks th, table#users th {
+    text-align: center;
+}    
+
+.quicksearch input {
+    width: 100px;
+    margin-right: 10px;
+}
+
+tr.alt {
+    background-color: #E0E0E0;
+}
+
+.note h4, .note-alt h4 {
+    margin: 0px;      
+}
+
+.note h5, .note-alt h5 {
+    margin: 0px;
+    font-weight: normal;
+    font-size: 10px;
+}
+
+.note, .note-alt {
+    padding: 5px;
+}
+
+.note .inner, .note-alt .inner {
+    margin-left: 10px;
+}    
+
+.note-alt {
+    background-color: #E0E0E0;
+}
+
+.yui-skin-sam {
+    margin-top: 10px;   
+}
+
+#print {
+    text-align: right;   
+}    
+
+#breadcrumb-container {
+    margin-bottom: 10px;   
+}        
+
+#breadcrumb-container span {
+    font-size: 14px;    
+}
+
+#main-container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    color: #000000;    
+}
+
+#main-container .yui-skin-sam li.selected a {
+    color: #FFFFFF;
+}    
+
+#main-container a {
+    text-decoration: none;
+/*    color: #5F3B12; */    
+}
+
+#tab-container {
+    margin: auto;
+}
+
+#tab-container ul {
+    margin: 0px;
+    padding: 0px;   
+}
+
+#tab-container ul li {    
+    list-style-type: none;
+    float: left;
+    padding: 15px;
+    background-color: #C0C0C0;
+    text-align: center;    
+}
+
+#tab-container ul li:first-child {         
+    -moz-border-radius-topleft: 5px;
+}
+
+#tab-container ul li:last-child {         
+    -moz-border-radius-topright: 5px;
+}
+
+#tab-container ul li.active {
+    background-color: #EFFFF4;
+}
+
+#tab-container ul li:hover {
+    background-color: #E0F0F0;
+}
+
+#tab-container ul li a {
+    color: #000000;
+    text-decoration: none;
+}
+
+#subnav {
+    clear: both;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#subnav ul {
+    margin: 0px;
+    padding: 0px;     
+}
+
+#subnav ul li {    
+    list-style-type: none;
+    float: left;
+    padding: 15px;
+    background-color: #C0C0C0;
+    text-align: center;  
+}
+
+#subnav ul li.active {
+    background-color: #EFFFF4;    
+}
+
+#subnav ul li:hover {
+    background-color: #E0F0F0;
+}
+
+#subnav ul li a {
+    color: #000000;
+    text-decoration: none;
+}
+
+#content-container {
+	min-height: 600px;
+    overflow: auto;    
+    clear: both;    
+    padding: 10px;
+    background-color: #C0C0C0;    
+    -moz-border-radius-topright: 5px;    
+    -moz-border-radius-bottomleft: 5px;    
+    -moz-border-radius-bottomright: 5px;    
+}
+
+#content {
+    clear: both;
+    padding: 10px;
+}
+
+#notices-container, #warnings-container {
+    padding: 10px;    
+    margin: 0 25px 25px 25px;    
+    border: 1px dashed black;
+}
+
+.projectlog-results {
+    width: 100%;
+}
+
+.projectlog-results .first-of-type td {
+    border-bottom: 1px solid black;      
+}
+
+.projectlog-results td {
+    text-align: left;
+    padding-left: 0px;
+}
+
+.projectlog-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.projectlog-header h2, .projectlog-header h3 {
+    font-weight: normal;
+    margin: 0px;
+    padding: 0px;   
+}    
+
+.print-only {
+    display: none;
+}    
+
+.warning {
+    color: #FF0000;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.notice {
+    color: #308730;
+    font-size: 14px;
+    font-weight: bold;
+}

@@ -1,0 +1,12 @@
+[2008-05-25 20:48:00 -0500] - Brandon Prudent <bprudent@redtreesystems.com>: Start on dynamic code; imported to svn 
+
+dbfe09258787b047b8bcd0bb4467fa8babbdd93c
+
+[2008-05-19 15:51:12 -0400] - Joshua T Corbin <jcorbin@wunjo.org>: Include last commit's sha1 as first changelog line.
+
+[2008-05-19 15:46:36 -0400] - Joshua T Corbin <jcorbin@wunjo.org>: Write management makefile.
+- Generates dist tarball
+- Generates changelog
+- Compacts editor_plugin.js
+
+[2008-05-19 15:30:43 -0400] - Joshua T Corbin <jcorbin@wunjo.org>: Initial demo code
