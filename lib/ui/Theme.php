@@ -32,6 +32,8 @@
  */
 abstract class Theme extends BufferedObject
 {    
+    private $path = null;
+    
     /**
      * Gets the name of the current class
      *
@@ -57,10 +59,7 @@ abstract class Theme extends BufferedObject
      */
     public function getImage($key)
     {
-        global $config;
-        
-        $class = $this->getClass();
-        return $config->absUri . "/themes/$class/view/images/$key"; 
+        return $this->getPath() . "/view/images/$key"; 
     }
     
     /**
@@ -71,47 +70,22 @@ abstract class Theme extends BufferedObject
      */
     public function getIcon($key)
     {
-        global $config;
-        
-        $class = $this->getClass();
-        return $config->absUri . "/themes/$class/view/icons/$key.png"; 
-    }    
-        
-    /**
-     * Load css from /theme/<code>/view/css/components/<current>/<current>.css.
-     * Specific actions may also be picked up here via name.
-     * 
-     * @return array an array of stylesheets to use
-     */
+        return $this->getPath() . "/view/icons/$key.png"; 
+    }
+    
     public function getStyleSheets()
     {
-        global $config, $current;
-        
-        $ss = array();
-        $code = $this->getClass();
-        $component = $current->component->getClass();
-        $lowerComponent = strtolower($component);
-        
-        $css = $config->absPath . "/themes/$code/view/css/components/$component/$lowerComponent.css";        
-        if (file_exists($css)) {
-            array_push($ss, $css);
-        }        
-        
-        if (ereg('MSIE ([0-9])', Params::server('HTTP_USER_AGENT'), $version)) {   
-            $version = $version[1];                    
-            $css = $config->absPath . "/themes/$code/view/css/components/$component/$lowerComponent-ie$version.css";        
-            if (file_exists($css)) {
-                array_push($ss, $css);
-            }            
-            else {
-                $css = $config->absPath . "/themes/$code/view/css/components/$component/$lowerComponent-ie.css";        
-                if (file_exists($css)) {
-                    array_push($ss, $css);
-                }
-            }
+        return array();
+    }
+    
+    public function getPath()
+    {
+        if ($this->path) {
+            return $this->path;
         }
-
-        return $ss;
+        
+        $us = new ReflectionClass($this->getClass());        
+        return $this->path = dirname($us->getFileName());        
     }
 
     /**
@@ -124,13 +98,10 @@ abstract class Theme extends BufferedObject
      */        
     static public function load($theme)
     {
-        global $config, $current;
+        $us = new $theme();        
+        Application::setPath($us->getPath());
 
-        /*
-         * set the current path
-         */
-        Application::setPath("$config->absPath/themes/$theme");
-        return new $theme();
+        return $us;
     }
 }
 

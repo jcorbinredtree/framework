@@ -77,12 +77,12 @@ abstract class Component extends ActionProvider
 
     /**
      * contructor; generic initializations
-     * do you initializations onInitialize()
+     * do your initializations onInitialize()
      */
     final public function __construct() {
         global $config;
         
-        $this->title = $config->company;
+        $this->title = 'Untitled Page';
     } 
     
     public function __toString() {
@@ -112,12 +112,10 @@ abstract class Component extends ActionProvider
     {
         global $config, $current;
         
-        /*
-         * set the current path
-         */
-        Application::setPath("$config->absPath/component/$component");
-        
         $c = new $component();
+        
+        Application::setPath($c->getPath());
+        
         $c->onRegisterActions();
         return $c;
     }    
@@ -233,27 +231,11 @@ abstract class Component extends ActionProvider
 
         return $link;
     }
-
-    /**
-     * Called before rendering takes place
-     *
-     * @param LayoutDescription $description
-     * @return void
-     */
-    public function onPreRender(LayoutDescription &$description)
-    {
-        
-    }
     
-    /**
-     * Called after rendering has occurred
-     *
-     * @param string $content
-     * @return void
-     */
-    public function onPostRender(&$content)
+    public function getPath()
     {
-        
+        $us = new ReflectionClass($this->getClass());        
+        return dirname($us->getFileName());
     }
     
     /**
@@ -268,7 +250,7 @@ abstract class Component extends ActionProvider
         global $config;
         
         $class = $this->getClass();
-        $path = Application::setPath("$config->absPath/components/$class/");
+        $path = Application::setPath($this->getPath());
        
         $handler = (is_string($action->handler) ? array($this, $action->handler) : $action->handler); 
         $returnValue = call_user_func($handler, $stage);

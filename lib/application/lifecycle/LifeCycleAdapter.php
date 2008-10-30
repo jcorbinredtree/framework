@@ -14,6 +14,19 @@ abstract class LifeCycleAdapter implements ILifeCycle
         
         $config->info("onIndex");
     }
+        
+    /**
+     * Called when an exception is generated from the system
+     * 
+     * @param Exception $ex the exception
+     * @return void
+     */    
+    public function onException(Exception &$ex)
+    {
+        global $config;
+
+        $config->info('onException');
+    }
 
     /**
      * Called when the application first starts

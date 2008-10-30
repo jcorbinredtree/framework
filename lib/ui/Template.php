@@ -41,7 +41,7 @@ class Template extends PHPSTLTemplate
         
         $this->compiler = 'FrameworkCompiler';
 
-        Compiler::setCompileDirectory($config->absPath . '/cache/templates/');
+        Compiler::setCompileDirectory(PolicyManager::getTemplatesPolicy());
         Compiler::setCompilerClass('FrameworkCompiler');
     }
     

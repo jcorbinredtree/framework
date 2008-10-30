@@ -80,7 +80,7 @@ class I18N
     {
         global $config;
 
-        $path = $config->absPath . "/languages/langpack.$lcLang.php";
+        $path = $config->fwAbsPath . "/languages/langpack.$lcLang.php";
 
         if (!file_exists($path)) {
             return false;

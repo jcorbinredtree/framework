@@ -46,7 +46,17 @@ if (function_exists('onConfig')) {
     onConfig($config);
 }
 
-Application::start();
+try {
+    Application::start();
+}
+catch (Exception $ex) {
+    LifeCycleManager::onException($ex);
+    
+    $theme = Theme::load($config->getDefaultExceptionTheme());
+    $layout = new LayoutDescription();
+    $layout->content = $ex;    
+    $theme->onDisplay($layout);
+}
 
 if ($config->isDebugMode()) {
     $pageTime = (microtime(true) - $__start);

@@ -15,6 +15,15 @@ class LifeCycleManager
         }
     }
     
+    public static function onException(Exception &$ex)
+    {            
+        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
+            $lco->onException($ex);
+        }        
+        
+        return false;
+    }
+    
     public static function onURLRewrite()
     {            
         foreach (LifeCycleManager::$lifeCyclers as &$lco) {

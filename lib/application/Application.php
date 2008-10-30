@@ -219,7 +219,7 @@ class Application
 
         if (!class_exists('File', false)) {
             include_once "$config->fwAbsPath/lib/util/File.php";
-        }
+        }        
 
         /*
          * autoload classes at the current->path
@@ -232,46 +232,26 @@ class Application
                 return $file;
             }
         }
-
-        /*
-         * autoload /components/shared/* classes
-         */
-        Application::$class = $class;
-        File::find(array('Application', 'findClass'),"$config->fwAbsPath/components/shared");
-        if ($file = Application::classMapped($class)) {
-            $config->info("$class found in $file");
-            return $file;
-        }
-
-        /*
-         * autoload /components/* classes
-         */
-        Application::$class = $class;
-        File::find(array('Application', 'findClass'),"$config->fwAbsPath/components");
-        if ($file = Application::classMapped($class)) {
-            $config->info("$class found in $file");
-            return $file;
-        }
-
-        /*
-         * autoload /extensions/* classes
-         */
-        Application::$class = $class;
-        File::find(array('Application', 'findClass'),"$config->fwAbsPath/extensions");
-        if ($file = Application::classMapped($class)) {
-            $config->info("$class found in $file");
-            return $file;
-        }
-
-        /*
-         * autoload lib/* classes
-         */
-        Application::$class = $class;
-        File::find(array('Application', 'findClass'),"$config->fwAbsPath/lib");
-        if ($file = Application::classMapped($class)) {
-            $config->info("$class found in $file");
-            return $file;
-        }
+        
+        $targets = array("$config->absPath/SITE/local/components", "$config->fwAbsPath/components",  // components
+        				 "$config->absPath/SITE/local/modules", "$config->fwAbsPath/modules",        // modules 
+        				 "$config->absPath/SITE/local/lib", "$config->fwAbsPath/lib",                // lib
+                         "$config->absPath/SITE/local/themes", "$config->fwAbsPath/themes",          // themes        
+                         "$config->absPath/SITE/local/extensions", "$config->fwAbsPath/extensions"); // extensions
+        foreach ($targets as $target) {
+            $config->debug("examining $target");
+            
+            if (!file_exists($target)) { 
+                continue;
+            }
+            
+            Application::$class = $class;
+            File::find(array('Application', 'findClass'), $target);
+            if ($file = Application::classMapped($class)) {
+                $config->info("$class found in $file");
+                return $file;
+            }
+        }        
 
         return false;
     }

@@ -143,6 +143,73 @@ class Config
     private $defaultAction = 'login';
     
     /**
+     * The default theme
+     *
+     * @var String
+     */
+    private $defaultTheme = 'DefaultTheme';
+    
+    /**
+     * The default exception theme
+     *
+     * @var string
+     */
+    private $defaultExceptionTheme = 'DefaultExceptionTheme';
+    
+    /**
+     * The location policy for files
+     *
+     * @var string
+     */
+    private $locationPolicy = 'DefaultLocationPolicy';
+
+    /**
+     * @return string
+     */
+    public function getLocationPolicy()
+    {
+        return $this->locationPolicy;
+    }
+
+    /**
+     * @param string $locationPolicy
+     */
+    public function setLocationPolicy($locationPolicy)
+    {
+        $this->locationPolicy = $locationPolicy;
+    }
+    /**
+     * @return string
+     */
+    public function getDefaultExceptionTheme()
+    {
+        return $this->defaultExceptionTheme;
+    }
+
+    /**
+     * @return String
+     */
+    public function getDefaultTheme()
+    {
+        return $this->defaultTheme;
+    }
+
+    /**
+     * @param string $defaultExceptionTheme
+     */
+    public function setDefaultExceptionTheme ($defaultExceptionTheme)
+    {
+        $this->defaultExceptionTheme = $defaultExceptionTheme;
+    }
+
+    /**
+     * @param String $defaultTheme
+     */
+    public function setDefaultTheme ($defaultTheme)
+    {
+        $this->defaultTheme = $defaultTheme;
+    }
+    /**
      * @return String
      */
     public function getDefaultAction ()
@@ -259,7 +326,7 @@ class Config
             return;
         }
 
-        $logDir = "$this->absPath/SITE/writable/logs";
+        $logDir = $this->getLogDir();
         $this->log = &Log::singleton('file', $logDir . '/' . date('Y-m-d') . '.test.log', '', null, ($this->debug ? PEAR_LOG_DEBUG : PEAR_LOG_WARNING));
         $this->test = true;
     }
@@ -313,6 +380,9 @@ class Config
     public function setDebugMode($val)
     {
         $this->debug = $val;
+        
+        $logDir = $this->getLogDir();
+        $this->log = & Log::singleton('file', $logDir . '/' . date('Y-m-d') . '.log', '', null, ($this->debug ? PEAR_LOG_DEBUG : PEAR_LOG_WARNING));
     }
 
     /**
@@ -385,7 +455,23 @@ class Config
      * @var string
      */
     public $absUriPath = null;
-
+    
+    /**
+     * Get the log directory we're writing to.
+     *
+     * @return string
+     */
+    public function getLogDir()
+    {
+        if (!class_exists($this->getLocationPolicy())) {
+            require_once "$this->fwAbsPath/lib/policies/ILocationPolicy.php"; 
+            require_once "$this->fwAbsPath/lib/policies/DefaultLocationPolicy.php"; 
+        }
+        
+        $policy = $this->getLocationPolicy();
+		return call_user_func(array($policy, 'logs'));
+    }
+    
     /**
      * Constructor; Sets up a lot of vars & such
      *
@@ -405,7 +491,7 @@ class Config
         $this->absPath = preg_replace('|[/]SITE[/]framework$|', '', $this->fwAbsPath);
         $this->absUriPath = dirname($_SERVER['PHP_SELF']);
 
-        $logDir = "$this->absPath/SITE/writable/logs";
+        $logDir = $this->getLogDir();
         if (file_exists($logDir)) {
             if (!is_writable($logDir)) {
                 throw new Exception('The log directory exists, but is not writable');

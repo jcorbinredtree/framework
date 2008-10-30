@@ -1,0 +1,25 @@
+<template xmlns:c = "class://CoreTag" xmlns:t = "class://ThemeTag" xmlns:f = "class://FrameworkTag">
+    <c:doctype type="xhtml 1.1" />
+    <html>
+            <head>
+                    <t:head />
+                    <style type = "text/css">
+                    body {
+                    	background-color: #A8CFB1;
+                    }
+                    </style>
+            </head>
+            <body>
+                    <t:warnings />
+                    <t:notices />
+
+					<div id = "main">
+						<ul>
+							<c:forEach list = "${this.layout.content}" var = "frame">
+								<li>${=frame['file']} (${=frame['line]})</li>
+							</c:forEach>
+						</ul>							
+					</div>
+            </body>
+    </html>
+</template>

@@ -164,10 +164,8 @@ class LayoutDescription
       * @return array
       */
      public function getTopNavigation() 
-     {
-         global $config;
-         
-         return array_merge($config->getTopNavigationItems(), LifeCycleManager::onGetTopNavigation());
+     {   
+         return LifeCycleManager::onGetTopNavigation();
      }
      
      /**
@@ -176,10 +174,8 @@ class LayoutDescription
       * @return array
       */     
      public function getLeftNavigation() 
-     {
-         global $config;
-         
-         return array_merge($config->getLeftNavigationItems(), LifeCycleManager::onGetLeftNavigation());
+     {   
+         return LifeCycleManager::onGetLeftNavigation();
      }
      
      /**
@@ -189,9 +185,7 @@ class LayoutDescription
       */     
      public function getRightNavigation() 
      {
-         global $config;
-         
-         return array_merge($config->getRightNavigationItems(), LifeCycleManager::onGetRightNavigation());
+         return LifeCycleManager::onGetRightNavigation();
      }
      
      /**
@@ -201,9 +195,7 @@ class LayoutDescription
       */          
      public function getBottomNavigation() 
      {
-         global $config;
-         
-         return array_merge($config->getBottomNavigationItems(), LifeCycleManager::onGetBottomNavigation());
+         return LifeCycleManager::onGetBottomNavigation();
      }
      
      /**

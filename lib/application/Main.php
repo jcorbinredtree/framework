@@ -264,7 +264,7 @@ class Main
                 $current->theme = Theme::Load($themeId);
             }
             else {
-                $current->theme = Theme::Load('DefaultTheme');
+                $current->theme = Theme::Load($config->getDefaultTheme());
             }
         }
         
@@ -347,8 +347,8 @@ class Main
             $layout->isPopup = Params::request(AppConstants::POPUP_KEY, false);
             $layout->component = $current->component;
             $layout->searchWord = Params::request(AppConstants::KEYWORD_KEY);
-            $layout->isHomePage = ($current->component->getClass() == Config::DEFAULT_COMPONENT) 
-                                  && ($current->action->id == Config::DEFAULT_ACTION);
+            $layout->isHomePage = ($current->component->getClass() == $config->getDefaultComponent()) 
+                                  && ($current->action->id == $config->getDefaultAction());
     
             $layout->styleSheets = $current->theme->getStyleSheets();
            
@@ -361,22 +361,22 @@ class Main
              * modules
              */
             {
-                foreach ($config->getLeftModules() as $module) {
+                foreach (LifeCycleManager::onGetLeftModules() as $module) {
                     Application::performModule($module, Module::POSITION_LEFT);
                     $layout->addLeftModule($module);
                 }
     
-                foreach ($config->getTopModules() as $module) {
+                foreach (LifeCycleManager::onGetTopModules() as $module) {
                     Application::performModule($module, Module::POSITION_TOP);
                     $layout->addTopModule($module);
                 }
                 
-                foreach ($config->getRightModules() as $module) {
+                foreach (LifeCycleManager::onGetRightModules() as $module) {
                     Application::performModule($module, Module::POSITION_RIGHT);
                     $layout->addRightModule($module);
                 }
     
-                foreach ($config->getBottomModules() as $module) {
+                foreach (LifeCycleManager::onGetBottomModules() as $module) {
                     Application::performModule($module, Module::POSITION_BOTTOM);
                     $layout->addBottomModule($module);
                 }            

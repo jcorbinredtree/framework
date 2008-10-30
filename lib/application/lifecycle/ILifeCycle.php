@@ -10,6 +10,14 @@ interface ILifeCycle
      * @return void
      */
     public static function onIndex(ApplicationIndex &$index);
+    
+    /**
+     * Called when an exception is generated from the system
+     * 
+     * @param Exception $ex the exception
+     * @return void
+     */
+    public function onException(Exception &$ex);
 
     /**
      * Called when the application first starts
