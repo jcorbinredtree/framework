@@ -40,6 +40,19 @@ interface ILinkPolicy
      * @return  void
      */
     public function parse();
+
+    /**
+     * Returns text in href form suitable for linking to other actions within the framework.
+     * 
+     * @static 
+     * @access public
+     * @param string a component class name
+     * @param string $action the action id you want to link to
+     * @param array $options an associative array of implementation-dependent parameters
+     * @param int $stage the stage you want to link to, default Stage::VIEW
+     * @return string text to use in an href upon success; null upon failure
+     */
+    public function getActionURI($component, $action, $options=array(), $stage=Stage::VIEW);    
 }
 
 ?>

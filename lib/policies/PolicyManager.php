@@ -69,9 +69,18 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy
      * @see ILinkPolicy::parse()
      *
      */
-    public function parse ()
+    public function parse()
     {
         $this->linkPolicy->parse();
+    }
+
+    /**
+     * @see ILinkPolicy::getActionURI()
+     * @return string
+     */
+    public function getActionURI($component, $action, $options=array(), $stage=Stage::VIEW)
+    {
+        return $this->linkPolicy->getActionURI($component, $action, $options, $stage);
     }
     
     /**

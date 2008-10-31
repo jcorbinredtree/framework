@@ -6,10 +6,26 @@ class LifeCycleManager
     
     private function __construct() { }
     
+    public static function add(ILifeCycle &$item)
+    {
+        array_push(LifeCycleManager::$lifeCyclers, $item);
+    }
+    
+    public static function remove(ILifeCycle &$item)
+    {
+        $lcs = array();
+
+        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
+            if ($item != $lco) {
+                array_push($lcs, $lco);
+            }
+        }
+        
+        LifeCycleManager::$lifeCyclers = $lcs;
+    }
+        
     public static function onInitialize()
     {
-        LifeCycleManager::$lifeCyclers = Application::getLifeCycleObjects();
-            
         foreach (LifeCycleManager::$lifeCyclers as &$lco) {
             $lco->onInitialize();            
         }

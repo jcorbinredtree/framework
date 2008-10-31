@@ -27,13 +27,7 @@
 
 /**
  * Implements PHP's autoload function in order to
- * load our core libraries as needed. This method
- * looks first in /lib for a matching class. Upon
- * failure, it looks under the current->path for
- * a match. If that fails, then your class can't
- * be found and won't be loaded. This makes the
- * system entirely handy. No insane includes all
- * over the place.
+ * load required classed.
  *
  * @see the php docs
  * @param string $class a class name
@@ -200,7 +194,7 @@ class Application
      */
     static public function autoLoad($class)
     {
-        global $config, $database, $current;
+        global $config, $current;
                 
         if (!$config) { return false; }
 
@@ -259,9 +253,9 @@ class Application
     /**
      * Saves the current request into the session. A new class
      * is created with the following properties:
+     *     stage (int) 
      *     action (string)
-     *     stage (int)
-     *     componentID (int)
+     *     component (string)
      *     get (array)
      *     post (array)
      *     request (array)
@@ -292,7 +286,7 @@ class Application
      * success, a structure with the following properties is returned:
      *     action (string)
      *     stage (int)
-     *     componentID (int)
+     *     component (string)
      *     get (array)
      *     post (array)
      *     request (array)
@@ -314,52 +308,6 @@ class Application
     }
 
     /**
-     * Finds all the life cycle contributors
-     *
-     * @return array of ILifeCycle objects
-     */
-    public static function getLifeCycleObjects()
-    {
-        global $database;
-
-        $values = ApplicationItem::getLifeCycleObjects();
-
-        $providers = array();
-        foreach ($values as $class) {
-            if (Application::classMapped($class)) {
-                array_push($providers, new $class());
-            }
-        }
-
-        return $providers;
-    }
-
-    /**
-     * Finds all the administration providers in the system
-     *
-     * @return array of providers
-     */
-    public static function getAdministrations()
-    {
-        global $database;
-
-        $values = ApplicationItem::getAdministrations();
-
-        $providers = array();
-        foreach ($values as $class) {
-            if (Application::classMapped($class)) {
-                array_push($providers, new $class());
-            }
-            else {
-            	print_r($_SESSION);
-            	die("class not mapped: $class");
-            }
-        }
-
-        return $providers;
-    }
-
-    /**
      * Saves the value of the global $current variable into
      * the session.
      *
@@ -369,7 +317,7 @@ class Application
      */
     static public function saveCurrent()
     {
-        global $current, $config;
+        global $current;
 
         $_SESSION[AppConstants::LAST_CURRENT_KEY] = serialize($current);
     }
@@ -414,7 +362,8 @@ class Application
         }
 
         if (!$uri) {
-            $uri = Component::getActionURI(Config::DEFAULT_COMPONENT, Config::DEFAULT_ACTION,
+            $policy = PolicyManager::getInstance();
+            $uri = $policy->getActionURI(Config::DEFAULT_COMPONENT, Config::DEFAULT_ACTION,
                                            array('-textalize' => true), Stage::VIEW);
         }
 
@@ -435,7 +384,7 @@ class Application
      */
     static public function call(ActionProvider &$provider, ActionDescription &$action, $stage=Stage::VIEW)
     {
-        global $config, $current;
+        global $current;
 
         if (!$provider->allows($action)) {
             return null;
@@ -462,8 +411,6 @@ class Application
      */
     static public function performAction(ActionProvider &$component, ActionDescription &$action, $stage=Stage::VIEW)
     {
-        global $config, $current;
-
         if (!$component->allows($action)) {
             return false;
         }
@@ -536,22 +483,6 @@ class Application
         return $oldPath;
     }
 
-    /**
-     * Sets the given Current object to the appropriate values in order to
-     * require the user to log into the application.
-     *
-     * @static
-     * @access public
-     * @param Current $current the Current object on which to perform
-     * @return void
-     */
-    public static function login(Current &$current)
-    {
-        $current->user = null;
-        $current->component = Component::load(Config::LOGIN_COMPONENT);
-        $current->action = $current->component->getAction(Config::LOGIN_ACTION);
-    }
-
     public static function requireMinimum()
     {
         global $config;
@@ -565,6 +496,9 @@ class Application
         require_once "$config->fwAbsPath/lib/database/IDatabaseObject.php";
         require_once "$config->fwAbsPath/lib/database/DatabaseObject.php";
         require_once "$config->fwAbsPath/lib/application/ApplicationItem.php";
+        
+        require_once "$config->fwAbsPath/lib/policies/ISecurityPolicy.php";
+        require_once "$config->fwAbsPath/lib/policies/DefaultSecurityPolicy.php";        
         require_once "$config->fwAbsPath/lib/policies/ILocationPolicy.php";
         require_once "$config->fwAbsPath/lib/policies/DefaultLocationPolicy.php";
         require_once "$config->fwAbsPath/lib/policies/ILinkPolicy.php";

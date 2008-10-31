@@ -1,20 +1,7 @@
 <?php
 
 abstract class LifeCycleAdapter implements ILifeCycle
-{
-    /**
-     * Called when the application is indexing the current file
-     *
-     * @param ApplicationIndex $index the current index object
-     * @return void
-     */
-    public static function onIndex(ApplicationIndex &$index)
-    {
-        global $config;
-        
-        $config->info("onIndex");
-    }
-        
+{        
     /**
      * Called when an exception is generated from the system
      * 

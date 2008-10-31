@@ -56,52 +56,12 @@ abstract class ActionProvider extends BufferedObject
      * @param int $stage
      * @return boolean the value of the user_func
      */
-    public abstract function perform(ActionDescription &$action, $stage);    
-
-    /**
-     * Returns the sef href if one is available, null otherwise
-     *
-     * @param string $key the sef url you wish to get
-     * @return string upon success, null upon failure
-     */
-    public static function getSefURI($key)
-    {
-        global $config;
-        
-        $mappings =& $config->getUrlMappings();
-        if (array_key_exists($key, $mappings)) {
-            return "$config->absUri/$key";
-        }
-        
-        return null;
-    }
-    
-	/**
-     * Returns text in href form suitable for linking to other actions within the framework.
-     * 
-     * @static 
-     * @access public
-     * @param string a component class name
-     * @param int $action the action you want to link to
-     * @param array $options an associative array of parameters to pass to the action. The following options
-     * are recognized:
-     * 		-textalize - set to true if you are using the text directly (ie not in an href). This
-     * 		             option will be removed from the final link, but does not do encoding transformations
-     * 		             such as & => &amp;.
-     *      -popup - set to true if you intend to open a popup window. The current theme must be 
-     *                   set up to handle this.
-     *      -no-html - when set to true the theme is entirely bypassed and the action called directly instead.
-     *                   This is the preferred method of displaying binary output.
-     *      -secure - when set to true will set the link to use https. Set to false to get out of SSL mode.
-     * @param int $stage the stage you want to link to, default Stage::VIEW
-     * @return string text to use in an href upon success; null upon failure
-     */
-    abstract public static function getActionURI($component, $action, $options=array(), $stage=Stage::VIEW);    
+    public abstract function perform(ActionDescription &$action, $stage);
     
     /**
      * Gets the action specified by $id
      *
-     * @param int|string $id the id of the action
+     * @param string $id the id of the action
      * @return ActionDescription
      */
     public function getAction($id) 
