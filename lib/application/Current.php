@@ -21,7 +21,7 @@
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2007 Red Tree Systems, LLC
  * @license      MPL 1.1
- * @version      1.1
+ * @version      3.0
  * @link         http://framework.redtreesystems.com
  */
 
@@ -46,7 +46,7 @@ class Current
      * Holds the current user, if available
      * 
      * @access public
-     * @var User
+     * @var IUser
      */
     public $user = null;
     
@@ -85,8 +85,7 @@ class Current
     public $layout = null;
     
     /**
-     * Holds the current action. This is widely
-     * used in the system.
+     * Holds the current action
      * 
      * @access public
      * @var string
@@ -94,12 +93,9 @@ class Current
     public $action = null;
     
     /**
-     * Holds the current path. Unlike the component,
-     * which does not change, this is a dynamic
-     * variable. Each method call resets the path
-     * to the current component operated on. Thus,
-     * each component can use this knowing that the
-     * current path is set to their directory.
+     * Holds the current path. The current path is set to 
+     * the last operating component, module, or theme's directory.
+     * It is safe to set this value via Application::setPath.
      * 
      * @access public
      * @var string
@@ -178,7 +174,7 @@ class Current
      * @see Component::GetActionURI
      * @access public
      * @param array addtional options to pass to Component::GetActionURI
-     * @return string an uri suitable for browsing to 
+     * @return string an url suitable for browsing to 
      */
     public function getCurrentRequest($addOptions=null)
     {
@@ -194,8 +190,8 @@ class Current
             $options = array_merge($options, $addOptions);
         }        
         
-        return call_user_func(array($this->component->getClass(), 'getActionURI'), 
-                              array($this->component->getClass(), $this->action->id, $this->stage, $options));
+        $policy = PolicyManager::getInstance();
+        return $policy->getActionURI($this->component->getClass(), $this->action->id, $options, $this->stage);
     }
 
     /**

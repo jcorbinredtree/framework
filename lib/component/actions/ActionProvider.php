@@ -72,6 +72,37 @@ abstract class ActionProvider extends BufferedObject
         
         return $this->actions[$id];
     }
+    
+    /**
+     * Determines if the current user can execute the given ActionDescription
+     *
+     * @param ActionDescription $description the subject ActionDescription
+     * @return boolean true if the user can perform this action
+     */
+    public function canUser(ActionDescription &$description)
+    {
+        global $config, $current;
+        
+        if (!$current->user) {
+            return false;
+        }
+
+        if ($current->user->isAdministrator()) {
+            return true;
+        }
+
+        if (!count($action->requireGroups)) {
+            return true;
+        }
+
+        foreach ($action->requireGroups as $group) {
+            if ($current->user->inGroupName($group)) {
+                return true;
+            }
+        }
+
+        return false;        
+    }
 
     /**
      * Determines whether the provider allows the specified
@@ -107,7 +138,7 @@ abstract class ActionProvider extends BufferedObject
             /*
              * and a user does not exist, or can not $method
              */
-            if ((!$current->user) || (!$current->user->can($action))) {
+            if ((!$current->user) || (!$this->canUser($action))) {
                 $msg = "Permission denied to $action->handler on component " . $this->getClass();
 
                 $config->warn($msg);    

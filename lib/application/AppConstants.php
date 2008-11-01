@@ -170,6 +170,13 @@ class AppConstants
     const THEME_COOKIE = 'theme';
     
     /**
+     * Session time key
+     *
+     * @var string
+     */
+    const TIME_KEY = '__time';
+    
+    /**
      * private constructor
      *
      */

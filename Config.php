@@ -65,7 +65,7 @@ class Config
      *
      * @var int
      */
-    private $sessionExpireTime = 0;    
+    private $sessionExpireTime = 0; 
         
     /**
      * Specifies options to the mailer. The keys in this hash directly map to the
@@ -155,30 +155,55 @@ class Config
      * @var string
      */
     private $defaultExceptionTheme = 'DefaultExceptionTheme';
+           
+    /**
+     * Sets the user factory
+     *
+     * @var IUserFactory
+     */
+    private $userFactory = 'DefaultUserFactory';
     
     /**
-     * The default admin theeme
+     * The login url
      *
      * @var string
      */
-    private $defaultAdminTheme = 'DefaultAdminTheme';
+    private $loginUrl = '/login';
 
     /**
      * @return string
      */
-    public function getDefaultAdminTheme ()
+    public function getLoginUrl()
     {
-        return $this->defaultAdminTheme;
+        return $this->loginUrl;
     }
 
     /**
-     * @param string $defaultAdminTheme
+     * @param string $loginUrl
      */
-    public function setDefaultAdminTheme($defaultAdminTheme)
+    public function setLoginUrl($loginUrl)
     {
-        $this->defaultAdminTheme = $defaultAdminTheme;
+        $this->loginUrl = $loginUrl;
     }
-    
+    /**
+     * @return IUserFactory
+     */
+    public function getUserFactory()
+    {
+        if (is_string($this->userFactory)) {
+            $this->userFactory = new DefaultUserFactory();
+        }
+        
+        return $this->userFactory;
+    }
+
+    /**
+     * @param IUserFactory $userFactory
+     */
+    public function setUserFactory(IUserFactory $userFactory)
+    {
+        $this->userFactory = $userFactory;
+    }
     /**
      * @return string
      */

@@ -97,23 +97,6 @@ class ActionDescription extends NavigatorItem implements ICacheable
             $this->$key = $val;
         }
     }
-    
-    /**
-     * Determines an appropriate uri based on current property values
-     * 
-     * @param $provider the action provider class interpreting the action
-     * @return string uri
-     */
-    public function getURI($provider)
-    {
-        if ($this->href) {
-            return $this->href;
-        }
-        
-        return call_user_func_array(array($provider, 'getActionURI'), array(
-            $provider, $this->id
-        ));
-    }
   
     /**
      * Determines if the component is cacheable for this action.

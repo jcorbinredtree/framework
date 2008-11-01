@@ -2,7 +2,7 @@
 
 class LifeCycleManager
 {
-    private static $lifeCyclers;
+    private static $lifeCyclers = array();
     
     private function __construct() { }
     

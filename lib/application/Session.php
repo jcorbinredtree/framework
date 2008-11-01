@@ -11,6 +11,12 @@ class Session
     {
         return Params::session($key, null);
     }
+    
+    public static function end()
+    {
+        $_SESSION = array();
+        return session_destroy();
+    }
 }
 
 ?>

@@ -19,6 +19,58 @@ class Main
     } 
     
     /**
+     * Parses the request and populates the $_GET and $_REQUEST arrays. The order of precedence is as follows:
+     * 
+     * 1.) An ILifeCycle implementation handling onURLRewrite()
+     * 2.) A matching key in $config->getUrlMappings()
+     * 3.) The ILinkPolicy::parse() method
+     * 
+     * @return void
+     */
+    public static function parseRequest()
+    {    
+        global $config;
+        
+        $handledUrl = LifeCycleManager::onURLRewrite();
+        if (!$handledUrl) {
+            $mappings = $config->getUrlMappings();
+            $url = preg_replace('|^' . $config->absUriPath . '[/]?|i', '', Params::server('REQUEST_URI'));
+            if ($url) {
+                foreach ($mappings as $key => $map) {
+                    if ($key == $url) {
+                        $_REQUEST[AppConstants::COMPONENT_KEY] = $_GET[AppConstants::COMPONENT_KEY] = $map[0];
+                        $_REQUEST[AppConstants::ACTION_KEY] = $_GET[AppConstants::ACTION_KEY] = $map[1];                        
+                        if (count($map) > 2) {
+                            $sets = explode(',', 'null,' . $map[2]);
+                            foreach ($sets as $set) {
+                                if ($set == 'null') {
+                                    continue;
+                                }
+                                
+                                $args = explode('=', $set);
+                                
+                                $_REQUEST[$args[0]] = $_GET[$args[0]] = $args[1];
+                            }
+                        }
+                        
+                        if (count($map) > 3) {
+                            $_REQUEST[AppConstants::STAGE_KEY] = $_GET[AppConstants::STAGE_KEY] = $map[3];
+                        }
+    
+                        $handledUrl = true;                        
+                        break;
+                    }
+                }
+            }
+            
+            if (!$handledUrl) {
+                $policy = PolicyManager::getInstance();
+                $policy->parse();
+            }
+        }        
+    }
+    
+    /**
      * populates the current ticket
      * 
      * @return  void
@@ -28,7 +80,7 @@ class Main
         global $current, $config;
         
         $current = null;
-        if (Params::session(AppConstants::LAST_CURRENT_KEY)) {
+        if (Session::get(AppConstants::LAST_CURRENT_KEY)) {
             $current = Application::popSavedCurrent();
         }
         else {
@@ -95,7 +147,7 @@ class Main
         global $config, $current;
         
         if ($config->getSessionExpireTime() && Params::session('user_id') 
-        && (((time() - Params::session('time')) >= $config->sessionExpireTime))) 
+            && (((time() - Session::get(AppConstants::TIME_KEY)) >= $config->sessionExpireTime))) 
         {
             $_SESSION = array();
             Application::saveRequest();
@@ -105,7 +157,7 @@ class Main
             Application::login($current);
         }
         elseif ($config->getSessionExpireTime()) {
-            $_SESSION['time'] = time();
+            Session::set(AppConstants::TIME_KEY, time());
         }   
     }
     
@@ -118,36 +170,15 @@ class Main
     {
         global $config, $current;
         
-        $uid = Session::get('user_id');
-        if (!$uid) {
-            return;
-        }
-    
-        $current->user = new User();
-        $current->user->fetch($uid);
-    
-        /*
-         * do we have a valid user?
-         */
-        if ((!$current->user) || (!$current->user->id)) {
-            Application::saveRequest();
-    
-            $config->warn("User #$uid not found");
-            $current->addWarning("User #$uid unknown or blocked. Please login again.");
-    
-            $_SESSION = array();
-    
-            Application::login($current);
-        }
-        else {
-            $_SESSION['time'] = time();
+        $userFactory = $config->getUserFactory();
+        if ($user = $userFactory->restore()) {                   
+            $current->user =& $user;
+            Session::set(AppConstants::TIME_KEY, time());
         }
         
         if ((!$current->component->allows($current->action))                        /* current action denied */
             || (!$current->user && Params::request(AppConstants::FORCE_LOGIN_KEY))) /* request to log in (but not user) */
         {
-            Application::saveRequest();
-        
             $config->info('User not found, loading Application::login');
         
             Application::login($current);
@@ -168,7 +199,9 @@ class Main
         }
         
         if ($request = Application::popSavedRequest()) {
-            $config->debug("restoring saved request: " . print_r($request, true));
+            if ($config->isDebugMode()) {
+                $config->debug("restoring saved request: " . print_r($request, true));
+            }
             
             if (($request->component)
                 && ($obj = call_user_func(array($request->component, 'load'), $request->component)))

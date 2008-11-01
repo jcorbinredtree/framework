@@ -28,7 +28,7 @@ abstract class LifeCycleAdapter implements ILifeCycle
     }
     
     /**
-     * Invoked to parse GET and POST info out of the URL.
+     * Invoked to parse GET info out of the URL.
      * Returning a true value stops the processor and leaves 
      * the parsing up to you. Tread lightly!
      *
