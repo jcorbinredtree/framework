@@ -142,13 +142,7 @@ class DefaultLinkPolicy implements ILinkPolicy
             }
 
             $kw = urlencode($kw);
-
-            if ($config->sefLinks) {
-                $link .= "/$kw/$val";
-            }
-            else {
-                $link .= "${amp}$kw=$val";
-            }
+            $link .= "/$kw/$val";
         }
 
         return $link;        

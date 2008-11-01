@@ -25,7 +25,7 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require 'Log.php';
+require_once 'Log.php';
 
 /**
  * Contains configuration information
@@ -352,9 +352,9 @@ class Config
             return;
         }
 
+        $this->test = true;
         $policy = PolicyManager::getInstance();
         $policy->logs();
-        $this->test = true;
     }
 
     /**
@@ -679,7 +679,6 @@ class Config
         $function = (isset($trace[$frame]['function']) ? $trace[$frame]['function'] : '');        
         $line     = (isset($trace[$frame]['line'])     ? $trace[$frame]['line']     : '');
         $type     = (isset($trace[$frame]['type'])     ? $trace[$frame]['type']     : '');
-        $args     = (isset($trace[$frame]['args'])     ? $trace[$frame]['args']     : array());
 
         $out = sprintf('[%.4f] %s', (microtime(true) - $__start), $function);
 
@@ -689,31 +688,7 @@ class Config
 
         $out .= "${type}";
 
-        if ($function) {
-            $out .= "$function(";
-
-            for ( $i = 0; $i < count($args); $i++ ) {
-                $arg = print_r($args[$i], true);
-
-                if (strlen($arg) > 10) {
-                    $arg = substr($arg, 0, 10) . '...';
-                }
-
-                $out .= $arg;
-
-                if (($i + 1) < count($args)) {
-                    $out .= ', ';
-                }
-            }
-
-            $out .= ')';
-        }
-
-        if ($out) {
-            $out .= ': ';
-        }
-
-        return preg_replace('/com::redtreesystems::framework::/', '', $out);
+        return $out;
     }
 
     private function binSafe(&$message)

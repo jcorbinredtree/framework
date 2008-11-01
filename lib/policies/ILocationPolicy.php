@@ -41,6 +41,14 @@ interface ILocationPolicy
      * @return string the location of the templates directory.
      */
     public function getTemplatesDir();
+
+    /**
+     * Gets the location of the cache directory.
+     * This directory should be writable.
+     *
+     * @return string the location of the cache directory.
+     */
+    public function getCacheDir();    
     
     /**
      * Gets the location of the logs directory.

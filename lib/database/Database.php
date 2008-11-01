@@ -21,7 +21,7 @@
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2007 Red Tree Systems, LLC
  * @license      MPL 1.1
- * @version      2.0
+ * @version      3.0
  * @link         http://framework.redtreesystems.com
  */
 
@@ -81,6 +81,13 @@ class Database
     public $time = false;
     
     /**
+     * The parsed DSN
+     *
+     * @var string
+     */
+    private $parsedDSN = '';
+    
+    /**
      * If timing is enabled, this tracks the total time queries
      * have taken to execute
      * 
@@ -133,7 +140,7 @@ class Database
      */
     public function __wakeup()
     {        
-        $this->__init();
+        $this->init();
     }
     
     /**
@@ -151,7 +158,7 @@ class Database
         $this->dsn = ($dsn ? $dsn : $config->getDatabaseInfo());
         $this->dbOptions = ($options ? $options : $config->getDatabaseOptions());
 
-        $this->__init();
+        $this->init();
     }
     
     /**
@@ -160,7 +167,7 @@ class Database
      * @access private
      * @return void
      */
-    private function __init()
+    private function init()
     {
         global $config;
         
@@ -170,7 +177,7 @@ class Database
         /*
          * parse the dsn
          */ 
-        if (preg_match('|^(.+?)[:][/]{2}(.+?)[:](.+?)[@](.+)[/](.+)|', $this->dsn, $matches)) {
+        if (preg_match('|^(.+?)[:][/]{2}(.+?)[:](.*?)[@](.+)[/](.+)|', $this->dsn, $matches)) {
             $dsn->driver = $matches[1];
             $dsn->user = $matches[2];
             $dsn->password = $matches[3];
@@ -180,9 +187,22 @@ class Database
         else {
             $config->fatal("Unable to parse the dsn: $this->dsn");
             die('Unable to parse dsn');
-        }
+        }      
         
+        $this->parsedDSN = $dsn;
+    }
+    
+    private function lazyLoad()
+    {
+        global $config;
+        
+        if ($this->pdo) {
+            return;
+        }
+                
         try {
+            $dsn =& $this->parsedDSN;
+            
             if (is_array($this->dbOptions)) {
                 $this->dbOptions[PDO::ATTR_PERSISTENT] = true;                
             }
@@ -199,7 +219,7 @@ class Database
         
         $this->pdo->setAttribute(PDO::ATTR_CASE, PDO::CASE_NATURAL);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);        
+        $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);          
     }
     
     /**
@@ -253,6 +273,8 @@ class Database
     {
         $arr = null;
         
+        $this->lazyLoad();
+        
         if ($this->statement) {
            $arr = $this->statement->errorInfo();
         }
@@ -275,6 +297,8 @@ class Database
     public function getTableFieldDefinition($table, $field)
     {
         global $config;
+        
+        $this->lazyLoad();        
         
         /*
          * @WARNING: this is mysql-specific
@@ -478,9 +502,24 @@ class Database
             return false;
         }
         
-        $args = func_get_args();        
-        for ($i = 1; $i < count($args); $i++) {
-            $this->bindValue($i, $args[$i]);
+        /*
+         * bind function args. if an array was passed, then flatten it
+         */
+        {
+            $args = func_get_args();
+            $index = 1;        
+            for ($i = 1; $i < count($args); $i++) {
+                $arg = $args[$i];
+                if (is_array($arg)) {
+                    foreach ($arg as $a) {
+                        $this->bindValue($index++, $a);
+                    }
+                    
+                    break;
+                }
+
+                $this->bindValue($index++, $arg);
+            }
         }
         
         $res = $this->execute();
@@ -519,7 +558,9 @@ class Database
     {
         global $config;
         
-        $start = microtime(true);        
+        $this->lazyLoad();                        
+        
+        $start = microtime(true);       
 
         try {
             $this->statement = $this->pdo->prepare($sql);
@@ -554,6 +595,8 @@ class Database
     public function query($sql)
     {
         global $config;
+        
+        $this->lazyLoad();                                
 
         $time = $start = 0;
 
@@ -640,11 +683,21 @@ class Database
      * @see Params::ArrayToObject
      * @param string $sql the SQL for your query
      * @param string $type the type of objects to be returned
+     * @param arglist ... variable arguments representing the prepared args
      * @return array an array of object rows 
      */
     public function queryForResultObjects($sql, $type='stdClass')
     {
-        if ($this->query($sql)) {
+        $args = func_get_args();
+        if (count($args) > 2) {
+            array_shift($args);
+            array_shift($args);
+        }
+        else {
+            $args = array();
+        }
+        
+        if ($this->executef($sql, $args)) {            
            return $this->getResultObjects($type);
         }
         
@@ -683,6 +736,8 @@ class Database
     public function lastInsertId()
     {
         global $config;
+        
+        $this->lazyLoad();                        
         
         $id = $this->pdo->lastInsertId();
 

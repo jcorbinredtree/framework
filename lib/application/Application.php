@@ -50,10 +50,7 @@ function __autoload($class)
 class Application
 {
     private static $class;
-    private static $map;
-    private static $files;
-    private static $saveMap = false;
-
+        
     /**
      * Contstructor; Private
      *
@@ -78,70 +75,6 @@ class Application
         Application::forward($config->absUri . $config->getLoginUrl());     
     }
 
-    public static function getClassFile($className)
-    {
-        if (!is_array(Application::$map)) {
-            Application::$map = Application::getData(AppConstants::CLASS_KEY);
-            if (!is_array(Application::$map)) {
-                Application::$map = array();
-            }
-        }
-
-        return array_key_exists($className, Application::$map) ? Application::$map[$className]->getFile() : null;
-    }
-
-    /**
-     * Adds data to an application-level store. This data will be cached in
-     * the session, and will not expire until the data is re-set or the session
-     * ends. The data expires from the global store at $expires, or if not specified,
-     * one day from now.
-     *
-     * @param string $key the key name for this data
-     * @param mixed $data the data you wish to store. this will be serialized, so you can pass anything
-     * @param int $expires the time, in unix time, this data expires from the global store
-     * @return void
-     */
-    public static function setData($key, &$data, $expires=0)
-    {
-        global $database;
-
-        if (!$expires) {
-            $expires = time() + 86400;
-        }
-
-        $sql = 'REPLACE INTO application_data SET `key` = ?, `data` = ?, `expires` = FROM_UNIXTIME(?)';
-        $database->executef($sql, $key, serialize($data), $expires);
-
-        $_SESSION["__application_$key"] = $data;
-    }
-
-    /**
-     * Retrieves the data associated with $key. The value is unserialized, so make sure
-     * all definitions are loaded. Note that this data may be cached in the session for speed,
-     * so it's safe to call this method repeatedly.
-     *
-     * @param string $key the key name for this data
-     * @return mixed this value will be set to null if no data is found
-     */
-    public static function getData($key)
-    {
-        global $database;
-
-        $sessionKey = "__application_$key";
-        if (array_key_exists($sessionKey, $_SESSION)) {
-            return $_SESSION[$sessionKey];
-        }
-
-        $sql = 'SELECT `data` FROM application_data WHERE `key` = ? AND expires > NOW()';
-        $database->executef($sql, $key);
-
-        if (!$database->count()) {
-            return null;
-        }
-
-        return $_SESSION[$sessionKey] = unserialize($database->getScalarValue());
-    }
-
     /**
      * Call back for File::find. Finds file
      * names consisting of <class>.php, and
@@ -158,48 +91,34 @@ class Application
         if (preg_match("|/$class.php$|", $file)) {
             include_once $file;
 
-            $index = new ApplicationItem();
-            $index->class = $class;
-            $index->path = preg_replace('|^' . $config->absPath . '[/]|i', '', $file);
-
-            Application::$saveMap = true;
-            Application::$map[$class] = $index;
+            ApplicationData::addClassEntry($class, $file);
         }
     }
 
     /**
-     * Determines if a class has been mapped - that is to say if a class
-     * name has a file definition. If so, this method will return the
-     * path to the file where the class is defined.
+     * Determines if a class has been mapped, and tried to load it.
+     * If so, this method will return the path to the file where the class is defined.
      *
      * @param string $class a class name to test
      * @return string a file path if found, false otherwise
      */
-    static public function classMapped($class)
-    {
-        $map = Application::$map;
-
-        if (array_key_exists($class, $map)) {
-            $file = $map[$class]->getFile();
-            if (file_exists($file)) {
-                include_once $file;
-                return $file;
-            }
+    static public function includeClass($class)
+    {    
+        $file = ApplicationData::getClassLocation($class);
+        if (!$file) {
+            return false;            
         }
-
-        return false;
+        
+        if (!file_exists($file)) {
+            throw new Exception("The location for $class is missing");
+        }            
+            
+        require_once $file;
+        return $file;
     }
 
     /**
-     * Implements PHP's autoload function in order to
-     * load our core libraries as needed. This method
-     * looks first in /lib/* for a matching class. Upon
-     * failure, it looks under the current->path for
-     * a match. If that fails /components/shared/* will
-     * be searched. If that fails, then your class can't
-     * be found and won't be loaded. This makes the
-     * system entirely handy. No insane includes all
-     * over the place.
+     * Loads classes based on class names 
      *
      * @see the php docs
      * @param string $class a class name
@@ -211,14 +130,7 @@ class Application
                 
         if (!$config) { return false; }
 
-        if (!Application::$map) {
-            Application::$map = Application::getData(AppConstants::CLASS_KEY);
-            if (!Application::$map) {
-                Application::$map =& ApplicationItem::getMap();
-            }
-        }
-
-        if ($file = Application::classMapped($class)) {
+        if ($file = Application::includeClass($class)) {
             return $file;
         }
 
@@ -234,7 +146,7 @@ class Application
         if ($current) {
             Application::$class = $class;
             File::find(array('Application', 'findClass'), $current->path);
-            if ($file = Application::classMapped($class)) {
+            if ($file = Application::includeClass($class)) {
                 $config->info("$class found in $file");
                 return $file;
             }
@@ -254,7 +166,7 @@ class Application
             
             Application::$class = $class;
             File::find(array('Application', 'findClass'), $target);
-            if ($file = Application::classMapped($class)) {
+            if ($file = Application::includeClass($class)) {
                 $config->info("$class found in $file");
                 return $file;
             }
@@ -495,12 +407,13 @@ class Application
 
         return $oldPath;
     }
-
-    public static function requireMinimum()
+    
+    private static function requireMinimum()
     {
         global $config;
 
-        require_once "$config->fwAbsPath/lib/application/AppConstants.php";
+        require_once "$config->fwAbsPath/lib/application/AppConstants.php";                
+        require_once "$config->fwAbsPath/lib/application/ApplicationData.php";        
         require_once "$config->fwAbsPath/lib/application/Main.php";
         require_once "$config->fwAbsPath/lib/database/Database.php";
         require_once "$config->fwAbsPath/lib/util/Params.php";
@@ -508,7 +421,6 @@ class Application
         require_once "$config->fwAbsPath/lib/component/RequestObject.php";
         require_once "$config->fwAbsPath/lib/database/IDatabaseObject.php";
         require_once "$config->fwAbsPath/lib/database/DatabaseObject.php";
-        require_once "$config->fwAbsPath/lib/application/ApplicationItem.php";
         
         require_once "$config->fwAbsPath/lib/policies/ILocationPolicy.php";
         require_once "$config->fwAbsPath/lib/policies/DefaultLocationPolicy.php";
@@ -516,16 +428,31 @@ class Application
         require_once "$config->fwAbsPath/lib/policies/DefaultLinkPolicy.php";                
         require_once "$config->fwAbsPath/lib/policies/PolicyManager.php";
     }
+        
+    public static function start()
+    {
+        Application::requireMinimum();
+        
+        /*
+         * load app data
+         */
+        ApplicationData::initialize();
+    }
+    
+    public static function end()
+    {
+        ApplicationData::unintialize();        
+    }
 
     /**
-     * Starts the application; main app driver
+     * Starts the web application
      *
      */
-    public static function start()
+    public static function startWeb()
     {
         global $config, $database;
 
-        Application::requireMinimum();
+        Application::start();
         
         Main::startSession();    
 
@@ -606,10 +533,8 @@ class Application
         }
 
         Main::render();
-
-        if (Application::$saveMap) {
-            Application::setData(AppConstants::CLASS_KEY, Application::$map);
-        }
+        
+        Application::end();
     }
 }
 

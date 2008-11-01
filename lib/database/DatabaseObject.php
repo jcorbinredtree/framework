@@ -165,7 +165,6 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             }
             
             $def = $def[0];
-            $type = Params::Generic($def, 'type', '');            
             
             if ($this->isDate($def)) {
                 array_push($values, date('Y-m-d H:i:s', (int) $this->$property));

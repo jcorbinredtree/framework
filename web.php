@@ -27,8 +27,6 @@
 
 $__start = microtime(true);
 
-require dirname(__FILE__) . '/Config.php';
-
 /**
  * One of three global variables, the config
  * holds all of the configuration information
@@ -43,7 +41,7 @@ $config = new Config();
 require "$config->fwAbsPath/lib/application/Application.php";
 
 try {
-    Application::start();
+    Application::startWeb();
 }
 catch (Exception $ex) {
     LifeCycleManager::onException($ex);

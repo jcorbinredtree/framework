@@ -60,6 +60,11 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy
         return $this->locationPolicy->getLogsDir();
     }
     
+    public function getCacheDir()
+    {
+        return $this->locationPolicy->getCacheDir();
+    }
+    
     public function logs()
     {
         $this->locationPolicy->logs();

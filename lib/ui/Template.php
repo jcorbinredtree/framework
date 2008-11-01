@@ -40,7 +40,7 @@ class Template extends PHPSTLTemplate
         $this->compiler = 'FrameworkCompiler';
 
         $policy = PolicyManager::getInstance();
-        Compiler::setCompileDirectory($policy->getTemplatesDir());
+        Compiler::setCompileDirectory($policy->getTemplatesDir() . '/');
         Compiler::setCompilerClass('FrameworkCompiler');
     }
     

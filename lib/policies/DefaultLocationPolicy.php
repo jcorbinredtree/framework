@@ -13,7 +13,20 @@ class DefaultLocationPolicy implements ILocationPolicy
     {
         global $config;
         
-        return "$config->absPath/SITE/writable/cache/logs";
+        return "$config->absPath/SITE/writable/logs";
+    }
+    
+    /**
+     * Gets the location of the cache directory.
+     * This directory should be writable.
+     *
+     * @return string the location of the cache directory.
+     */
+    public function getCacheDir()
+    {
+        global $config;
+        
+        return "$config->absPath/SITE/writable/cache";            
     }
     
     public function logs()
@@ -27,7 +40,8 @@ class DefaultLocationPolicy implements ILocationPolicy
             }
 
             $level = ($config->isDebugMode() ? PEAR_LOG_DEBUG : PEAR_LOG_WARNING);
-            $config->setLog(Log::singleton('file', $logDir . '/' . date('Y-m-d') . '.log', '', null, $level));
+            $test = ($config->isTestMode() ? '.test' : '');
+            $config->setLog(Log::singleton('file', $logDir . '/' . date('Y-m-d') . "$test.log", '', null, $level));
         }
         else {
             $config->setLog(Log::singleton('null'));
