@@ -9,13 +9,16 @@ class QueryBuilder
      */
     private $dbo;
     
+    private $type;
     private $joins = array();
     private $wheres = array();    
     private $orders = array();    
+    private $limit = '';
     
-    public function __construct(IDatabaseObject &$dbo)
+    public function __construct(IDatabaseObject &$dbo, $type='SELECT')
     {
-        $this->dbo = $dbo;   
+        $this->dbo = $dbo;
+        $this->type = $type;   
     }
     
     public function join(IDatabaseObject &$dbo2)
@@ -37,9 +40,54 @@ class QueryBuilder
         array_push($this->orders, $field);
     }
     
+    public function limit($l)
+    {
+        $this->limit = $l;
+    }
+    
     public function __toString()
     {        
-        throw new NotImplementedException();
+        $dbo =& $this->dbo;
+        $sql = "$this->type ";
+        
+        if ($this->type == 'SELECT') {
+            $sql .= "`$dbo->table`.`$dbo->key`," . $dbo->getColumnsSQL() . ' ';
+        }
+        
+        $sql .= "FROM `$dbo->table` ";
+        foreach ($this->joins as $join) {
+            $sql .= "$join ";
+        }
+        
+        for ($i = 0; $i < count($this->wheres); $i++) {
+            $where = $this->wheres[$i];
+            if (!$i) {
+                $where = "WHERE $where";
+            }
+            else {
+                $where = "AND $where ";                
+            }
+            
+            $sql .= "$where ";
+        }
+        
+        for ($i = 0; $i < count($this->orders); $i++) {
+            $order = $this->orders[$i];
+            if (!$i) {
+                $order = "ORDER BY $order";
+            }
+            else {
+                $order = ",$order";
+            }
+            
+            $sql .= "$order ";
+        }
+        
+        if ($this->limit) {
+            $sql .= "LIMIT $this->limit";
+        }
+        
+        return $sql;
     }
 }
 

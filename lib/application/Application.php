@@ -50,7 +50,7 @@ function __autoload($class)
 class Application
 {
     private static $class;
-        
+
     /**
      * Contstructor; Private
      *
@@ -61,18 +61,18 @@ class Application
     {
 
     }
-    
+
     /**
      * Forwards to the login page
-     * 
+     *
      * @return void
      */
     public static function login()
     {
         global  $config;
-        
+
         Application::saveRequest();
-        Application::forward($config->absUri . $config->getLoginUrl());     
+        Application::forward($config->absUri . $config->getLoginUrl());
     }
 
     /**
@@ -103,22 +103,22 @@ class Application
      * @return string a file path if found, false otherwise
      */
     static public function includeClass($class)
-    {    
+    {
         $file = ApplicationData::getClassLocation($class);
         if (!$file) {
-            return false;            
+            return false;
         }
-        
+
         if (!file_exists($file)) {
             throw new Exception("The location for $class is missing");
-        }            
-            
+        }
+
         require_once $file;
         return $file;
     }
 
     /**
-     * Loads classes based on class names 
+     * Loads classes based on class names
      *
      * @see the php docs
      * @param string $class a class name
@@ -127,7 +127,7 @@ class Application
     static public function autoLoad($class)
     {
         global $config, $current;
-                
+
         if (!$config) { return false; }
 
         if ($file = Application::includeClass($class)) {
@@ -138,7 +138,7 @@ class Application
 
         if (!class_exists('File', false)) {
             include_once "$config->fwAbsPath/lib/util/File.php";
-        }        
+        }
 
         /*
          * autoload classes at the current->path
@@ -151,26 +151,26 @@ class Application
                 return $file;
             }
         }
-        
+
         $targets = array("$config->absPath/SITE/local/components", "$config->fwAbsPath/components",  // components
-        				 "$config->absPath/SITE/local/modules", "$config->fwAbsPath/modules",        // modules 
+        				 "$config->absPath/SITE/local/modules", "$config->fwAbsPath/modules",        // modules
         				 "$config->absPath/SITE/local/lib", "$config->fwAbsPath/lib",                // lib
-                         "$config->absPath/SITE/local/themes", "$config->fwAbsPath/themes",          // themes        
+                         "$config->absPath/SITE/local/themes", "$config->fwAbsPath/themes",          // themes
                          "$config->absPath/SITE/local/extensions", "$config->fwAbsPath/extensions"); // extensions
         foreach ($targets as $target) {
             $config->debug("examining $target");
-            
-            if (!file_exists($target)) { 
+
+            if (!file_exists($target)) {
                 continue;
             }
-            
+
             Application::$class = $class;
             File::find(array('Application', 'findClass'), $target);
             if ($file = Application::includeClass($class)) {
                 $config->info("$class found in $file");
                 return $file;
             }
-        }        
+        }
 
         return false;
     }
@@ -178,7 +178,7 @@ class Application
     /**
      * Saves the current request into the session. A new class
      * is created with the following properties:
-     *     stage (int) 
+     *     stage (int)
      *     action (string)
      *     component (string)
      *     get (array)
@@ -288,8 +288,7 @@ class Application
 
         if (!$uri) {
             $policy = PolicyManager::getInstance();
-            $uri = $policy->getActionURI(Config::DEFAULT_COMPONENT, Config::DEFAULT_ACTION,
-                                           array('-textalize' => true), Stage::VIEW);
+            $uri = $policy->getActionURI($config->getDefaultComponent(), $config->getDefaultAction());
         }
 
         session_write_close();
@@ -407,13 +406,13 @@ class Application
 
         return $oldPath;
     }
-    
+
     private static function requireMinimum()
     {
         global $config;
 
-        require_once "$config->fwAbsPath/lib/application/AppConstants.php";                
-        require_once "$config->fwAbsPath/lib/application/ApplicationData.php";        
+        require_once "$config->fwAbsPath/lib/application/AppConstants.php";
+        require_once "$config->fwAbsPath/lib/application/ApplicationData.php";
         require_once "$config->fwAbsPath/lib/application/Main.php";
         require_once "$config->fwAbsPath/lib/database/Database.php";
         require_once "$config->fwAbsPath/lib/util/Params.php";
@@ -421,27 +420,27 @@ class Application
         require_once "$config->fwAbsPath/lib/component/RequestObject.php";
         require_once "$config->fwAbsPath/lib/database/IDatabaseObject.php";
         require_once "$config->fwAbsPath/lib/database/DatabaseObject.php";
-        
+
         require_once "$config->fwAbsPath/lib/policies/ILocationPolicy.php";
         require_once "$config->fwAbsPath/lib/policies/DefaultLocationPolicy.php";
         require_once "$config->fwAbsPath/lib/policies/ILinkPolicy.php";
-        require_once "$config->fwAbsPath/lib/policies/DefaultLinkPolicy.php";                
+        require_once "$config->fwAbsPath/lib/policies/DefaultLinkPolicy.php";
         require_once "$config->fwAbsPath/lib/policies/PolicyManager.php";
     }
-        
+
     public static function start()
     {
         Application::requireMinimum();
-        
+
         /*
          * load app data
          */
         ApplicationData::initialize();
     }
-    
+
     public static function end()
     {
-        ApplicationData::unintialize();        
+        ApplicationData::unintialize();
     }
 
     /**
@@ -453,15 +452,15 @@ class Application
         global $config, $database;
 
         Application::start();
-        
-        Main::startSession();    
+
+        Main::startSession();
 
         /*
          * This function should be defined in the site's index.php
          */
         if (function_exists('onConfig')) {
             onConfig($config);
-        }        
+        }
 
         /**
          * Two of three global variables. The entire
@@ -533,7 +532,7 @@ class Application
         }
 
         Main::render();
-        
+
         Application::end();
     }
 }

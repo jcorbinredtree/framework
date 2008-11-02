@@ -36,9 +36,9 @@ abstract class RequestObject implements IRequestObject
 {
 	public static function from(&$where)
 	{
-		throw new Exception("not implemented");
+		throw new NotImplementedException();
 	}
-	 
+
 	public function validate()
 	{
 		return false;

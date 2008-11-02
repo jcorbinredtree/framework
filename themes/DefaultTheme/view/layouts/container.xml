@@ -20,7 +20,7 @@
                       </div>
 
                       <div id = "center">
-                        <p>content</p>
+                        ${=this.layout.content}
                       </div>                                        
                    </div>
             </body>

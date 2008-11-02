@@ -37,7 +37,7 @@ require_once 'Log.php';
  * @package    Application
  */
 class Config
-{        
+{
     /**
      * This is the database connection information, in a MDB2 DSN format
      *
@@ -65,12 +65,12 @@ class Config
      *
      * @var int
      */
-    private $sessionExpireTime = 0; 
-        
+    private $sessionExpireTime = 0;
+
     /**
      * Specifies options to the mailer. The keys in this hash directly map to the
      * phpmailer properties.
-     * 
+     *
      * @var array
      */
     private $mailerOptions = array(
@@ -120,49 +120,42 @@ class Config
      * @var string
      */
     private $version = "3.0";
-    
+
     /**
      * Holds a refernence to the url mappings
-     * 
+     *
      * @var array
      */
     private $urlMappings = array();
-    
+
     /**
      * The default or "home page" component
      *
      * @var String
      */
     private $defaultComponent = 'Login';
-    
+
     /**
      * The default or "home page" action
      *
      * @var String
      */
     private $defaultAction = 'login';
-    
+
     /**
      * The default theme
      *
      * @var String
      */
     private $defaultTheme = 'DefaultTheme';
-    
+
     /**
      * The default exception theme
      *
      * @var string
      */
     private $defaultExceptionTheme = 'DefaultExceptionTheme';
-           
-    /**
-     * Sets the user factory
-     *
-     * @var IUserFactory
-     */
-    private $userFactory = 'DefaultUserFactory';
-    
+
     /**
      * The login url
      *
@@ -185,25 +178,7 @@ class Config
     {
         $this->loginUrl = $loginUrl;
     }
-    /**
-     * @return IUserFactory
-     */
-    public function getUserFactory()
-    {
-        if (is_string($this->userFactory)) {
-            $this->userFactory = new DefaultUserFactory();
-        }
-        
-        return $this->userFactory;
-    }
 
-    /**
-     * @param IUserFactory $userFactory
-     */
-    public function setUserFactory(IUserFactory $userFactory)
-    {
-        $this->userFactory = $userFactory;
-    }
     /**
      * @return string
      */
@@ -242,7 +217,7 @@ class Config
     {
         return $this->defaultAction;
     }
-    
+
     /**
      * @return String
      */
@@ -250,7 +225,7 @@ class Config
     {
         return $this->defaultComponent;
     }
-    
+
     /**
      * @param String $defaultAction
      */
@@ -258,7 +233,7 @@ class Config
     {
         $this->defaultAction = $defaultAction;
     }
-    
+
     /**
      * @param String $defaultComponent
      */
@@ -266,7 +241,7 @@ class Config
     {
         $this->defaultComponent = $defaultComponent;
     }
-    
+
     /**
      * @return Log
      */
@@ -274,7 +249,7 @@ class Config
     {
         return $this->log;
     }
-    
+
     /**
      * @param Log $log
      */
@@ -282,7 +257,7 @@ class Config
     {
         $this->log =& $log;
     }
-    
+
     /**
      * @param array $mailerOptions
      */
@@ -290,7 +265,7 @@ class Config
     {
         $this->mailerOptions = $mailerOptions;
     }
-    
+
     /**
      * @param array $mailerOptions
      */
@@ -299,26 +274,26 @@ class Config
         $this->mailerOptions = array_merge($this->mailerOptions, $mailerOptions);
     }
     /**
-     * 
+     *
      * Gets db options
-     * 
+     *
      * @return array
      */
     public function getDatabaseOptions()
     {
         return $this->dbOptions;
     }
-    
+
     /**
      * Gets the current dsn
-     * 
+     *
      * @return string
      */
     public function getDatabaseInfo()
     {
         return ($this->test ? $this->testDsn : $this->dsn);
     }
-    
+
     /**
      * Set database info
      * @param $dsn the dsn
@@ -328,7 +303,7 @@ class Config
     {
         $this->dsn = $dsn;
     }
-    
+
     /**
      * Set test info
      * @param $dsn the dsn
@@ -406,7 +381,7 @@ class Config
     public function setDebugMode($val)
     {
         $this->debug = $val;
-        
+
         $policy = PolicyManager::getInstance();
         $policy->logs();
     }
@@ -435,7 +410,7 @@ class Config
      * @return array of mappings
      */
     public function getUrlMappings()
-    {     
+    {
         return $this->urlMappings;
     }
 
@@ -454,10 +429,10 @@ class Config
     {
         $this->urlMappings[$url] = $mapping;
     }
-    
+
     /**
      * Gets the mailer options that comprise a new mailer object
-     * 
+     *
      * @return array
      */
     public function getMailerOptions()
@@ -483,10 +458,10 @@ class Config
      * @var string
      */
     public $absPath = null;
-        
+
     /**
      * The absolute path of the framework
-     * 
+     *
      * @var string
      */
     public $fwAbsPath = '';
@@ -500,7 +475,7 @@ class Config
      * @var string
      */
     public $absUriPath = null;
-    
+
     /**
      * Constructor; Sets up a lot of vars & such
      *
@@ -515,11 +490,11 @@ class Config
         }
 
         $this->fwAbsPath = dirname(__FILE__);
-        
+
         /* (kinda hacky) */
         $this->absPath = preg_replace('|[/]SITE[/]framework$|', '', $this->fwAbsPath);
         $this->absUriPath = dirname($_SERVER['PHP_SELF']);
-        
+
         $this->log =& Log::singleton('null');
     }
 
@@ -545,8 +520,8 @@ class Config
         include_once "$mailerPath/class.phpmailer.php";
 
         $mail = ($this->test ? new PhonyMailer() : new PHPMailer());
-        $mail->PluginDir = "$mailerPath/";        
-        
+        $mail->PluginDir = "$mailerPath/";
+
         foreach ($this->mailerOptions as $key => $val) {
             $mail->$key = $this->mailerOptions[$key];
         }
@@ -676,7 +651,7 @@ class Config
 
         $trace = debug_backtrace();
 
-        $function = (isset($trace[$frame]['function']) ? $trace[$frame]['function'] : '');        
+        $function = (isset($trace[$frame]['function']) ? $trace[$frame]['function'] : '');
         $line     = (isset($trace[$frame]['line'])     ? $trace[$frame]['line']     : '');
         $type     = (isset($trace[$frame]['type'])     ? $trace[$frame]['type']     : '');
 

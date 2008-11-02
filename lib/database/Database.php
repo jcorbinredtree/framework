@@ -454,7 +454,7 @@ class Database
                 return false;
             }
         } catch (PDOException $e) {
-            $config->error('execute failed: ' . $e->getMessage(), 3);
+            $config->error('execute failed for query: ' . $this->statement->queryString . '; message: ' . $e->getMessage(), 3);
             return false;
         }    
 
@@ -535,13 +535,26 @@ class Database
             $this->totalTime += $time;
             
             if ($this->log) {
-                array_shift($args);
-                $args = implode('","', $args);
-                if ($args) {
-                    $args = "|\"$args\"";  
+                $str = '';
+                for ($i = 1; $i < count($args); $i++) {
+                    $arg = $args[$i];
+                    if (is_array($arg)) {
+                        foreach ($arg as $a) {
+                            $str .= ",$a";                  
+                        }
+                        
+                        break;
+                    }
+                    
+                    $str .= ",$a";                                      
                 }
                 
-                $config->info(sprintf("executef(%s%s) executed in %.4f seconds, %d rows returned", $sqlf, $args, $time, $this->count()), 3);
+                if ($str) {
+                    $str = substr($str, 1, strlen($str));
+                    $str = "|\"$str\"";  
+                }
+                
+                $config->info(sprintf("executef(%s%s) executed in %.4f seconds, %d rows returned", $sqlf, $str, $time, $this->count()), 3);
             }
         }
         
@@ -665,7 +678,8 @@ class Database
     {
         $output = array();
         
-        while($row = $this->getScalarValue(false)) {
+        for ($i = 0; $i < $this->statement->rowCount(); $i++) {
+            $row = $this->getScalarValue(false);
             array_push($output, $row);
         }
 
@@ -697,7 +711,7 @@ class Database
             $args = array();
         }
         
-        if ($this->executef($sql, $args)) {            
+        if ($this->executef($sql, $args)) {      
            return $this->getResultObjects($type);
         }
         
@@ -718,7 +732,8 @@ class Database
     {
         $output = array();
         
-        while($row = $this->getObject($type, false)) {
+        for ($i = 0; $i < $this->statement->rowCount(); $i++) {
+            $row = $this->getObject($type, false);
             array_push($output, $row);
         }
 
@@ -834,6 +849,7 @@ class Database
     public function getObject($type='stdClass', $kill=true)
     {       
         $obj = new $type();
+        
         if ($row = $this->getRow(PDO::FETCH_ASSOC, false)) {
             if (($obj instanceof IDatabaseObject) && (isset($row[$obj->key]))) {
                 $row['id'] = $row[$obj->key];

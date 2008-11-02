@@ -51,7 +51,7 @@ class FrameworkTag extends Tag
 
         return $href .= ')';
     }
-        
+
     protected function optionalAttributes(DOMElement &$element, $attrs)
     {
         $opts = '';
@@ -68,32 +68,32 @@ class FrameworkTag extends Tag
     public function href(DOMElement &$element)
     {
         global $config;
-        
+
         $sefLink = $this->getUnquotedAttr($element, 'sefLink');
         $component = $this->getAttr($element, 'component');
         $action = $this->getAttr($element, 'action');
         $args = $this->getUnquotedAttr($element, 'args');
-        $stage = $this->getUnquotedAttr($element, 'stage', Stage::VIEW);        
+        $stage = $this->getUnquotedAttr($element, 'stage', Stage::VIEW);
         $var = $this->getUnquotedAttr($element, 'var', false);
-        
+
         $href = '';
         if ($sefLink) {
             $href = "'$config->absUri/$sefLink'";
         }
         else {
             $href = '$this->href(' . "$component,$action,";
-    
+
             if ($args) {
                 $href .= $this->parseArgs($args);
-                $href .= ",$stage";            
+                $href .= ",$stage";
             }
             else {
-                $href .= "array(),$stage";            
+                $href .= "array(),$stage";
             }
-    
+
             $href .= ');';
         }
-        
+
         if ($var) {
             $this->compiler->write('<?php $' . "$var = $href ?>");
         }
@@ -106,9 +106,9 @@ class FrameworkTag extends Tag
     {
         $sefLink = $this->getUnquotedAttr($element, 'sefLink');
         $component = $this->getAttr($element, 'component');
-        $action = $this->getUnquotedAttr($element, 'action');
+        $action = $this->getAttr($element, 'action');
         $args = $this->getUnquotedAttr($element, 'args');
-        $stage = $this->getUnquotedAttr($element, 'stage', Stage::VIEW);        
+        $stage = $this->getUnquotedAttr($element, 'stage', Stage::VIEW);
 
         $href = '';
         if ($sefLink) {
@@ -116,18 +116,18 @@ class FrameworkTag extends Tag
         }
         else {
             $href = '<?php echo $this->href(' . "$component,$action,";
-    
+
             if ($args) {
                 $href .= $this->parseArgs($args);
-                $href .= ",$stage";            
+                $href .= ",$stage";
             }
             else {
-                $href .= "array(),$stage";            
+                $href .= "array(),$stage";
             }
-    
+
             $href .= '); ?>';
-        }        
-        
+        }
+
         $a = '<a href = "' . $href . '"';
         $a .= $this->optionalAttributes($element, array('name', 'class', 'style', 'id', 'title'));
         $a .= '>';
@@ -149,28 +149,28 @@ class FrameworkTag extends Tag
         $name = $this->requiredAttr($element, 'name');
         $alt = $this->requiredAttr($element, 'alt');
         $align = $this->getAttr($element, 'align');
-         
+
         $img = '<img src="<?php echo $this->getThemeIcon(' . $name . '); ?>" alt="' . $alt . '"';
-         
+
         if($align){
             $img .= ' align = "' . $align . '"';
         }
-         
+
         $img .= "/>";
-         
+
         $this->compiler->write($img);
     }
 
     public function form(DOMElement &$element)
     {
         global $current;
-        
+
         $class = $current->component->getClass();
         $method = $this->getUnquotedAttr($element, 'method', 'post');
-        $stage = $this->getUnquotedAttr($element, 'stage', Stage::VALIDATE); 
+        $stage = $this->getUnquotedAttr($element, 'stage', Stage::VALIDATE);
 
         $form = '<form action = "<?php echo ' . $class . '::getActionURI($current->component->getClass(),$current->action->id,';
-        $form .= "array('-secure'=>" . '$current->isSecureRequest()), $stage); ?>" method = "' . $method . '"';        
+        $form .= "array('-secure'=>" . '$current->isSecureRequest()), ' . $stage . '); ?>" method = "' . $method . '"';
         $form .= $this->optionalAttributes($element, array('name', 'id', 'enctype'));
         $form .= '>';
 
@@ -184,7 +184,7 @@ class FrameworkTag extends Tag
         $value = $this->requiredAttr($element, 'value');
         $escapeXml = $this->getBooleanAttr($element, 'escapeXml', true);
         $var = $this->getUnquotedAttr($element, 'var', '');
-         
+
         if ($escapeXml) {
             $I18N = '<?php htmlentities($this->eprint(I18N::String(' . $value . '))); ?>';
         }

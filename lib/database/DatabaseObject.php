@@ -215,9 +215,15 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         return false;
     }
     
-    protected function getColumnsSQL($prefix='')
+    public function getColumnsSQL($prefix='')
     {
         global $database;
+        
+        if (!$prefix) {
+            $prefix = $this->table;
+        }
+        
+        $prefix = preg_replace('/[.]$/', '', $prefix);
         
         $fields = $this->getFields();
         $sql = '';
@@ -229,10 +235,10 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             
             $def = $def[0];
             if ($this->isDate($def)) {
-                $sql .= "UNIX_TIMESTAMP($prefix`$field`) AS `$field`";
+                $sql .= "UNIX_TIMESTAMP(`$prefix`.`$field`) AS `$field`";
             }
             else {
-                $sql .= "$prefix`$field`";
+                $sql .= "`$prefix`.`$field`";
             }
             
             $sql .= ', ';

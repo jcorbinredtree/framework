@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ISecurityPolicy interface
+ * DefaultThemePolicy
  *
  * PHP version 5
  *
@@ -18,7 +18,7 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
  * @package      Policies
- * @category     Security
+ * @category     UI
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2008 Red Tree Systems, LLC
  * @license      MPL 1.1
@@ -27,37 +27,37 @@
  */
 
 /**
- * This interface defines the security policy contract
+ * This class represents the default theme loading behavior
  *
  * @package      Policies
- * @category     Security
+ * @category     UI
  */
-interface ISecurityPolicy
+
+class DefaultThemePolicy implements IThemePolicy
 {
     /**
-     * Called when a user attemtps to log in. Return true and set up a value in the session
-     * if this user is authenticated by the credentials.
+     * set theme from A.) Cookies, B.) _theme_id request, C.) default
      *
-     * @param string $un The user name
-     * @param string $pass The password
-     * @return boolean true if the user successfully logged in
+     * @return Theme The theme to load
+     * @see IThemePolicy::getTheme()
      */
-    public function login($un, $pass);
+    public function getTheme()
+    {
+        global $config;
 
-    /**
-     * This is called on every request to load a user presumably based
-     * on a saved session key set with IUser::login;
-     *
-     * @return IUser if you restored a user from the session, otherwise null
-     */
-    public function restore();
+        $themeId = (int) Params::cookie(AppConstants::THEME_COOKIE, 0);
 
-    /**
-     * Called to log a user out of the system.
-     *
-     * @return void
-     */
-    public function logout();
+        if (Params::request(AppConstants::THEME_KEY)) {
+            $themeId = (int) Params::request(AppConstants::THEME_KEY);
+            setcookie(AppConstants::THEME_COOKIE, $themeId, time() + Config::COOKIE_LIFETIME);
+        }
+
+        if ($themeId) {
+            return Theme::load($themeId);
+        }
+
+        return Theme::load($config->getDefaultTheme());
+    }
 }
 
 ?>

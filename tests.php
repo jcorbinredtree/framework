@@ -8,7 +8,7 @@ $_SESSION = array();
 
 require_once "$config->fwAbsPath/lib/application/Application.php";
         
-Application::requireMinimum();
+Application::start();
 
 if (function_exists('onConfig')) {
     onConfig($config);

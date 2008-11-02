@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ISecurityPolicy interface
+ * IThemePolicy interface
  *
  * PHP version 5
  *
@@ -18,7 +18,7 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
  * @package      Policies
- * @category     Security
+ * @category     UI
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2008 Red Tree Systems, LLC
  * @license      MPL 1.1
@@ -27,37 +27,19 @@
  */
 
 /**
- * This interface defines the security policy contract
+ * This interface specifies a theme execution policy
  *
  * @package      Policies
- * @category     Security
+ * @category     UI
  */
-interface ISecurityPolicy
+interface IThemePolicy
 {
     /**
-     * Called when a user attemtps to log in. Return true and set up a value in the session
-     * if this user is authenticated by the credentials.
+     * Called when it's time to load the theme. Return an instance of Theme.
      *
-     * @param string $un The user name
-     * @param string $pass The password
-     * @return boolean true if the user successfully logged in
+     * @return Theme The theme to load
      */
-    public function login($un, $pass);
-
-    /**
-     * This is called on every request to load a user presumably based
-     * on a saved session key set with IUser::login;
-     *
-     * @return IUser if you restored a user from the session, otherwise null
-     */
-    public function restore();
-
-    /**
-     * Called to log a user out of the system.
-     *
-     * @return void
-     */
-    public function logout();
+    public function getTheme();
 }
 
 ?>
