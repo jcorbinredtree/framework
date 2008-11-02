@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -33,39 +33,39 @@
  * @category     Actions
  */
 class ActionDescription extends NavigatorItem implements ICacheable
-{	
+{
 	/**
-	 * One of either a method name of the current component, or 
+	 * One of either a method name of the current component, or
 	 * any array capable of passing through call_user_func.
 	 *
 	 * @var string|array
 	 */
     public $handler;
-    
+
     /**
      * True if this action requires a user
      *
      * @var boolean
      */
     public $requiresUser = false;
-    
+
     /**
      * The groups allowed to run this action
      *
      * @var array
      */
     public $requireGroups = array();
-    
+
     /**
-     * When set to a boolean value, overrides the settings of 
+     * When set to a boolean value, overrides the settings of
      * $requiresUser or requireGroups, allowing for custom
-     * or more complex permissions. Set to null to use the 
+     * or more complex permissions. Set to null to use the
      * standard access system.
      *
-     * @var unknown_type
+     * @var boolean
      */
     public $isAccessible = null;
-    
+
     /**
      * Determines whether or not this action is cacheable
      *
@@ -79,8 +79,8 @@ class ActionDescription extends NavigatorItem implements ICacheable
      *
      * @var array
      */
-    public $useCacheHandler = null;   
-    
+    public $useCacheHandler = null;
+
     /**
      * Constructor with variable args
      *
@@ -93,21 +93,21 @@ class ActionDescription extends NavigatorItem implements ICacheable
             if (!property_exists($this, $key)) {
                 throw new Exception("unknown property $key");
             }
-            
+
             $this->$key = $val;
         }
     }
-  
+
     /**
      * Determines if the component is cacheable for this action.
-     * 
+     *
      * @return boolean
      */
     public function isCacheable()
     {
         return $this->cacheable;
     }
-    
+
     /**
      * Sets the cacheability of this action
      *
@@ -133,12 +133,12 @@ class ActionDescription extends NavigatorItem implements ICacheable
             if ($this->useCacheHandler === true) {
                 return true;
             }
-            
+
             return call_user_func($this->useCacheHandler, $cacheModifiedTime);
         }
-        
+
         return false;
-    }           
+    }
 }
 
 ?>

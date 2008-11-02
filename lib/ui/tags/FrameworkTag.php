@@ -179,7 +179,17 @@ class FrameworkTag extends Tag
         $this->compiler->write('</form>');
     }
 
-    public function I18N(DOMElement &$element)
+    public function warning(DOMElement &$element)
+    {
+        $key = $this->requiredAttr($element, 'key');
+
+        $this->compiler->write('<?php $__w=$current->getKeyedWarnings();if(array_key_exists(' . $key . ',$__w)){ ?>');
+        $this->compiler->write('<?php foreach($__w[' . $key . '] as $__w_e){ ?>');
+        $this->compiler->write('<span class = "keyed-warning"><?php echo $__w_e; ?></span>');
+        $this->compiler->write('<?php }} ?>');
+    }
+
+    public function i18n(DOMElement &$element)
     {
         $value = $this->requiredAttr($element, 'value');
         $escapeXml = $this->getBooleanAttr($element, 'escapeXml', true);

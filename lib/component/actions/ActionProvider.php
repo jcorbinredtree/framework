@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -22,7 +22,7 @@
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2007 Red Tree Systems, LLC
  * @license      MPL 1.1
- * @version      2.0
+ * @version      3.0
  * @link         http://framework.redtreesystems.com
  */
 
@@ -36,18 +36,18 @@ abstract class ActionProvider extends BufferedObject
 {
     /**
      * Holds the list of registered actions
-     * 
-     * @var array 
-     */    
+     *
+     * @var array
+     */
     protected $actions = array();
-    
+
     /**
      * Called when it's time to register actions
      *
      * @return void
      */
     public abstract function onRegisterActions();
-    
+
     /**
      * The implementor should override this class to properly execute the
      * given ActionDescription
@@ -57,22 +57,22 @@ abstract class ActionProvider extends BufferedObject
      * @return boolean the value of the user_func
      */
     public abstract function perform(ActionDescription &$action, $stage);
-    
+
     /**
      * Gets the action specified by $id
      *
      * @param string $id the id of the action
      * @return ActionDescription
      */
-    public function getAction($id) 
+    public function getAction($id)
     {
         if (!array_key_exists($id, $this->actions)) {
             return null;
         }
-        
+
         return $this->actions[$id];
     }
-    
+
     /**
      * Determines if the current user can execute the given ActionDescription
      *
@@ -82,7 +82,7 @@ abstract class ActionProvider extends BufferedObject
     public function canUser(ActionDescription &$description)
     {
         global $config, $current;
-        
+
         if (!$current->user) {
             return false;
         }
@@ -101,13 +101,13 @@ abstract class ActionProvider extends BufferedObject
             }
         }
 
-        return false;        
+        return false;
     }
 
     /**
      * Determines whether the provider allows the specified
      * method to be performed under the current conditions.
-     * 
+     *
      * @access public
      * @param ActionDescription $action the action in question
      * @return boolean true if we are allowed to perform this method; false otherwise
@@ -115,7 +115,7 @@ abstract class ActionProvider extends BufferedObject
     public function allows(ActionDescription &$action)
     {
         global $config, $current;
-        
+
         /*
          * check for access rules
          */
@@ -125,12 +125,12 @@ abstract class ActionProvider extends BufferedObject
 
                 $config->warn("denied by user rule: $msg");
 
-                return false;                
+                return false;
             }
-            
+
             return true;
         }
-        
+
         /*
          * if the operation requires a user
          */
@@ -141,10 +141,10 @@ abstract class ActionProvider extends BufferedObject
             if ((!$current->user) || (!$this->canUser($action))) {
                 $msg = "Permission denied to $action->handler on component " . $this->getClass();
 
-                $config->warn($msg);    
+                $config->warn($msg);
 
                 return false;
-            }            
+            }
         }
 
         /*
@@ -157,7 +157,7 @@ abstract class ActionProvider extends BufferedObject
                 $c = $h[0];
                 $h = $h[1];
             }
-            
+
             if (!method_exists($c, $h)) {
                 throw new Exception("Unknown handler $h for provider " . get_class($c));
             }
@@ -165,26 +165,26 @@ abstract class ActionProvider extends BufferedObject
 
         return true;
     }
-    
+
     /**
      * Gets the name of the current class
      *
      * @return string the name of the component class
      */
-    public function getClass() 
+    public function getClass()
     {
         return get_class($this);
-    }    
-    
+    }
+
     /**
      * Registers ActionDescription with this provider
      *
      * @param mixed $description either an ActionDescription, or an associtive array
      * @return void
      */
-    public function registerAction($description) 
+    public function registerAction($description)
     {
-        $obj = null;        
+        $obj = null;
         if (is_array($description)) {
             $obj = new ActionDescription($description);
         }
@@ -194,9 +194,9 @@ abstract class ActionProvider extends BufferedObject
         else {
             throw new Exception("unknown parameter");
         }
-        
+
         $this->actions[$obj->id] = $obj;
-    }     
+    }
 }
 
 ?>

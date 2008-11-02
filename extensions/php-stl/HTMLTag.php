@@ -42,17 +42,17 @@ class HTMLTag extends Tag
 
         return $opts;
     }
-    
+
     public function hidden(DOMElement &$element)
     {
         $name = $this->requiredAttr($element, 'name', false);
         $id = $this->getUnquotedAttr($element, 'id', $name);
         $value = $this->getUnquotedAttr($element, 'value');
-        
+
         $this->compiler->write('<input type="hidden" name="' . $name . '" ');
         $this->compiler->write('id="' . $id . '" value="<?php echo ' . $value . ';?>" />');
     }
-    
+
     /**
      * A simple input tag
      *
@@ -61,7 +61,7 @@ class HTMLTag extends Tag
      * @param string optional value - the value for this field
      * @param int optional maxlength - the max length of the field (defaults to 255)
      * @param bool enabled - true if enabled, false otherwise
-     */                            
+     */
     public function input(DOMElement &$element)
     {
         $name = $this->requiredAttr($element, 'name', false);
@@ -69,21 +69,22 @@ class HTMLTag extends Tag
         $value = $this->getUnquotedAttr($element, 'value');
         $maxlength = $this->getUnquotedAttr($element, 'maxlength', 255);
         $enabled = $this->getUnquotedAttr($element, 'enabled');
-        
-        $this->compiler->write('<input type="text" name="' . $name . '" ');
+        $type = $this->getUnquotedAttr($element, 'type', 'text');
+
+        $this->compiler->write('<input type="' . $type . '" name="' . $name . '" ');
         $this->compiler->write('id="' . $id . '" maxlength="' . $maxlength .'" ');
-            
+
         if ($enabled) {
             $this->compiler->write("<?php echo ($enabled?'':'disabled=\"disabled\"'); ?> ");
         }
-            
+
         if ($value) {
             $this->compiler->write('value="<?php echo ' . $value . ';?>"');
         }
-        
+
         $this->compiler->write(' />');
     }
-    
+
     /**
      * A checkbox
      *
@@ -91,24 +92,24 @@ class HTMLTag extends Tag
      * @param string optional id - the id you want for this element (defaults to name)
      * @param string optional value - the value for this field
      * @param string optional checked - a boolean value to select the box or not
-     */                            
+     */
     public function checkbox(DOMElement &$element)
     {
         $name = $this->requiredAttr($element, 'name', false);
         $id = $this->getUnquotedAttr($element, 'id', $name);
         $value = $this->getUnquotedAttr($element, 'value');
         $checked = $this->getUnquotedAttr($element, 'checked', false);
-        
+
         $this->compiler->write('<input type="checkbox" name="' . $name . '" ');
         $this->compiler->write('id="' . $id . '" value="<?php echo ' . $value . '; ?>" ');
-        
+
         if ($checked) {
             $this->compiler->write("<?php echo ($checked?'checked=\"checked\"':'');?>");
         }
-        
+
         $this->compiler->write(' />');
     }
-    
+
 
     /**
      * Displays a textarea
@@ -128,21 +129,21 @@ class HTMLTag extends Tag
         $rows = $this->getUnquotedAttr($element, 'rows', 3);
         $cols = $this->getUnquotedAttr($element, 'cols', 50);
         $enabled = $this->getUnquotedAttr($element, 'enabled');
-        
+
         $this->compiler->write('<textarea name="' . $name . '" rows="' . $rows . '" cols = "' . $cols . '" ');
-            
+
         if ($enabled) {
             $this->compiler->write("<?php echo ($enabled?'':'disabled=\"disabled\"'); ?> ");
         }
-                
+
         $this->compiler->write('id="' . $id . '">');
-        
+
         if ($value) {
             $this->compiler->write('<?php echo htmlentities(' . $value . ');?>');
         }
-        
+
         $this->compiler->write('</textarea>');
-    }    
+    }
 
     /**
      * Displays a country select box
@@ -257,7 +258,7 @@ class HTMLTag extends Tag
            $this->compiler->write( '</select>' );
 
     }
-    
+
     /**
      * Displays a drop-down of states
      *
@@ -279,24 +280,24 @@ class HTMLTag extends Tag
             "NH" => "New Hampshire", "NM" => "New Mexico", "NJ" => "New Jersey", "NY" => "New York",
             "NC" => "North Carolina", "ND" => "North Dakota", "OH" => "Ohio", "OK" => "Oklahoma",
             "OR" => "Oregon", "PA" => "Pennsylvania", "RI" => "Rhode Island", "SC" => "South Carolina",
-            "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah", 
+            "SD" => "South Dakota", "TN" => "Tennessee", "TX" => "Texas", "UT" => "Utah",
             "VT" => "Vermont", "VA" => "Virginia", "WA" => "Washington", "WV" => "West Virginia",
             "WI" => "Wisconsin", "WY" => "Wyoming"
         );
-            
+
         $select = $this->requiredAttr($element, 'select', false);
         $name = $this->requiredAttr($element, 'name', false);
         $id = $this->getUnquotedAttr($element, 'id', $name);
-        
+
         $this->compiler->write('<select name = "' . $name . '" id = "' . $id . '">');
-        
+
         foreach ($states as $abbr => $full) {
             $this->compiler->write('<option value = "' . $abbr . '" <?php echo (("' . $abbr . '"==' . $select . ')?"selected=\"selected\"":""); ?>>' . $full . '</option>');
         }
-        
+
         $this->compiler->write('</select>');
     }
-    
+
     /**
      * Displays a button
      *
@@ -344,10 +345,10 @@ class HTMLTag extends Tag
         if ($multiple) {
             $html .= 'multiple="multiple" ';
         }
-                
-        if ($enabled) { 
+
+        if ($enabled) {
             $html .= "<?php echo ($enabled?'':'disabled=\"disabled\"'); ?> ";
-        }        
+        }
 
         $html .= $this->optionalAttributes($element, array('onchange'));
         $html .= ">" . '<option value = "">&nbsp;</option>';

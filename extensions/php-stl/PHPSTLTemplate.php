@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is
@@ -27,37 +27,37 @@
 
 /**
  * PHPSTLTemplate
- * 
+ *
  * This class is a simple template, used for those who don't want the PHPSavant or Smarty
  * dependency
  */
-class PHPSTLTemplate 
+class PHPSTLTemplate
 {
     /**
      * The compiler class to use for compilation. Defaults to 'Compiler'
      *
      * @var string
-     */    
+     */
     private $compiler = 'Compiler';
-    
+
     /**
      * Holds a list of paths to search for templates
-     * 
+     *
      * @var array
      */
     private $paths = array();
-    
+
     /**
      * Sets the compiler class
      *
      * @param string $className the compiler class name
      * @return void
      */
-    public function setCompiler($className) 
+    public function setCompiler($className)
     {
         $this->compiler = $className;
     }
-    
+
     /**
      * Add path $path to the list of paths to search for templates
      *
@@ -68,7 +68,7 @@ class PHPSTLTemplate
     {
         array_push($this->paths, $path);
     }
-    
+
     /**
      * Assign $val to this.$name
      *
@@ -78,19 +78,23 @@ class PHPSTLTemplate
      */
     public function assign($name, $val)
     {
+        if (!$name) {
+            throw new IllegalArgumentException('name can not be empty');
+        }
+
         $this->$name = $val;
     }
-    
+
     /**
      * Gets a template's output
      *
      * @param string $template a path to a template
      * @return string
      */
-    public function fetch($template) 
+    public function fetch($template)
     {
         $compiler = new $this->compiler();
-        
+
         $foundTemplate = $template;
         if (!file_exists($template)) {
             foreach ($this->paths as $path) {
@@ -100,14 +104,14 @@ class PHPSTLTemplate
                 }
             }
         }
-        
+
         $compiled = $compiler->compile($foundTemplate, Compiler::TYPE_BUILTIN);
-        
+
         ob_start();
         include $compiled;
         return ob_get_clean();
     }
-    
+
     /**
      * Displays a template
      *

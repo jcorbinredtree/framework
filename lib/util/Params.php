@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -39,7 +39,7 @@ class Params
     const VALIDATE_NUMERIC = 1;
     const VALIDATE_EMAIL = 2;
     const VALIDATE_EMAIL_BLACKLIST = 3;
-    
+
     /**
      * Constructor; Private
      *
@@ -51,12 +51,12 @@ class Params
 
     }
 
-    
+
     /**
      * Used primarly for populating a custom object from the given array.
      * This converts the standard _ param notation to the camel case object
      * notation. This method can be used to create properties that don't
-     * exist, effectivly creating a parameter object. 
+     * exist, effectivly creating a parameter object.
      *
      * @static
      * @access public
@@ -69,118 +69,92 @@ class Params
     static public function arrayToObject(&$array, &$object, $copyNonExistant=false)
     {
         $op = null;
-        
+
         if (!is_array($array)) {
             $op = get_object_vars($array);
         }
         else {
             $op =& $array;
         }
-        
+
         if (!is_array($op)) {
             throw new Exception("bad param for $array");
         }
-        
+
         foreach ($op as $name => $value) {
             $property = preg_replace_callback('/_(\w)/', create_function('$x', 'return strtoupper($x[0][1]);'), $name);
-            
+
             if ($copyNonExistant || property_exists($object, $property)) {
                 $object->$property = $value;
             }
         }
     }
-    
+
     /**
      * Validates the given keys, adding errors to $current as required
-     * 
+     *
      * @param mixed $mixed an object or associtive array on which to validate
      * @param array $validation an associtive array of key/warning pairs.
-     * The warning may be an array which holds other arrays 
+     * The warning may be an array which holds other arrays
      * where the first element specifies how to
      * validate the key, and the second element is the warning.
      * which parameters were invalid.
-     * @return boolean true if we passed validation, false otherwise 
+     * @return boolean true if we passed validation, false otherwise
      */
     static public function validate(&$mixed, $validation)
     {
-        $toss = array();
-        return Params::validateEx($mixed, $validation, $toss);
-    }
-        
-    /**
-     * Validates the given keys, adding errors to $current as required
-     * 
-     * @param mixed $mixed an object or associtive array on which to validate
-     * @param array $validation an associtive array of key/warning pairs.
-     * The warning may be an array which holds other arrays 
-     * where the first element specifies how to
-     * validate the key, and the second element is the warning.
-     * @param array $moreInfo an array to hold extended information, such as
-     * which parameters were invalid.
-     * @return boolean true if we passed validation, false otherwise 
-     */
-    static public function validateEx(&$mixed, $validation, &$moreInfo)    
-    {    
         global $current, $config;
-        
+
         $passed = true;
         $array = (is_object($mixed) ? get_object_vars($mixed) : $mixed);
 
         foreach ($validation as $key => $deep) {
             $deep = (is_array($deep) ? $deep : array(array(Params::VALIDATE_EMPTY, $deep)));
-            
+
             foreach ($deep as $specification) {
                 list($type, $message) = $specification;
                 $value = $array[$key];
-            
+
                 switch ($type) {
                     case Params::VALIDATE_EMPTY:
                         if (!trim($value)) {
-                            $current->addWarning($message);
-                            array_push($moreInfo, $key);
-                            
+                            $current->addWarning($message, $key);
                             $passed = false;
                             continue;
                         }
-                        
+
                         break;
                     case Params::VALIDATE_NUMERIC:
                         if ($value && (!is_numeric($value))) {
-                            $current->addWarning($message);
-                            array_push($moreInfo, $key);
-                            
+                            $current->addWarning($message, $key);
                             $passed = false;
-                            continue;    
+                            continue;
                         }
-                        
+
                         break;
                     case Params::VALIDATE_EMAIL:
                         if ($value && (!Email::IsValid($array[$key]))) {
-                            $current->addWarning($message);
-                            array_push($moreInfo, $key);                              
-                                                                                    
+                            $current->addWarning($message, $key);
                             $passed = false;
-                            continue;    
+                            continue;
                         }
-                                                
+
                         break;
                     case Params::VALIDATE_EMAIL_BLACKLIST:
                         if ($value && Email::IsValid($value) && (Email::IsBlackListed($value))) {
-                            $current->addWarning($message);
-                            array_push($moreInfo, $key);
-                                                                                    
+                            $current->addWarning($message, $key);
                             $passed = false;
-                            continue;    
+                            continue;
                         }
-                                                
-                        break;                        
+
+                        break;
                 }
             }
         }
-        
+
         return $passed;
     }
-    
+
     /**
      * Safely gets a variable from $array. If $key does not exist,
      * $default is provided.
@@ -190,7 +164,7 @@ class Params
      * @param mixed $default the default value to supply if $name
      * does not exist in the array. defaults to null
      * @return mixed the value for key $name
-     */    
+     */
     static public function generic($array, $key, $default=null)
     {
         $value = (isset($array[$key]) ? $array[$key] : $default);
@@ -205,7 +179,7 @@ class Params
                 $value = stripslashes($value);
             }
         }
-        
+
         return $value;
     }
 
@@ -231,7 +205,7 @@ class Params
      * @param mixed $default the default value to supply if $name
      * does not exist in the array. defaults to null
      * @return mixed the value for key $name
-     */    
+     */
     static public function get($name, $default=null)
     {
         return Params::Generic($_GET, $name, $default);
@@ -245,7 +219,7 @@ class Params
      * @param mixed $default the default value to supply if $name
      * does not exist in the array. defaults to null
      * @return mixed the value for key $name
-     */    
+     */
     static public function request($name, $default=null)
     {
         return Params::Generic($_REQUEST, $name, $default);
@@ -259,7 +233,7 @@ class Params
      * @param mixed $default the default value to supply if $name
      * does not exist in the array. defaults to null
      * @return mixed the value for key $name
-     */    
+     */
     static public function session($name, $default=null)
     {
         return (isset($_SESSION[$name]) ? $_SESSION[$name] : $default);
@@ -273,7 +247,7 @@ class Params
      * @param mixed $default the default value to supply if $name
      * does not exist in the array. defaults to null
      * @return mixed the value for key $name
-     */    
+     */
     static public function server($name, $default=null)
     {
         return (isset($_SERVER[$name]) ? $_SERVER[$name] : $default);

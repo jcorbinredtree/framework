@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -41,107 +41,116 @@ class Current
      * @var int
      */
     public $id = 0;
-    
+
     /**
      * Holds the current user, if available
-     * 
+     *
      * @access public
      * @var IUser
      */
     public $user = null;
-    
+
     /**
      * Holds the current stage
-     * 
+     *
      * @var int
      */
     public $stage = Stage::VIEW;
-    
+
     /**
      * Holds the current theme
-     * 
+     *
      * @access public
      * @var Theme
      */
     public $theme = null;
-    
+
     /**
      * Holds the current component. This is not
      * entirely accurate, as it actually holds the
      * component REQUESTED, which may not actually
      * be the current component (say, if one were
      * required by the main component).
-     * 
+     *
      * @access public
      * @var Component
      */
     public $component = null;
-    
+
     /**
      * Holds a reference to the current LayoutDescription
      *
      * @var LayoutDescription
      */
     public $layout = null;
-    
+
     /**
      * Holds the current action
-     * 
+     *
      * @access public
      * @var string
      */
     public $action = null;
-    
+
     /**
-     * Holds the current path. The current path is set to 
+     * Holds the current path. The current path is set to
      * the last operating component, module, or theme's directory.
      * It is safe to set this value via Application::setPath.
-     * 
+     *
      * @access public
      * @var string
      */
     public $path = "";
-    
+
     /**
      * Determine whether or not the request is secure
-     * 
+     *
      * @since 1.4
      * @access private
      * @var boolean
      */
     private $secure = false;
-    
+
     /**
      * Holds the current warning messages to print to
      * the user
-     * 
+     *
      * @access private
      * @var array
      */
     private $warnings = array();
-    
+
+    /**
+     * Holds the current warning messages to print to
+     * the user, in an associtive format
+     *
+     * @access private
+     * @var array
+     */
+    private $keyedWarnings = array();
+
     /**
      * Holds the current notice messages to print to
      * the user
-     * 
+     *
      * @access private
      * @var array
      */
     private $notices = array();
-    
+
     /**
      * Constructor
-     * 
+     *
      * @access public
      * @return Current a new instance
      */
     public function __construct()
     {
     }
-    
+
     /**
      * Sets whether this is a secure (https) request.
-     * 
+     *
      * @since 1.4
      * @access public
      * @param boolean the value to set
@@ -151,7 +160,7 @@ class Current
     {
         $this->secure = $val;
     }
-    
+
     /**
      * Returns true if this is a secure request. Note
      * that this is only a value, and does not actually
@@ -170,26 +179,26 @@ class Current
 
     /**
      * Gets the current request again, with the specified options
-     * 
+     *
      * @see Component::GetActionURI
      * @access public
      * @param array addtional options to pass to Component::GetActionURI
-     * @return string an url suitable for browsing to 
+     * @return string an url suitable for browsing to
      */
     public function getCurrentRequest($addOptions=null)
     {
         global $config;
 
         $options = array_merge($_GET, $_POST);
-        
+
         unset($options[$config->getCookieName()]);
         unset($options[AppConstants::COMPONENT_KEY]);
         unset($options[AppConstants::ACTION_KEY]);
 
         if ($addOptions) {
             $options = array_merge($options, $addOptions);
-        }        
-        
+        }
+
         $policy = PolicyManager::getInstance();
         return $policy->getActionURI($this->component->getClass(), $this->action->id, $options, $this->stage);
     }
@@ -197,13 +206,23 @@ class Current
     /**
      * Adds a warning to the system. This will be printed to the
      * browser.
-     * 
-     * @param string the warning
+     *
+     * @param string $warning the warning
+     * @param string $key adds this warning to the keyed warnings
      * @return void
      */
-    public function addWarning($warning)
+    public function addWarning($warning, $key)
     {
-        array_push($this->warnings, $warning);
+        if ($key) {
+            if (!array_key_exists($key, $this->keyedWarnings)) {
+                $this->keyedWarnings[$key] = array();
+            }
+
+            array_push($this->keyedWarnings[$key], $warning);
+        }
+        else {
+            array_push($this->warnings, $warning);
+        }
     }
 
     /**
@@ -218,9 +237,20 @@ class Current
     }
 
     /**
+     * Get the keyed warnings
+     *
+     * @access public
+     * @return array keyed warnings
+     */
+    public function getKeyedWarnings()
+    {
+        return $this->keyedWarnings;
+    }
+
+    /**
      * Adds a notice to the system. This will be printed to the
      * browser.
-     * 
+     *
      * @param string the notice
      * @return void
      */
@@ -228,10 +258,10 @@ class Current
     {
         array_push($this->notices, $notice);
     }
-    
+
     /**
      * Clears the current warnings
-     * 
+     *
      * @since v1.5
      * @return void
      */
@@ -239,13 +269,13 @@ class Current
     {
         $this->warnings = array();
     }
-    
+
     /**
      * Clears the current notices
-     * 
+     *
      * @since v1.5
      * @return void
-     */    
+     */
     public function clearNotices()
     {
         $this->notices = array();
@@ -256,7 +286,7 @@ class Current
      *
      * @access public
      * @return array the notices
-     */    
+     */
     public function getNotices()
     {
         return $this->notices;
