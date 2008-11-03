@@ -10,9 +10,11 @@ class QueryBuilder
     private $dbo;
 
     private $type;
+    private $fields = '';
     private $joins = array();
     private $wheres = array();
     private $orders = array();
+    private $groupBys = array();
     private $limit = '';
 
     /**
@@ -28,11 +30,20 @@ class QueryBuilder
         $this->type = $type;
     }
 
-    public function join(IDatabaseObject &$dbo2)
+    public function join(IDatabaseObject &$dbo2, $keyA=null, $keyB=null)
     {
         $dbo = $this->dbo;
-        $sql = "INNER JOIN `$dbo2->table` ON `$dbo2->table`.`$dbo->key` = ";
-        $sql .= "`$dbo->table`.`$dbo->key`";
+
+        if (!$keyA) {
+            $keyA = $dbo->key;
+        }
+
+        if (!$keyB) {
+            $keyB = $keyA;
+        }
+
+        $sql = "INNER JOIN `$dbo2->table` ON `$dbo2->table`.`$keyB` = ";
+        $sql .= "`$dbo->table`.`$keyA`";
 
         array_push($this->joins, $sql);
     }
@@ -45,6 +56,16 @@ class QueryBuilder
     public function order($field)
     {
         array_push($this->orders, $field);
+    }
+
+    public function group($field)
+    {
+        array_push($this->groupBys, $field);
+    }
+
+    public function setFields($f)
+    {
+        $this->fields = $f;
     }
 
     public function setLimit($l)
@@ -64,7 +85,15 @@ class QueryBuilder
         $meat = '';
 
         if ($this->type == 'SELECT') {
-            $sql .= "`$dbo->table`.`$dbo->key`," . $dbo->getColumnsSQL() . ' ';
+            if ($this->fields) {
+                $sql .= "$this->fields ";
+            }
+            else {
+                $sql .= "`$dbo->table`.`$dbo->key`," . $dbo->getColumnsSQL() . ' ';
+            }
+        }
+        elseif ($this->fields) {
+            throw new IllegalArgumentException('field specification is incompatible with non-select queries');
         }
         elseif ($this->pager) {
             throw new IllegalArgumentException('pager is not compatible with non-select queries');
@@ -89,6 +118,18 @@ class QueryBuilder
             }
 
             $meat .= "$where ";
+        }
+
+        for ($i = 0; $i < count($this->groupBys); $i++) {
+            $group = $this->groupBys[$i];
+            if (!$i) {
+                $group = "GROUP BY $group";
+            }
+            else {
+                $group = ",$group";
+            }
+
+            $meat .= "$group ";
         }
 
         if ($this->pager && (null === $this->pager->results)) {

@@ -211,7 +211,7 @@ class Current
      * @param string $key adds this warning to the keyed warnings
      * @return void
      */
-    public function addWarning($warning, $key)
+    public function addWarning($warning, $key='')
     {
         if ($key) {
             if (!array_key_exists($key, $this->keyedWarnings)) {

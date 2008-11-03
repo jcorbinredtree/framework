@@ -662,7 +662,10 @@ class Database
      */
     public function queryForResultValues($sql)
     {
-        if ($this->query($sql)) {
+        $args = func_get_args();
+        array_shift($args);
+
+        if ($this->executef($sql, $args)) {
             return $this->getResultValues();
         }
 
