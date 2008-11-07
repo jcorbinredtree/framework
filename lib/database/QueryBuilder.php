@@ -30,20 +30,23 @@ class QueryBuilder
         $this->type = $type;
     }
 
-    public function join(IDatabaseObject &$dbo2, $keyA=null, $keyB=null)
+    public function join(IDatabaseObject &$dboB, $keyA=null, $keyB=null)
     {
-        $dbo = $this->dbo;
+        return $this->joinObject($this->dbo, $dboB, $keyA, $keyB);
+    }
 
+    public function joinObject(IDatabaseObject &$dboA, IDatabaseObject &$dboB, $keyA=null, $keyB=null)
+    {
         if (!$keyA) {
-            $keyA = $dbo->key;
+            $keyA = $dboA->key;
         }
 
         if (!$keyB) {
             $keyB = $keyA;
         }
 
-        $sql = "INNER JOIN `$dbo2->table` ON `$dbo2->table`.`$keyB` = ";
-        $sql .= "`$dbo->table`.`$keyA`";
+        $sql = "INNER JOIN `$dboB->table` ON `$dboB->table`.`$keyB` = ";
+        $sql .= "`$dboA->table`.`$keyA`";
 
         array_push($this->joins, $sql);
     }

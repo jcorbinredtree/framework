@@ -163,6 +163,16 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
     }
 
     /**
+     * @see IThemePolicy::getExceptionTheme()
+     *
+     * @return Theme
+     */
+    public function getExceptionTheme()
+    {
+        return $this->themePolicy->getExceptionTheme();
+    }
+
+    /**
      * Gets a PolicyManager instance
      *
      * @return PolicyManager

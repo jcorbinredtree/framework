@@ -58,6 +58,19 @@ class DefaultThemePolicy implements IThemePolicy
 
         return Theme::load($config->getDefaultTheme());
     }
+
+    /**
+     * Called to get the exception theme
+     *
+     * @return Theme The theme to load
+     * @see IThemePolicy::getExceptionTheme
+     */
+    public function getExceptionTheme()
+    {
+        global $config;
+
+        return Theme::load($config->getDefaultExceptionTheme());
+    }
 }
 
 ?>

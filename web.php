@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -33,7 +33,7 @@ $__start = microtime(true);
  * such as absolute path and uri. Additionally,
  * it implements a logger, so you can say things
  * like $config->warn("problem").
- * 
+ *
  * @global Config $config
  * @see Config
  */
@@ -45,12 +45,13 @@ try {
 }
 catch (Exception $ex) {
     LifeCycleManager::onException($ex);
-    
-    $theme = Theme::load($config->getDefaultExceptionTheme());
+
+    $policy = PolicyManager::getInstance();
+    $theme = $policy->getExceptionTheme();
     $layout = new LayoutDescription();
-    $layout->content = $ex;    
+    $layout->content = $ex;
     $theme->onDisplay($layout);
-    
+
     print $theme->getBuffer();
 }
 
@@ -62,7 +63,7 @@ if ($config->isDebugMode()) {
     $message .= $database->getTotalQueries() . ' queries executed in ';
     $message .= sprintf('%.4f', $database->getTotalTime()) . ' seconds, ';
     $message .= sprintf('%.2f', (($databaseTime / $pageTime) * 100)) . '% of total time <==';
-    
+
     $config->info($message);
 }
 
