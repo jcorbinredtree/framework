@@ -1,18 +1,6 @@
 <?php
 
-global $config, $current, $database;
-
-$config = new Config();
-
-$_SESSION = array();
-
-require_once "$config->fwAbsPath/lib/application/Application.php";
-        
-Application::start();
-
-if (function_exists('onConfig')) {
-    onConfig($config);
-}
+require_once dirname(__FILE__) . '/cli.php'; // include the cli setup
 
 $config->setTestMode(true);
 

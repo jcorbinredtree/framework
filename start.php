@@ -2,11 +2,18 @@
 
 require_once dirname(__FILE__) . '/Config.php';
 
-if (isset($RUNTEST) && $RUNTEST) {
-    require_once dirname(__FILE__) . '/tests.php';    
-}
-else {
-    require_once dirname(__FILE__) . '/web.php';    
+$type = (isset($APP) && $APP) ? $APP : 'web';
+
+switch ($type) {
+    case 'web':
+        require_once dirname(__FILE__) . '/web.php';
+        break;
+    case 'test':
+        require_once dirname(__FILE__) . '/tests.php';
+        break;
+    case 'cli':
+        require_once dirname(__FILE__) . '/cli.php';
+        break;
 }
 
 ?>
