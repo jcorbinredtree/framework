@@ -51,6 +51,33 @@ class Params
 
     }
 
+    /**
+     * Convert an underscored name to a class-worthy field name.
+     * Examples:
+     *      some_field => someField
+     *      other_field_name => otherFieldName
+     *
+     * @param string $name the underscored name to convert
+     * @return string the fielded name
+     */
+    static public function fieldToProperty($name)
+    {
+        return preg_replace_callback('/_(\w)/', create_function('$x', 'return strtoupper($x[0][1]);'), $name);
+    }
+
+    /**
+     * Convert a class property name to it's underscored counterpart.
+     * Examples:
+     *      someField => some_field
+     *      otherFieldName => other_field_name
+     *
+     * @param string $name the camelCase name to convert
+     * @return string the underscored name
+     */
+    static public function propertyToField($field)
+    {
+        return preg_replace_callback('/[A-Z]/', create_function('$x', 'return "_" . strtolower($x[0]);'), $field);
+    }
 
     /**
      * Used primarly for populating a custom object from the given array.
@@ -82,7 +109,7 @@ class Params
         }
 
         foreach ($op as $name => $value) {
-            $property = preg_replace_callback('/_(\w)/', create_function('$x', 'return strtoupper($x[0][1]);'), $name);
+            $property = Params::propertyToField($name);
 
             if ($copyNonExistant || property_exists($object, $property)) {
                 $object->$property = $value;

@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -31,7 +31,7 @@
  * This class should be extended by any class wishing to be an ORM object.
  * Note that this class is a RequestObject also, so you can perform any of
  * those methods as well.
- * 
+ *
  * Usage:
  * 1.) Extend this class
  * 2.) Add public properties to your class definition that map to your
@@ -41,36 +41,36 @@
  * field names, and that's not a problem.
  * 3.) Set $this->table to the appropriate table
  * 4.) Set $this->key to the name of your primary key field
- * 
- * Relationships are generally up to you, but it's often enough to 
+ *
+ * Relationships are generally up to you, but it's often enough to
  * just override the methods of IDatabaseObject as appropriate.
  *
  * @category     Database
  * @package      Core
  */
 abstract class DatabaseObject extends RequestObject implements IDatabaseObject
-{    
+{
     /**
      * This field will serve as the primary key's id.
      *
      * @var int
      */
     public $id = -1;
-    
+
     /**
      * The subject table
      *
      * @var string
      */
     public $table = '';
-    
+
     /**
      * The name of our primary key field
      *
      * @var string
      */
     public $key = '';
-    
+
     /**
      * Called to create the object
      *
@@ -79,11 +79,11 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     public function create()
     {
         global $database, $config;
-        
+
         $database->lock($this->table, Database::LOCK_WRITE);
         {
-            $sql = sprintf("INSERT INTO `%s` SET ", $this->table);             
-                    
+            $sql = sprintf("INSERT INTO `%s` SET ", $this->table);
+
             $fields = $this->getFields();
             $values = array();
             foreach ($fields as $property => $field) {
@@ -91,38 +91,44 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 if (!$def) {
                     continue;
                 }
-                
-                $def = $def[0];                
+
+                $def = $def[0];
                 if ($this->isDate($def)) {
                     array_push($values, date('Y-m-d H:i:s', (int) $this->$property));
                 }
-                else {                
+                else {
                     array_push($values, $this->$property);
                 }
-                
+
                 $sql .= "`$field`=?,";
             }
-            
+
             $sql = substr($sql, 0, (strlen($sql) - 1));
             if (!$database->prepare($sql)) {
                 $config->error("could not prepare db object");
                 $database->unlock();
                 return false;
             }
-            
+
             if (!$database->execute($values)) {
                 $config->error("could not execute insert on db object");
                 $database->unlock();
-                return false;                
+                return false;
             }
-            
-            $this->id = $database->lastInsertId();
+
+            $p = Params::fieldToProperty($this->key);
+            if (property_exists($this, $p) && $this->$p) {
+                $this->id = $this->$p;
+            }
+            else {
+                $this->id = $database->lastInsertId();
+            }
         }
         $database->unlock();
-        
-        return true; 
+
+        return true;
     }
-    
+
     /**
      * Fetches the given $id into the current object. IT'S NOT A STATIC METHOD.
      *
@@ -132,20 +138,20 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     public function fetch($id)
     {
         global $database;
-        
+
         $sql = "SELECT " . $this->getColumnsSQL() . " FROM `$this->table`";
         $sql .= " WHERE `$this->key` = ? LIMIT 1";
         if ($database->executef($sql, $id) && $database->count()) {
             $row = $database->getRow();
             Params::ArrayToObject($row, $this);
             $this->id = $id;
-            
+
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Updates the current object in the database, based on the properties set
      *
@@ -154,7 +160,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     public function update()
     {
         global $database, $config;
-        
+
         $fields = $this->getFields();
         $sql = "UPDATE `$this->table` SET ";
         $values = array();
@@ -163,30 +169,30 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             if (!$def) {
                 continue;
             }
-            
+
             $def = $def[0];
-            
+
             if ($this->isDate($def)) {
                 array_push($values, date('Y-m-d H:i:s', (int) $this->$property));
             }
-            else {                
+            else {
                 array_push($values, $this->$property);
             }
-            
+
             $sql .= "`$field`=?,";
         }
-        
+
         $sql = substr($sql, 0, (strlen($sql) - 1));
         $sql .= " WHERE `$this->key` = ? LIMIT 1";
         if (!$database->prepare($sql)) {
             $config->error("could not prepare db object");
             return false;
-        }                
-        
-        array_push($values, $this->id);        
+        }
+
+        array_push($values, $this->id);
         return $database->execute($values);
     }
-    
+
     /**
      * Removes the current $this->id from the database
      *
@@ -195,36 +201,36 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     public function delete()
     {
         global $database;
-        
+
         if ($database->executef("DELETE FROM `$this->table` WHERE `$this->key` = ?", $this->id)) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     private function isDate($def)
     {
         switch (strtolower(Params::generic($def, 'native_type'))) {
             case 'date':
             case 'datetime':
             case 'timestamp':
-                return true;        
+                return true;
         }
-        
+
         return false;
     }
-    
+
     public function getColumnsSQL($prefix='')
     {
         global $database;
-        
+
         if (!$prefix) {
             $prefix = $this->table;
         }
-        
+
         $prefix = preg_replace('/[.]$/', '', $prefix);
-        
+
         $fields = $this->getFields();
         $sql = '';
         foreach ($fields as $property => $field) {
@@ -232,7 +238,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             if (!$def) {
                 continue;
             }
-            
+
             $def = $def[0];
             if ($this->isDate($def)) {
                 $sql .= "UNIX_TIMESTAMP(`$prefix`.`$field`) AS `$field`";
@@ -240,27 +246,26 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             else {
                 $sql .= "`$prefix`.`$field`";
             }
-            
+
             $sql .= ', ';
         }
-        
-        return substr($sql, 0, (strlen($sql) - 2));        
-    }    
-    
+
+        return substr($sql, 0, (strlen($sql) - 2));
+    }
+
     protected function getFields()
     {
         $fields = get_class_vars(get_class($this));
         $description = array();
-        
+
         foreach ($fields as $field => $value) {
             if ($field == 'id') {
                 $description['id'] = $this->key;
             }
-            
-            $description[$field] = preg_replace_callback('/[A-Z]/', 
-                    create_function('$matches', 'return "_" . strtolower($matches[0]);'), $field);
+
+            $description[$field] = Params::propertyToField($field);
         }
-        
+
         return $description;
     }
 }
