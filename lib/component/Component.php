@@ -48,6 +48,13 @@ abstract class Component extends ActionProvider
     public $scripts = array();
 
     /**
+     * Holds required stylesheets
+     *
+     * @var array
+     */
+    public $stylesheets = array();
+
+    /**
      * Holds required head
      *
      * @var string
@@ -235,6 +242,10 @@ abstract class Component extends ActionProvider
      */
     protected function addScript($req)
     {
+        if (in_array($req, $this->stylesheets)) {
+            return;
+        }
+
         if (is_array($req)) {
             foreach ($req as $r) {
                 array_push($this->scripts, $r);
@@ -244,6 +255,29 @@ abstract class Component extends ActionProvider
         }
 
         array_push($this->scripts, $req);
+    }
+
+    /**
+     * Adds a stylesheet to the page requirements
+     *
+     * @param string $req the location of the stylesheet
+     * @return void
+     */
+    protected function addStylesheet($req)
+    {
+        if (in_array($req, $this->stylesheets)) {
+            return;
+        }
+
+        if (is_array($req)) {
+            foreach ($req as $r) {
+                array_push($this->stylesheets, $r);
+            }
+
+            return;
+        }
+
+        array_push($this->stylesheets, $req);
     }
 
     /**

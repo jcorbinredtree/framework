@@ -36,6 +36,7 @@
 class Params
 {
     const VALIDATE_EMPTY = 0;
+    const VALIDATE_EMPTY_STRICT = 1;
     const VALIDATE_NUMERIC = 1;
     const VALIDATE_EMAIL = 2;
     const VALIDATE_EMAIL_BLACKLIST = 3;
@@ -109,7 +110,7 @@ class Params
         }
 
         foreach ($op as $name => $value) {
-            $property = Params::propertyToField($name);
+            $property = Params::fieldToProperty($name);
 
             if ($copyNonExistant || property_exists($object, $property)) {
                 $object->$property = $value;
@@ -118,7 +119,8 @@ class Params
     }
 
     /**
-     * Validates the given keys, adding errors to $current as required
+     * Validates the given keys, adding errors to $current as required. The keys used
+     * may be in dotted (or colon) format, indicating an object property on the given object.
      *
      * @param mixed $mixed an object or associtive array on which to validate
      * @param array $validation an associtive array of key/warning pairs.
@@ -140,11 +142,34 @@ class Params
 
             foreach ($deep as $specification) {
                 list($type, $message) = $specification;
-                $value = $array[$key];
+                $value = null;
+
+                $m = array();
+                if (preg_match('/^(\w+)[:.](\w+)/', $key, $m)) {
+                    $o = $m[1];
+                    $p = $m[2];
+
+                    if (!is_object($array[$o]) || !property_exists($array[$o], $p)) {
+                        throw new IllegalArgumentException("bad param for key $key");
+                    }
+
+                    $value = $array[$o]->$p;
+                }
+                else {
+                    $value = $array[$key];
+                }
 
                 switch ($type) {
                     case Params::VALIDATE_EMPTY:
                         if (!trim($value)) {
+                            $current->addWarning($message, $key);
+                            $passed = false;
+                            continue;
+                        }
+
+                        break;
+                    case Params::VALIDATE_EMPTY_STRICT:
+                        if (null === $value) {
                             $current->addWarning($message, $key);
                             $passed = false;
                             continue;
@@ -160,7 +185,7 @@ class Params
 
                         break;
                     case Params::VALIDATE_EMAIL:
-                        if ($value && (!Email::IsValid($array[$key]))) {
+                        if ($value && (!Email::IsValid($value))) {
                             $current->addWarning($message, $key);
                             $passed = false;
                             continue;

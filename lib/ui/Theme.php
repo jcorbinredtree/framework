@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -31,9 +31,9 @@
  * @package        Themes
  */
 abstract class Theme extends BufferedObject
-{    
+{
     private $path = null;
-    
+
     /**
      * Gets the name of the current class
      *
@@ -41,64 +41,59 @@ abstract class Theme extends BufferedObject
      */
     public function getClass() {
         return get_class($this);
-    }    
-    
+    }
+
     /**
      * Displays the application
-     * 
+     *
      * @param LayoutDescription $layout a populated LayoutDescription
      * @return void
      */
     abstract public function onDisplay(LayoutDescription &$layout);
-    
+
     /**
      * Gets image based on the theme
-     * 
+     *
      * @param string $key
      * @return string
      */
     public function getImage($key)
     {
-        return $this->getPath() . "/view/images/$key"; 
+        return $this->getPath() . "/view/images/$key";
     }
-    
+
     /**
      * Gets icon based on the theme
-     * 
+     *
      * @param string $key
      * @return string
      */
     public function getIcon($key)
     {
-        return $this->getPath() . "/view/icons/$key.png"; 
+        return $this->getPath() . "/view/icons/$key.png";
     }
-    
-    public function getStyleSheets()
-    {
-        return array();
-    }
-    
+
     public function getPath()
     {
         if ($this->path) {
             return $this->path;
         }
-        
-        $us = new ReflectionClass($this->getClass());        
-        return $this->path = dirname($us->getFileName());        
+
+        $us = new ReflectionClass($this->getClass());
+        return $this->path = dirname($us->getFileName());
     }
 
     /**
      * Returns an instance of the specified theme
-     * 
+     *
      * @static
      * @access public
      * @param string $theme a theme class name
      * @return Theme an instance of the specified theme
-     */        
+     */
     static public function load($theme)
     {
-        $us = new $theme();        
+        $us = new $theme();
         Application::setPath($us->getPath());
 
         return $us;

@@ -45,14 +45,47 @@ abstract class RequestObject implements IRequestObject
 	}
 
 	/**
-	 * Merges the current object with the specified associtive array.
+	 * Merges the current object with the specified associtive array. Colon properties will
+	 * be marked up to their respective objects. For instance, if your object is
 	 *
-	 * @access public
+	 * class X extends RequestObject
+	 * {
+	 *     public $objProp;
+	 * }
+	 *
+	 * and the $with is
+	 *
+	 * objProp:value1
+	 *
+	 * then $this->objProp->value1 will be set accordingly.
+	 *
+	 * @param array $with an associtive array of items to merge
 	 * @return void
 	 */
 	public function merge(&$with)
 	{
-		Params::ArrayToObject($with, $this);
+		Params::arrayToObject($with, $this);
+
+		$objs = array();
+		foreach ($with as $key => $value) {
+		    $m = array();
+            if (preg_match('/^(\w+)[:](\w+)/', $key, $m)) {
+                $oKey = $m[1];
+                $pKey = $m[2];
+
+                if (!array_key_exists($oKey, $objs)) {
+                    $objs[$oKey] = array();
+                }
+
+                $objs[$oKey][$pKey] = $value;
+            }
+		}
+
+		if (count($objs)) {
+		    foreach ($objs as $prop => $desc) {
+		        Params::arrayToObject($desc, $this->$prop);
+		    }
+		}
 	}
 }
 

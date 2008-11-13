@@ -329,8 +329,6 @@ class Main
             $layout->isHomePage = ($current->component->getClass() == $config->getDefaultComponent())
                                   && ($current->action->id == $config->getDefaultAction());
 
-            $layout->styleSheets = $current->theme->getStyleSheets();
-
             if ($layout->currentItem =& NavigatorItem::find($current->id, $combinedItems)) {
                 $layout->currentItem->isCurrent = true;
                 $layout->topLevelItem =& $layout->currentItem->getTopLevelParent();

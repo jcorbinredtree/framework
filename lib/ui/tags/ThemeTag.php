@@ -34,6 +34,16 @@
  */
 class ThemeTag extends Tag
 {
+    public function allHead(DOMElement &$element)
+    {
+        $this->title($element);
+        $this->keywords($element);
+        $this->description($element);
+        $this->scripts($element);
+        $this->stylesheets($element);
+        $this->head($element);
+    }
+
     public function title(DOMElement &$element)
     {
         $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
