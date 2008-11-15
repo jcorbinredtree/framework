@@ -123,6 +123,42 @@ class Pager extends SessionObject
     }
 
     /**
+     * A very simple utility method to merge data from the post
+     *
+     * @return Pager
+     */
+    public static function fromPost()
+    {
+        $us = new Pager();
+        $us->merge($_POST);
+        return $us;
+    }
+
+    /**
+     * A very simple utility method to merge data from the get
+     *
+     * @return Pager
+     */
+    public static function fromGet()
+    {
+        $us = new Pager();
+        $us->merge($_GET);
+        return $us;
+    }
+
+    /**
+     * A very simple utility method to merge data from the request
+     *
+     * @return Pager
+     */
+    public static function fromRequest()
+    {
+        $us = new Pager();
+        $us->merge($_REQUEST);
+        return $us;
+    }
+
+    /**
      * Doesn't make sense for this object - we'll just return true
      *
      * @return boolean

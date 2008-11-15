@@ -196,9 +196,6 @@ abstract class ActionProvider extends BufferedObject
             throw new Exception("unknown parameter");
         }
 
-        global $config;
-        $config->debug("register: $this.$obj->id");
-
         $this->actions[$obj->id] = $obj;
     }
 }

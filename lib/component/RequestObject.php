@@ -34,6 +34,13 @@
  */
 abstract class RequestObject implements IRequestObject
 {
+    /**
+     * Implement this method to allow a pattern such as:
+     * $robj = MyClass::from($_POST);
+     * if ($robj->myProp) { ... }
+     *
+     * @param array $where An associtive array to load data from
+     */
 	public static function from(&$where)
 	{
 		throw new NotImplementedException();

@@ -254,7 +254,7 @@ abstract class Component extends ActionProvider
      * @param string $req the location of the script
      * @return void
      */
-    protected function addScript($req)
+    public function addScript($req)
     {
         if (in_array($req, $this->stylesheets)) {
             return;
@@ -277,7 +277,7 @@ abstract class Component extends ActionProvider
      * @param string $req the location of the stylesheet
      * @return void
      */
-    protected function addStylesheet($req)
+    public function addStylesheet($req)
     {
         if (in_array($req, $this->stylesheets)) {
             return;
@@ -302,7 +302,7 @@ abstract class Component extends ActionProvider
      * expressed as name/value pairs
      * @return void
      */
-    protected function viewTemplate($name, $arguments=array())
+    public function viewTemplate($name, $arguments=array())
     {
         $template = new Template();
         $template->setArguments($arguments);
