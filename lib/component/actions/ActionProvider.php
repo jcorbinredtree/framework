@@ -81,7 +81,7 @@ abstract class ActionProvider extends BufferedObject
      */
     public function canUser(ActionDescription &$description)
     {
-        global $config, $current;
+        global $current;
 
         if (!$current->user) {
             return false;
@@ -91,11 +91,11 @@ abstract class ActionProvider extends BufferedObject
             return true;
         }
 
-        if (!count($action->requireGroups)) {
+        if (!count($description->requireGroups)) {
             return true;
         }
 
-        foreach ($action->requireGroups as $group) {
+        foreach ($description->requireGroups as $group) {
             if ($current->user->inGroupName($group)) {
                 return true;
             }
@@ -185,6 +185,7 @@ abstract class ActionProvider extends BufferedObject
     public function registerAction($description)
     {
         $obj = null;
+
         if (is_array($description)) {
             $obj = new ActionDescription($description);
         }
@@ -194,6 +195,9 @@ abstract class ActionProvider extends BufferedObject
         else {
             throw new Exception("unknown parameter");
         }
+
+        global $config;
+        $config->debug("register: $this.$obj->id");
 
         $this->actions[$obj->id] = $obj;
     }

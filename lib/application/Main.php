@@ -92,6 +92,7 @@ class Main
              *
              * @global Current $current
              * @see Current;
+             * @var Current
              */
             $current = new Current();
         }
@@ -115,6 +116,11 @@ class Main
             $message = "Unknown action $actionId";
             $config->error($message);
             throw new Exception($message);
+        }
+
+        if (!$current->isSecureRequest() && $current->action->requiresSSL) {
+            $uri = $current->getCurrentRequest(array('-secure'=>true));
+            Application::forward($uri);
         }
 
         $current->stage = Params::request(AppConstants::STAGE_KEY, Stage::VIEW);

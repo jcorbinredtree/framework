@@ -88,7 +88,7 @@ class Current
      * Holds the current action
      *
      * @access public
-     * @var string
+     * @var ActionDescription
      */
     public $action = null;
 
@@ -191,7 +191,6 @@ class Current
 
         $options = array_merge($_GET, $_POST);
 
-        unset($options[$config->getCookieName()]);
         unset($options[AppConstants::COMPONENT_KEY]);
         unset($options[AppConstants::ACTION_KEY]);
 

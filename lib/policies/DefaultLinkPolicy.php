@@ -65,6 +65,30 @@ class DefaultLinkPolicy implements ILinkPolicy
         $component = urlencode($component);
 
         $link = $config->absUri;
+
+        /*
+         * The Action Rule: if the action linked to requires ssl, then set the link to https, otherwise to http
+         */
+        {
+            $c = call_user_func(array($component, 'getInstance'), $component);
+            $a = $c->getAction($action);
+
+            if (!$c) {
+                throw new IllegalArgumentException("unknown component $component or action $action");
+            }
+
+            if (!$a) {
+                throw new IllegalArgumentException("unknown action $component.$action");
+            }
+
+            if ($a->requiresSSL) {
+                $link = $this->replaceProto($link, true);
+            }
+            else {
+                $link = $this->replaceProto($link, false);
+            }
+        }
+
         $link .= "/" . AppConstants::COMPONENT_KEY . "/$component";
 
         if ($action) {
@@ -101,12 +125,15 @@ class DefaultLinkPolicy implements ILinkPolicy
                 continue;
             }
 
+            /*
+             * -secure takes precendence over The Action Rule
+             */
             if ($kw == AppConstants::SECURE_KEY) {
                 if ($val) {
-                    $link = preg_replace('/^http[:]/i', 'https:', $link);
+                    $link = $this->replaceProto($link, true);
                 }
                 else {
-                    $link = preg_replace('/^https[:]/i', 'http:', $link);
+                    $link = $this->replaceProto($link, false);
                 }
             }
 
@@ -115,6 +142,15 @@ class DefaultLinkPolicy implements ILinkPolicy
         }
 
         return $link;
+    }
+
+    private function replaceProto($link, $https)
+    {
+        if ($https) {
+            return preg_replace('/^http[:]/i', 'https:', $link);
+        }
+
+        return preg_replace('/^https[:]/i', 'http:', $link);
     }
 }
 

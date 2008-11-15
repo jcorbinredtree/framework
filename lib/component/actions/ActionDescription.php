@@ -50,6 +50,13 @@ class ActionDescription extends NavigatorItem implements ICacheable
     public $requiresUser = false;
 
     /**
+     * True if this action requires https encryption
+     *
+     * @var boolean
+     */
+    public $requiresSSL = false;
+
+    /**
      * The groups allowed to run this action
      *
      * @var array

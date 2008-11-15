@@ -83,14 +83,32 @@ abstract class Component extends ActionProvider
     public $description = '';
 
     /**
+     * Component instances, hashed by name
+     *
+     * @var Component
+     */
+    private static $instances = array();
+
+    final public static function getInstance($c)
+    {
+        if (array_key_exists($c, Component::$instances)) {
+            return Component::$instances[$c];
+        }
+
+        return Component::$instances[$c] = new $c();
+    }
+
+    /**
      * contructor; generic initializations
      * do your initializations onInitialize()
      */
     final public function __construct() {
-        global $config;
-
-        $this->title = 'Untitled Page';
+        $this->title = $this->getClass();
+        $this->onInitialize();
+        $this->onRegisterActions();
     }
+
+    public function onInitialize() {}
 
     public function __toString() {
         return $this->getClass();
@@ -117,13 +135,9 @@ abstract class Component extends ActionProvider
      */
     static public function load($component)
     {
-        global $config, $current;
-
-        $c = new $component();
-
+        $c = call_user_func(array($component, 'getInstance'), $component);
         Application::setPath($c->getPath());
 
-        $c->onRegisterActions();
         return $c;
     }
 
