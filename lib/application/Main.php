@@ -98,6 +98,7 @@ class Main
         }
 
         $current->id = Params::request('id', 0);
+
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
         $componentClass = (Params::request(AppConstants::COMPONENT_KEY)
                               ? Params::request(AppConstants::COMPONENT_KEY)
@@ -118,7 +119,7 @@ class Main
             throw new Exception($message);
         }
 
-        if (!$current->isSecureRequest() && $current->action->requiresSSL) {
+        if ((Params::server('HTTPS') != 'on') && $current->action->requiresSSL) {
             $uri = $current->getCurrentRequest(array('-secure'=>true));
             Application::forward($uri);
         }
