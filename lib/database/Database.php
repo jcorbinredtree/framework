@@ -210,16 +210,16 @@ class Database
                 $this->dbOptions = array(PDO::ATTR_PERSISTENT => true);
             }
 
+            $this->dbOptions[PDO::ATTR_CASE] = PDO::CASE_NATURAL;
+            $this->dbOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+            $this->dbOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+
             $this->pdo = new PDO("$dsn->driver:host=$dsn->host;dbname=$dsn->db",
                                  $dsn->user, $dsn->password, $this->dbOptions);
         } catch (PDOException $e) {
             $config->fatal($e->getMessage());
             die("Unable to connect to the database");
         }
-
-        $this->pdo->setAttribute(PDO::ATTR_CASE, PDO::CASE_NATURAL);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
     }
 
     /**

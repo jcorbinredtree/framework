@@ -11,7 +11,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is
@@ -27,16 +27,16 @@
 
 /**
  * CoreTag
- * 
+ *
  * This class provides core tag functionality
- * 
+ *
  * @category Tag
  */
 class CoreTag extends Tag
 {
     /**
      * Represents an if condition
-     * 
+     *
      * @param string test required - the condition to test
      * @param string var optional - if present, will store a boolean value to this variable
      */
@@ -44,7 +44,7 @@ class CoreTag extends Tag
     {
         $test = $this->requiredAttr($element, 'test', false);
         $var = $this->getUnquotedAttr($element, 'var', false);
-        
+
         if ($var) {
             $this->compiler->write('<?php ' . $var . '=(' . $test . ');?>');
         }
@@ -54,7 +54,7 @@ class CoreTag extends Tag
             $this->compiler->write('<?php } ?>');
         }
     }
-    
+
     /**
      * Represents an else condition - obviously only useful after an if
      */
@@ -63,25 +63,25 @@ class CoreTag extends Tag
         $this->compiler->write('<?php else{ ?>');
         $this->process($element);
         $this->compiler->write('<?php } ?>');
-    }    
+    }
 
     /**
      * Represents a switch block
-     * 
+     *
      * @param string test required - the variable to test
      */
     public function _switch(DOMElement &$element)
     {
         $test = $this->requiredAttr($element, 'test');
-        
+
         $this->compiler->write('<?php switch(' . $test . '){ ?>');
         $this->process($element);
-        $this->compiler->write('<?php } ?>');        
+        $this->compiler->write('<?php } ?>');
     }
-    
+
     /**
      * Represents a case statement - only useful (and valid) inside a switch
-     * 
+     *
      * @param string when required - the condition that must be met to reach the following code
      * @param string fallThrough optional - If true, will not add a break
      */
@@ -89,33 +89,33 @@ class CoreTag extends Tag
     {
         $test = $this->requiredAttr($element, 'when');
         $fallThrough = $this->getBooleanAttr($element, 'fallThrough', false);
-        
+
         $this->compiler->write('<?php case ' . $test . ': ?>');
         $this->process($element);
         if (!$fallThrough) {
             $this->compiler->write('<?php break; ?>');
-        }            
+        }
     }
-    
+
     /**
      * Represents the default in a case statement - only useful (and valid) inside a switch
-     * 
+     *
      * @param string fallThrough optional - If true, will not add a break
      */
     public function _default(DOMElement &$element)
     {
         $fallThrough = $this->getBooleanAttr($element, 'fallThrough', false);
-        
+
         $this->compiler->write('<?php default: ?>');
         $this->process($element);
         if (!$fallThrough) {
             $this->compiler->write('<?php break; ?>');
-        }            
-    }    
-    
+        }
+    }
+
     /**
      * Performs a for each loop
-     * 
+     *
      * @param string list required - a list to process
      * @param string var required - the name of the locally scoped variable
      */
@@ -123,8 +123,8 @@ class CoreTag extends Tag
     {
         $list = $this->requiredAttr($element, 'list');
         $var = $this->requiredAttr($element, 'var', false);
-        $varStatus = $this->getUnquotedAttr($element, 'varStatus', '__dindex' . uniqid());        
-        
+        $varStatus = $this->getUnquotedAttr($element, 'varStatus', '__dindex' . uniqid());
+
         if (preg_match('/,/', $var)) {
             $desc = explode(',', $var);
             $this->compiler->write('<?php foreach(' . $list . ' as $' . $desc[0] . ' => $' . $desc[1]    . '){ ?>');
@@ -134,13 +134,13 @@ class CoreTag extends Tag
             $this->compiler->write('<?php $' . "$v=" . $list . ';$' . $varStatus . '=new LoopTagStatus();$' . $varStatus . '->count=count($' . $v . ');
                                     for(;$' . $varStatus . '->index<$' . $varStatus . '->count;$' . $varStatus . '->index++){
                                     $' . $varStatus . '->current=$' . $var . '=$' . $v . '[$' . $varStatus . '->index]; ?>' );
-                        
+
         }
-        
+
         $this->process($element);
         $this->compiler->write('<?php } ?>');
     }
-    
+
     /**
      * Writes a continue statement for loop processing
      */
@@ -148,18 +148,18 @@ class CoreTag extends Tag
     {
         $this->compiler->write('<?php continue; ?>');
     }
-    
+
     /**
      * Writes a break statement for loop processing
      */
     public function _break(DOMElement &$element)
     {
-        $this->compiler->write('<?php break; ?>');        
+        $this->compiler->write('<?php break; ?>');
     }
-    
+
     /**
      * Performs a for loop
-     * 
+     *
      * @param int from required - the integer to start from
      * @param int to required - the integer to end on (the condition)
      * @param string var optional - the index variable to assign. default is i
@@ -169,15 +169,15 @@ class CoreTag extends Tag
         $from = $this->requiredAttr($element, 'from', false);
         $to = $this->requiredAttr($element, 'to', false);
         $var = $this->getUnquotedAttr($element, 'var', 'i');
-        
+
         $this->compiler->write('<?php for($' . "$var=$from" . '; $' . $var .'<' . $to .'; $' . $var . '++){ ?>');
         $this->process($element);
         $this->compiler->write('<?php } ?>');
     }
-    
+
     /**
      * Sets a variable in a scope
-     * 
+     *
      * @param string value required - the value to set
      * @param string var required - the name of the variable to set
      */
@@ -185,11 +185,11 @@ class CoreTag extends Tag
     {
         $value = $this->requiredAttr($element, 'value');
         $var = $this->requiredAttr($element, 'var', false);
-        
+
         if ($var[0] != '$') {
             $var = '$' . $var;
         }
-        
+
         if (preg_match('/,/', $var)) {
             $var = explode(',', $var);
             $vstr = '';
@@ -198,44 +198,45 @@ class CoreTag extends Tag
                 if ($varVal[0] != '$') {
                     $varVal = '$' . $varVal;
                 }
-                
+
                 $vstr .= $varVal;
-                
+
                 if (($i + 1) < count($var)) {
                     $vstr .= ',';
                 }
             }
-                
-            $this->compiler->write('<?php list(' . $vstr . ') = ' . $value . '; ?>');                        
+
+            $this->compiler->write('<?php list(' . $vstr . ') = ' . $value . '; ?>');
         }
         else {
-            $this->compiler->write('<?php ' . $var . ' = ' . $value . '; ?>');            
+            $this->compiler->write('<?php ' . $var . ' = ' . $value . '; ?>');
         }
     }
-    
+
     /**
      * Includes another template
-     * 
+     *
      * @param string template required - the other template to include
      */
     public function display(DOMElement &$element)
     {
         $template = $this->requiredAttr($element, 'template');
-        
+
         $this->compiler->write('<?php $this->display(' . $template . '); ?>');
-    }    
-    
+    }
+
     /**
      * Prints out a value
-     * 
+     *
      * @param string value required - the value to output
      * @param boolean escapeXml optional, default true
      * @param string default optional - the default value to use in the event of an empty value
      * @param string var optional - the variable to store the output in
      * @param string format optional - format options,
+     *                 "int" => formats as integer
      *                 "money" => formats as us money,
      *                 "boolean" => formats as Yes or No
-     *                 "date:xxx" => formats as date, where xxx is the format string used by date() 
+     *                 "date:xxx" => formats as date, where xxx is the format string used by date()
      */
     public function out(DOMElement &$element)
     {
@@ -243,16 +244,19 @@ class CoreTag extends Tag
         $escapeXml = $this->getBooleanAttr($element, 'escapeXml', true);
         $default = $this->getAttr($element, 'default', '');
         $var = $this->getUnquotedAttr($element, 'var', false);
-        $format = $this->getUnquotedAttr($element, 'format', false);        
-        
+        $format = $this->getUnquotedAttr($element, 'format', false);
+
         if (!$value) {
             $value = $default;
         }
-        
+
         $matches = array();
         if (preg_match('/^date:(.+)/', $format, $matches)) {
             $fstr = $matches[1];
             $value = "date('$fstr',$value)";
+        }
+        elseif ($format == 'int') {
+            $value = "(int) $value";
         }
         elseif ($format == 'money') {
             $value = "money_format('%n', $value)";
@@ -260,11 +264,11 @@ class CoreTag extends Tag
         elseif ($format == 'boolean') {
             $value = "($value?'Yes':'No')";
         }
-        
+
         if ($escapeXml) {
             $value = 'htmlentities(' . $value . ')';
         }
-        
+
         if ($var) {
             $this->compiler->write('<?php $' . "$var = $value" . '; ?>');
         }
@@ -272,10 +276,10 @@ class CoreTag extends Tag
             $this->compiler->write('<?php echo ' . $value . '; ?>');
         }
     }
-    
+
     /**
      * Puts out an xml header, such as <?xml version = "1.0" encoding = "utf-8" ?>
-     * 
+     *
      * @param string encoding optional - the XML encoding, default is utf-8
      * @param string version optional - the XML version, default is 1.0
      */
@@ -283,10 +287,10 @@ class CoreTag extends Tag
     {
         $encoding = $this->getUnquotedAttr($element, 'encoding', 'utf-8');
         $version = $this->getUnquotedAttr($element, 'version', '1.0');
-        
+
         $this->compiler->write('<?php print \'<?xml version = "' . $version . '" encoding = "' . $encoding . '" ?>\'; ?>');
     }
-    
+
     /**
      * Prints the xhtml tag
      */
@@ -295,29 +299,32 @@ class CoreTag extends Tag
         $this->compiler->write('<html xmlns = "http://www.w3.org/1999/xhtml">');
         $this->process($element);
         $this->compiler->write('</html>');
-    }    
-    
+    }
+
     /**
      * Puts out a doctype
-     * 
+     *
      * @param string type required - the only supported value is 'xhtml 1.1'
      */
     public function doctype(DOMElement $element)
     {
         $type = $this->requiredAttr($element, 'type', false);
-        
+
         switch ($type) {
+            case 'xhtml 1.0':
+                $this->compiler->write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">');
+                break;
             case 'xhtml 1.1':
                 $this->compiler->write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">');
                 break;
             default:
                 die("Unknown doctype $type in $element->nodeName");
-        }        
+        }
     }
-    
+
     /**
      * Converts your object to json .. hopefully :-/
-     * 
+     *
      * @param object the object you wish to convert
      * @param var an optional variable name to output to
      */
@@ -327,7 +334,7 @@ class CoreTag extends Tag
         $var = $this->getUnquotedAttr($element, 'var');
 
         $this->compiler->write('<?php ');
-        
+
         $this->compiler->write('if (!function_exists("json_encode")){
         /* warning: crappy encoding follows */
         function json_encode($obj)
@@ -347,17 +354,17 @@ class CoreTag extends Tag
             return "$buf}";
         }
     	}');
-        
+
         if ($var) {
             $this->compiler->write('$' . "$var = ");
         }
         else {
             $this->compiler->write('print ');
         }
-        
+
         $this->compiler->write('json_encode(' . $object . '); ?>');
     }
-    
+
     /**
      * Adds a php block - use sparingly
      */
@@ -367,7 +374,7 @@ class CoreTag extends Tag
         $this->process($element);
         $this->compiler->write('; ?>');
     }
-    
+
     /**
      * Writes a CDATA block to the output
      */
@@ -377,7 +384,7 @@ class CoreTag extends Tag
         $this->process($element);
         $this->compiler->write(']]>');
     }
-    
+
     /**
      * Dumps the given object out via print_r. You may specify
      * whether or not to include <pre> tags.
@@ -393,11 +400,11 @@ class CoreTag extends Tag
         if ($pre) {
             $this->compiler->write('<pre>');
         }
-        
+
         $this->compiler->write("<?php print_r($object); ?>");
-        
+
         if ($pre) {
-            $this->compiler->write('</pre>');            
+            $this->compiler->write('</pre>');
         }
     }
 }
