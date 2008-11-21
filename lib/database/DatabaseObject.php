@@ -72,6 +72,50 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     public $key = '';
 
     /**
+     * A simple property to track memoization
+     *
+     * @var array
+     */
+    protected $memo = array();
+
+    /**
+     * Determines if this key exists in the memoization
+     *
+     * @param string $key
+     * @return boolean
+     */
+    protected function hasMemo($key)
+    {
+        return array_key_exists($key, $this->memo);
+    }
+
+    /**
+     * Gets a memoization
+     *
+     * @param string $key
+     * @return mixed
+     */
+    protected function getMemo($key)
+    {
+        if (array_key_exists($key, $this->memo)) {
+            return $this->memo[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * Sets a simple memoization
+     *
+     * @param string $key
+     * @param mixed $data
+     */
+    protected function setMemo($key, &$data)
+    {
+        $this->memo[$key] = $data;
+    }
+
+    /**
      * Called to create the object
      *
      * @return boolean
