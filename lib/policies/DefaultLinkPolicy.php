@@ -106,6 +106,7 @@ class DefaultLinkPolicy implements ILinkPolicy
             $options[AppConstants::POPUP_KEY] = 1;
         }
 
+        $qs = '';
         foreach ($options as $kw => $val) {
             if ($kw[0] == '-') {
                 switch ($kw) {
@@ -137,11 +138,25 @@ class DefaultLinkPolicy implements ILinkPolicy
                 }
             }
 
-            $kw = urlencode($kw);
-            $link .= "/$kw/$val";
+            $kw  = urlencode($kw);
+            $val = urlencode($val);
+
+            /*
+             * the query string rule: apache will freak out if %2F is part of the url
+             */
+            if (false !== strpos($val, '%2F')) {
+                $qs .= "&$kw=$val";
+            }
+            else {
+                $link .= "/$kw/$val";
+            }
         }
 
-        return $link;
+        if ($qs) {
+            $qs[0] = '?';
+        }
+
+        return $link . $qs;
     }
 
     private function replaceProto($link, $https)

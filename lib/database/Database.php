@@ -427,7 +427,9 @@ class Database
                 $params = array();
                 $vars = get_object_vars($param);
                 foreach ($vars as $key => $val) {
-                    $params[":$key"] = $val;
+                    if (null !== $val) {
+                        $params[":$key"] = $val;
+                    }
                 }
             }
             else {
@@ -703,7 +705,7 @@ class Database
      * @param string $sql the SQL for your query
      * @param string $type the type of objects to be returned
      * @param arglist ... variable arguments representing the prepared args
-     * @return array an array of object rows
+     * @return array an array of object rows, or null on error
      */
     public function queryForResultObjects($sql, $type='stdClass')
     {
@@ -711,6 +713,22 @@ class Database
         if (count($args) > 2) {
             array_shift($args);
             array_shift($args);
+
+            /* flatten array args */
+            $tmp = array();
+            foreach ($args as $arg) {
+                if (is_array($arg)) {
+                    foreach ($arg as $i) {
+                        array_push($tmp, $i);
+                    }
+
+                    continue;
+                }
+
+                array_push($tmp, $arg);
+            }
+
+            $args = $tmp;
         }
         else {
             $args = array();
@@ -720,7 +738,7 @@ class Database
            return $this->getResultObjects($type);
         }
 
-        return array();
+        return null;
     }
 
     /**

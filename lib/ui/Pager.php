@@ -258,6 +258,16 @@ class Pager extends SessionObject
         global $current;
 
         $args = $this->args;
+        if (is_object($args)) {
+            $t = get_object_vars($args);
+            $ra = array();
+            foreach ($t as $k) {
+                $ra[$k] = $args[$k];
+            }
+
+            $args = $ra;
+        }
+
         $args['start'] = $start;
 
         $component = $this->component ? $this->component : $current->component->getClass();

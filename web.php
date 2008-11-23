@@ -46,6 +46,8 @@ try {
 catch (Exception $ex) {
     LifeCycleManager::onException($ex);
 
+    @ob_end_clean();
+
     $policy = PolicyManager::getInstance();
     $theme = $policy->getExceptionTheme();
     $layout = new LayoutDescription();
