@@ -297,7 +297,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         return substr($sql, 0, (strlen($sql) - 2));
     }
 
-    protected function getFields()
+    public function getFields()
     {
         $fields = get_class_vars(get_class($this));
         $description = array();
