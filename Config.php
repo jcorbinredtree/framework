@@ -155,28 +155,35 @@ class Config
      * @var string
      */
     private $defaultExceptionTheme = 'DefaultExceptionTheme';
-
+    
     /**
-     * The login url
-     *
-     * @var string
+     * Holds the user configuration values
+     *  
+     * @var array
      */
-    private $loginUrl = '/login';
-
+    private $userConfig = array();
+    
     /**
-     * @return string
+     * Sets a configuration value
+     * 
+     * @param $key
+     * @param $value
+     * @return void
      */
-    public function getLoginUrl()
+    public function set($key, $value)
     {
-        return $this->loginUrl;
+        $this->userConfig[$key] = $value;
     }
-
+    
     /**
-     * @param string $loginUrl
+     * Gets a user set configuration value
+     * 
+     * @param $key
+     * @return mixed
      */
-    public function setLoginUrl($loginUrl)
+    public function get($key)
     {
-        $this->loginUrl = $loginUrl;
+        return $this->userConfig[$key];
     }
 
     /**
