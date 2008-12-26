@@ -69,10 +69,12 @@ class Application
      */
     public static function login()
     {
-        global  $config;
-
+        global $config;
+        
+        $policy = PolicyManager::getInstance();
+        
         Application::saveRequest();
-        Application::forward($config->absUri . $config->getLoginUrl());
+        Application::forward($policy->getLoginUrl());
     }
 
     /**

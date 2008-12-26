@@ -461,7 +461,7 @@ class Database
             $config->error('execute failed for query: ' . $this->statement->queryString . '; message: ' . $e->getMessage(), 3);
             return false;
         }
-
+        
         $params = ($params ? join(',', $params) : '');
 
         if ($this->time) {
@@ -498,13 +498,13 @@ class Database
         $start = microtime(true);
         $logging = $this->log;
         $timing = $this->time;
-
+        
         $this->log = $this->time = false;
         if (!$this->prepare($sqlf)) {
             $this->log = $logging;
             $this->time = $timing;
             return false;
-        }
+        }        
 
         /*
          * bind function args. if an array was passed, then flatten it
@@ -576,7 +576,7 @@ class Database
         global $config;
 
         $this->lazyLoad();
-
+        
         $start = microtime(true);
 
         try {
@@ -733,7 +733,7 @@ class Database
         else {
             $args = array();
         }
-
+        
         if ($this->executef($sql, $args)) {
            return $this->getResultObjects($type);
         }
@@ -756,8 +756,7 @@ class Database
         $output = array();
 
         for ($i = 0; $i < $this->statement->rowCount(); $i++) {
-            $row = $this->getObject($type, false);
-            array_push($output, $row);
+            array_push($output, $this->getObject($type, false));
         }
 
         $this->free();
@@ -878,7 +877,7 @@ class Database
                 $row['id'] = $row[$obj->key];
             }
 
-            Params::ArrayToObject($row, $obj, true);
+            Params::arrayToObject($row, $obj, true);
 
             if ($kill) {
                 $this->free();

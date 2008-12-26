@@ -120,7 +120,13 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
     public function getActionURI($component, $action, $options=array(), $stage=Stage::VIEW)
     {
         return $this->linkPolicy->getActionURI($component, $action, $options, $stage);
+    }    
+    
+    public function getLoginUrl()
+    {
+        return $this->securityPolicy->getLoginUrl();    
     }
+    
     /**
      * @see ISecurityPolicy::login()
      *

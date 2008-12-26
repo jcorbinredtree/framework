@@ -51,6 +51,17 @@ class Params
     {
 
     }
+    
+    /**
+     * preg callback
+     * 
+     * @param $x
+     * @return transformed $x
+     */
+    private static function fieldToPropertyCallback($x)
+    {
+        return strtoupper($x[0][1]);        
+    }
 
     /**
      * Convert an underscored name to a class-worthy field name.
@@ -61,9 +72,20 @@ class Params
      * @param string $name the underscored name to convert
      * @return string the fielded name
      */
-    static public function fieldToProperty($name)
+    public static function fieldToProperty($name)
     {
-        return preg_replace_callback('/_(\w)/', create_function('$x', 'return strtoupper($x[0][1]);'), $name);
+        return preg_replace_callback('/_(\w)/', array('Params', 'fieldToPropertyCallback'), $name);
+    }
+    
+    /**
+     * preg callback
+     * 
+     * @param $x
+     * @return transformed $x
+     */
+    private static function propertyToFieldCallback($x)
+    {
+        return "_" . strtolower($x[0]);
     }
 
     /**
@@ -77,7 +99,7 @@ class Params
      */
     static public function propertyToField($field)
     {
-        return preg_replace_callback('/[A-Z]/', create_function('$x', 'return "_" . strtolower($x[0]);'), $field);
+        return preg_replace_callback('/[A-Z]/', array('Params', 'propertyToFieldCallback'), $field);
     }
 
     /**

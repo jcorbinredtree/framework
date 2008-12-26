@@ -261,8 +261,8 @@ class Pager extends SessionObject
         if (is_object($args)) {
             $t = get_object_vars($args);
             $ra = array();
-            foreach ($t as $k) {
-                $ra[$k] = $args[$k];
+            foreach ($t as $k => $v) {
+                $ra[$k] = $args->$k;
             }
 
             $args = $ra;
