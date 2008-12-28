@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<template xmlns:f = "class://FrameworkTag">    
-    <div id = "dms-files-table" style = "display:none;" />
-</template>

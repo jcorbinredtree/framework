@@ -40,33 +40,49 @@ $__start = microtime(true);
 $config = new Config();
 require "$config->fwAbsPath/lib/application/Application.php";
 
-try {    
-    Application::startWeb();
-}
-catch (Exception $ex) {
-    LifeCycleManager::onException($ex);
 
-    @ob_end_clean();
+Application::start();
+Main::startSession();
 
-    $policy = PolicyManager::getInstance();
-    $theme = $policy->getExceptionTheme();
-    $layout = new LayoutDescription();
-    $layout->content = $ex;
-    $theme->onDisplay($layout);
+$current = new Current();
 
-    print $theme->getBuffer();
+/*
+ * This function should be defined in the site's index.php
+ */
+if (function_exists('onConfig')) {
+    onConfig($config);
 }
 
-if ($config->isDebugMode()) {
-    $pageTime = (microtime(true) - $__start);
-    $databaseTime = $database->getTotalTime();
-    $databaseQueries = $database->getTotalQueries();
-    $message = '==> Request Served in ' . (sprintf('%.4f', $pageTime)) . ' seconds; ';
-    $message .= $database->getTotalQueries() . ' queries executed in ';
-    $message .= sprintf('%.4f', $database->getTotalTime()) . ' seconds, ';
-    $message .= sprintf('%.2f', (($databaseTime / $pageTime) * 100)) . '% of total time <==';
+/**
+ * Two of three global variables. The entire
+ * application revolves around the database,
+ * so a good database class is indispensible.
+ * Note that the logging and timing of queries
+ * is set to correspond with the value of
+ * $config->debug.
+ *
+ * @global Database $database
+ * @see Database
+ */
+$database = new Database();
+$database->log = $database->time = $config->isDebugMode();
 
-    $config->info($message);
+$config->initalize();
+
+/*
+ * Load a user if there is one to load
+ */
+Main::loadUser();
+
+Main::setLanguageAndTheme();
+
+/*
+ * set appropriate path
+ */
+{
+    $bt = debug_backtrace();
+    $bt = $bt[count($bt) - 1];
+    Application::setPath(dirname($bt['file']));
 }
 
 ?>

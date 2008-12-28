@@ -182,6 +182,10 @@ class Main
             $current->user =& $user;
             Session::set(AppConstants::TIME_KEY, time());
         }
+        
+        if (!$current->component) {
+            return;
+        }
 
         if ((!$current->component->allows($current->action))                        /* current action denied */
             || (!$current->user && Params::request(AppConstants::FORCE_LOGIN_KEY))) /* request to log in (but not user) */

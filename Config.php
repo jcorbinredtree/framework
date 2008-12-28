@@ -510,7 +510,7 @@ class Config
      */
     public function initalize()
     {
-        $https = (isset($_REQUEST[AppConstants::SECURE_KEY]) && $_REQUEST[AppConstants::SECURE_KEY]);
+        $https = (isset($_SERVER['SERVER_PORT']) && ($_SERVER['SERVER_PORT'] == 443));
         $this->absUri = 'http' . ($https ? 's' : '') . '://' . $_SERVER['SERVER_NAME'] . (($this->absUriPath == '/') ? '' : $this->absUriPath);
     }
 

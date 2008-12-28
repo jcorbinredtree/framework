@@ -145,6 +145,22 @@ abstract class BufferedObject
         print $this->getBuffer();
         $this->clear();
     }
+
+    /**
+     * A simple method to simply view a template, optionally setting aruments
+     *
+     * @param string name the location of the template
+     * @param array arguments [optional] the arguments to pass to the template,
+     * expressed as name/value pairs
+     * @return void
+     */
+    public function viewTemplate($name, $arguments=array())
+    {
+        $template = new Template();
+        $template->setArguments($arguments);
+
+        $this->write($template->fetch($name));
+    }
 }
 
 ?>
