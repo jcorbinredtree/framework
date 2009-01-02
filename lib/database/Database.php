@@ -458,7 +458,7 @@ class Database
                 return false;
             }
         } catch (PDOException $e) {
-            $config->error('execute failed for query: ' . $this->statement->queryString . '; message: ' . $e->getMessage(), 3);
+            $config->error('execute failed for query: ' . ($this->statement ? $this->statement->queryString : '{no statement}') . '; message: ' . $e->getMessage(), 3);
             return false;
         }
         
@@ -499,6 +499,7 @@ class Database
         $logging = $this->log;
         $timing = $this->time;
         
+        //global $config; $config->warn("2.) $sqlf");
         $this->log = $this->time = false;
         if (!$this->prepare($sqlf)) {
             $this->log = $logging;
@@ -580,6 +581,10 @@ class Database
         $start = microtime(true);
 
         try {
+            if ($config->isDebugMode()) {
+                $config->debug("prepare: $sql");
+            }
+            
             $this->statement = $this->pdo->prepare($sql);
         }
         catch (PDOException $e) {
@@ -734,6 +739,7 @@ class Database
             $args = array();
         }
         
+        //global $config; $config->warn("1.) $sql");
         if ($this->executef($sql, $args)) {
            return $this->getResultObjects($type);
         }

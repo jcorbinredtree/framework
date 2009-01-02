@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -26,7 +26,7 @@
  */
 
 /**
- * Defines standard methods the system may use to ascertain 
+ * Defines standard methods the system may use to ascertain
  * information about this objects subclass.
  *
  * @static
@@ -37,7 +37,7 @@ class Email
 {
     /**
      * Constructor; Private
-     * 
+     *
      * @access private
      * @return Email a new instance
      */
@@ -51,7 +51,7 @@ class Email
      * A rudimentery validation on the email address, and a check
      * if the specified domain exists. This was found on a devshed
      * article, and modified slightly.
-     * 
+     *
      * @static
      * @param string the email address
      * @return boolean true if the email address is properly formatted,
@@ -77,7 +77,7 @@ class Email
      * public blacklists. This method was found in the php.net
      * user notes with the following statement:
      * "written by satmd, do what you want with it, but keep the author please"
-     * 
+     *
      * @static
      * @access public
      * @param string $email the email address in question
@@ -94,6 +94,10 @@ class Email
         $ip = gethostbyname($domain);
 
         $quads = explode('.', $ip);
+        if (count($quads) != 4) {
+            return false;
+        }
+
         $rip = $quads[3] . '.' . $quads[2] . '.' . $quads[1] . '.' . $quads[0];
 
         for ($i = 0; $i < count($dnsbl_check); $i++) {
@@ -101,7 +105,7 @@ class Email
                 return true;
             }
         }
-        
+
         return false;
     }
 }
