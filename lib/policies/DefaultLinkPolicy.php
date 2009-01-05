@@ -81,6 +81,10 @@ class DefaultLinkPolicy implements ILinkPolicy
                 throw new IllegalArgumentException("unknown action $component.$action");
             }
 
+            if (!($a instanceof ActionDescription)) {
+                throw new IllegalArgumentException("bad action $component.$action");
+            }
+
             if ($a->requiresSSL) {
                 $link = $this->replaceProto($link, true);
             }
