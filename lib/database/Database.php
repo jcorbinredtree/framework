@@ -461,7 +461,7 @@ class Database
             $config->error('execute failed for query: ' . ($this->statement ? $this->statement->queryString : '{no statement}') . '; message: ' . $e->getMessage(), 3);
             return false;
         }
-        
+
         $params = ($params ? join(',', $params) : '');
 
         if ($this->time) {
@@ -498,14 +498,14 @@ class Database
         $start = microtime(true);
         $logging = $this->log;
         $timing = $this->time;
-        
+
         //global $config; $config->warn("2.) $sqlf");
         $this->log = $this->time = false;
         if (!$this->prepare($sqlf)) {
             $this->log = $logging;
             $this->time = $timing;
             return false;
-        }        
+        }
 
         /*
          * bind function args. if an array was passed, then flatten it
@@ -577,14 +577,14 @@ class Database
         global $config;
 
         $this->lazyLoad();
-        
+
         $start = microtime(true);
 
         try {
             if ($config->isDebugMode()) {
                 $config->debug("prepare: $sql");
             }
-            
+
             $this->statement = $this->pdo->prepare($sql);
         }
         catch (PDOException $e) {
@@ -738,7 +738,7 @@ class Database
         else {
             $args = array();
         }
-        
+
         //global $config; $config->warn("1.) $sql");
         if ($this->executef($sql, $args)) {
            return $this->getResultObjects($type);

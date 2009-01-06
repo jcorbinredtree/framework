@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -30,7 +30,7 @@
  *
  * @package      UI
  */
-class LayoutDescription 
+class LayoutDescription
 {
     /**
      * Holds the left modules
@@ -38,49 +38,77 @@ class LayoutDescription
      * @var array
      */
     private $leftModules = array();
-    
+
     /**
      * Holds the top modules
      *
      * @var array
-     */    
+     */
     private $topModules = array();
-    
+
     /**
      * Holds the right modules
      *
      * @var array
-     */    
+     */
     private $rightModules = array();
-    
+
     /**
      * Holds the bottom modules
      *
      * @var array
-     */    
+     */
     private $bottomModules = array();
-    
+
+    /**
+     * Holds the left navigation
+     *
+     * @var array
+     */
+    private $leftNavigation = array();
+
+    /**
+     * Holds the top navigation
+     *
+     * @var array
+     */
+    private $topNavigation = array();
+
+    /**
+     * Holds the right navigation
+     *
+     * @var array
+     */
+    private $rightNavigation = array();
+
+    /**
+     * Holds the bottom navigation
+     *
+     * @var array
+     */
+    private $bottomNavigation = array();
+
     /**
      * Meta keywords
-     * 
-     * @var string 
+     *
+     * @var string
      */
     public $keywords;
-    
+
     /**
      * The meta description
      *
      * @var string
-     */    
+     */
     public $description;
-    
+
     /**
      * Additional meta head
      *
      * @var string
      */
     public $head;
-    
+
     /**
      * The title for the page
      *
@@ -90,67 +118,67 @@ class LayoutDescription
 
     /**
      * The scripts used for this page
-     * 
+     *
      * @var array
      */
      public $scripts = array();
-     
+
      /**
       * The stylesheets to include
       *
       * @var array
       */
      public $stylesheets = array();
-     
+
      /**
       * Breadcrumbs used for this page
-      * 
+      *
       * @var array
       */
      public $breadCrumbs;
-     
+
      /**
       * The current component
       *
       * @var Component
       */
      public $component;
-     
+
      /**
       * The current component's buffer
       *
       * @var string
       */
      public $content;
-     
+
      /**
       * The current top level item
-      * 
+      *
       * @var NavigatorItem
       */
      public $topLevelItem;
-     
+
      /**
       * The current item
       *
       * @var NavigatorItem
       */
      public $currentItem;
-     
+
      /**
       * Determines if this is the home page
       *
       * @var boolean
       */
      public $isHomePage;
-     
+
      /**
       * Determines if this is a popup window
       *
       * @var boolean
       */
-     public $isPopup;     
-     
+     public $isPopup;
+
      /**
       * The search phrase
       *
@@ -159,69 +187,29 @@ class LayoutDescription
      public $searchWord;
 
      /**
-      * Gets the navigation items meant for the top of the page
-      *
-      * @return array
-      */
-     public function getTopNavigation() 
-     {   
-         return LifeCycleManager::onGetTopNavigation();
-     }
-     
-     /**
-      * Gets the navigation items meant for the left of the page
-      *
-      * @return array
-      */     
-     public function getLeftNavigation() 
-     {   
-         return LifeCycleManager::onGetLeftNavigation();
-     }
-     
-     /**
-      * Gets the navigation items meant for the right of the page
-      *
-      * @return array
-      */     
-     public function getRightNavigation() 
-     {
-         return LifeCycleManager::onGetRightNavigation();
-     }
-     
-     /**
-      * Gets the navigation items meant for the bottom of the page
-      *
-      * @return array
-      */          
-     public function getBottomNavigation() 
-     {
-         return LifeCycleManager::onGetBottomNavigation();
-     }
-     
-     /**
       * Gets the current set of warnings
       *
       * @return array
-      */               
-     public function getWarnings() 
+      */
+     public function getWarnings()
      {
          global $current;
-         
+
          return $current->getWarnings();
      }
-     
+
      /**
       * Gets the current set of notices
       *
       * @return array
-      */                  
-     public function getNotices() 
+      */
+     public function getNotices()
      {
          global $current;
-         
+
          return $current->getNotices();
      }
-     
+
      /**
       * Adds a top module
       *
@@ -237,12 +225,12 @@ class LayoutDescription
       * Gets the modules meant for the top of the page
       *
       * @return array
-      */                         
-     public function getTopModules() 
+      */
+     public function getTopModules()
      {
          return array_merge($this->topModules, LifeCycleManager::onGetTopModules());
-     }     
-     
+     }
+
      /**
       * Adds a left module
       *
@@ -250,20 +238,20 @@ class LayoutDescription
       * @return void
       */
      public function addLeftModule(Module &$module)
-     {         
+     {
          array_push($this->leftModules, $module);
      }
-     
+
      /**
       * Gets the modules meant for the left of the page
       *
       * @return array
-      */                    
-     public function getLeftModules() 
+      */
+     public function getLeftModules()
      {
-        return array_merge($this->leftModules, LifeCycleManager::onGetLeftModules());                 
+        return array_merge($this->leftModules, LifeCycleManager::onGetLeftModules());
      }
-     
+
      /**
       * Adds a right module
       *
@@ -274,17 +262,17 @@ class LayoutDescription
      {
          array_push($this->rightModules, $module);
      }
-     
+
      /**
       * Gets the modules meant for the right of the page
       *
       * @return array
-      */               
-     public function getRightModules() 
+      */
+     public function getRightModules()
      {
-         return array_merge($this->rightModules, LifeCycleManager::onGetRightModules());                 
-     }     
-     
+         return array_merge($this->rightModules, LifeCycleManager::onGetRightModules());
+     }
+
      /**
       * Adds a bottom module
       *
@@ -295,15 +283,99 @@ class LayoutDescription
      {
          array_push($this->bottomModules, $module);
      }
-     
+
      /**
       * Gets the modules meant for the bottom of the page
       *
       * @return array
-      */               
-     public function getBottomModules() 
+      */
+     public function getBottomModules()
      {
         return array_merge($this->bottomModules, LifeCycleManager::onGetBottomModules());
+     }
+
+     /**
+      * Adds a top module
+      *
+      * @param Navigation $module
+      * @return void
+      */
+     public function addTopNavigation(Navigation &$module)
+     {
+         array_push($this->topNavigation, $module);
+     }
+
+     /**
+      * Gets the navigation meant for the top of the page
+      *
+      * @return array
+      */
+     public function getTopNavigation()
+     {
+         return array_merge($this->topNavigation, LifeCycleManager::onGetTopNavigation());
+     }
+
+     /**
+      * Adds a left module
+      *
+      * @param Navigation $module
+      * @return void
+      */
+     public function addLeftNavigation(Navigation &$module)
+     {
+         array_push($this->leftNavigation, $module);
+     }
+
+     /**
+      * Gets the navigation meant for the left of the page
+      *
+      * @return array
+      */
+     public function getLeftNavigation()
+     {
+        return array_merge($this->leftNavigation, LifeCycleManager::onGetLeftNavigation());
+     }
+
+     /**
+      * Adds a right module
+      *
+      * @param Navigation $module
+      * @return void
+      */
+     public function addRightNavigation(Navigation &$module)
+     {
+         array_push($this->rightNavigation, $module);
+     }
+
+     /**
+      * Gets the navigation meant for the right of the page
+      *
+      * @return array
+      */
+     public function getRightNavigation()
+     {
+         return array_merge($this->rightNavigation, LifeCycleManager::onGetRightNavigation());
+     }
+
+     /**
+      * Adds a bottom module
+      *
+      * @param Navigation $module
+      * @return void
+      */
+     public function addBottomNavigation(Navigation &$module)
+     {
+         array_push($this->bottomNavigation, $module);
+     }
+
+     /**
+      * Gets the navigation meant for the bottom of the page
+      *
+      * @return array
+      */
+     public function getBottomNavigation()
+     {
+        return array_merge($this->bottomNavigation, LifeCycleManager::onGetBottomNavigation());
      }
 }
 ?>

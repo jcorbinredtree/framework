@@ -70,9 +70,9 @@ class Application
     public static function login()
     {
         global $config;
-        
+
         $policy = PolicyManager::getInstance();
-        
+
         Application::saveRequest();
         Application::forward($policy->getLoginUrl());
     }
@@ -485,12 +485,12 @@ class Application
 
         $config->initalize();
 
-        LifeCycleManager::onRequestStart();
-
         /*
          * fill out the current ticket
          */
         Main::populateCurrent();
+
+        LifeCycleManager::onRequestStart();
 
         /*
          * if this should be a secure request, make sure we're

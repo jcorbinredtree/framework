@@ -182,7 +182,7 @@ class Main
             $current->user =& $user;
             Session::set(AppConstants::TIME_KEY, time());
         }
-        
+
         if (!$current->component) {
             return;
         }
@@ -324,9 +324,6 @@ class Main
          * populate the LayoutDescription
          */
         {
-            $combinedItems = array_merge($layout->getTopNavigation(), $layout->getLeftNavigation(),
-                                         $layout->getRightNavigation(), $layout->getBottomNavigation());
-
             $vars = get_object_vars($current->component);
             foreach ($vars as $prop => $val) {
                 if (property_exists($layout, $prop)) {
@@ -336,39 +333,8 @@ class Main
 
             $layout->isPopup = Params::request(AppConstants::POPUP_KEY, false);
             $layout->component = $current->component;
-            $layout->searchWord = Params::request(AppConstants::KEYWORD_KEY);
             $layout->isHomePage = ($current->component->getClass() == $config->getDefaultComponent())
                                   && ($current->action->id == $config->getDefaultAction());
-
-            if ($layout->currentItem =& NavigatorItem::find($current->id, $combinedItems)) {
-                $layout->currentItem->isCurrent = true;
-                $layout->topLevelItem =& $layout->currentItem->getTopLevelParent();
-            }
-
-            /*
-             * modules
-             */
-            {
-                foreach (LifeCycleManager::onGetLeftModules() as $module) {
-                    Application::performModule($module, Module::POSITION_LEFT);
-                    $layout->addLeftModule($module);
-                }
-
-                foreach (LifeCycleManager::onGetTopModules() as $module) {
-                    Application::performModule($module, Module::POSITION_TOP);
-                    $layout->addTopModule($module);
-                }
-
-                foreach (LifeCycleManager::onGetRightModules() as $module) {
-                    Application::performModule($module, Module::POSITION_RIGHT);
-                    $layout->addRightModule($module);
-                }
-
-                foreach (LifeCycleManager::onGetBottomModules() as $module) {
-                    Application::performModule($module, Module::POSITION_BOTTOM);
-                    $layout->addBottomModule($module);
-                }
-            }
         }
 
         //print_r($layout);exit(0);
@@ -377,9 +343,6 @@ class Main
         LifeCycleManager::onPreRender($current->layout);
         {
             $layout->content = $current->component->getBuffer();
-            if (!$config->isDebugMode()) {
-                $current->theme->addFilter(new WhitespaceFilter());
-            }
 
             /*
              * set the current path to the theme location & display
