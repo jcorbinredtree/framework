@@ -25,51 +25,51 @@
  */
 
 class NavigatorItem extends TreeNode
-{    
+{
     /**
      * Specifies the href for this NavigatorItem
-     * 
+     *
      * @access public
      * @var string
      */
     public $href;
-    
+
     /**
      * Specifies the label for this NavigatorItem
-     * 
+     *
      * @access public
      * @var string
      */
     public $label;
-    
+
     /**
      * An icon representing this NavigatorItem
      *
      * @var string
      */
     public $icon;
-    
+
     /**
      * Represents the state of this item
      *
      * @var boolean
      */
     public $isPublished = true;
-    
+
     /**
      * Determines if this item should show in menus
      *
      * @var boolean
      */
     public $isInMenu = true;
-    
+
     /**
      * Indicates the order this item should fall in (positional; less is higher)
      *
      * @var int
      */
     public $order;
-    
+
     /**
      * Specifices if we are the current item or not
      */
@@ -77,14 +77,14 @@ class NavigatorItem extends TreeNode
 
     /**
      * Constructor
-     * 
+     *
      * @param string $href
      * @param string $label
      * @return NavigatorItem
      */
     public function __construct($href='', $label='')
     {
-        $this->id = md5(mt_rand());
+        $this->id = uniqid();
         $this->href = $href;
         $this->label = $label;
     }

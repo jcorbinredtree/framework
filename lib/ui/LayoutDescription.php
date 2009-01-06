@@ -300,9 +300,9 @@ class LayoutDescription
       * @param Navigation $module
       * @return void
       */
-     public function addTopNavigation(Navigation &$module)
+     public function addTopNavigation(NavigatorItem &$navigation)
      {
-         array_push($this->topNavigation, $module);
+         array_push($this->topNavigation, $navigation);
      }
 
      /**
@@ -321,9 +321,9 @@ class LayoutDescription
       * @param Navigation $module
       * @return void
       */
-     public function addLeftNavigation(Navigation &$module)
+     public function addLeftNavigation(NavigatorItem &$navigation)
      {
-         array_push($this->leftNavigation, $module);
+         array_push($this->leftNavigation, $navigation);
      }
 
      /**
@@ -342,9 +342,9 @@ class LayoutDescription
       * @param Navigation $module
       * @return void
       */
-     public function addRightNavigation(Navigation &$module)
+     public function addRightNavigation(NavigatorItem &$navigation)
      {
-         array_push($this->rightNavigation, $module);
+         array_push($this->rightNavigation, $navigation);
      }
 
      /**
@@ -363,9 +363,9 @@ class LayoutDescription
       * @param Navigation $module
       * @return void
       */
-     public function addBottomNavigation(Navigation &$module)
+     public function addBottomNavigation(NavigatorItem &$navigation)
      {
-         array_push($this->bottomNavigation, $module);
+         array_push($this->bottomNavigation, $navigation);
      }
 
      /**
