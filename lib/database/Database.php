@@ -316,6 +316,39 @@ class Database
     }
 
     /**
+     * Begins a transaction
+     *
+     * @see http://us.php.net/manual/en/pdo.begintransaction.php
+     * @return boolean true on success
+     */
+    public function transaction()
+    {
+        return $this->pdo->beginTransaction();
+    }
+
+    /**
+     * Rolls a transaction back
+     *
+     * @see http://us.php.net/manual/en/pdo.rollback.php
+     * @return boolean true on success
+     */
+    public function rollback()
+    {
+        return $this->pdo->rollBack();
+    }
+
+    /**
+     * Rolls a transaction back
+     *
+     * @see http://us.php.net/manual/en/pdo.commit.php
+     * @return boolean true on success
+     */
+    public function commit()
+    {
+        return $this->pdo->commit();
+    }
+
+    /**
      * Locks the specified tables.
      *
      * @access public
