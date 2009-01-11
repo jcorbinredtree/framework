@@ -485,10 +485,25 @@ class Application
 
         $config->initalize();
 
+        /**
+         * Initialize the Current object
+         */
+        Main::loadCurrent();
+
+        /*
+         * Load a user if there is one to load
+         */
+        Main::loadUser();
+
         /*
          * fill out the current ticket
          */
         Main::populateCurrent();
+
+        /*
+         * Perform access rules
+         */
+        Main::accessRules();
 
         LifeCycleManager::onRequestStart();
 
@@ -503,11 +518,6 @@ class Application
          * Has session timed out? (only for timed-sessions)
          */
         Main::sessionTimeout();
-
-        /*
-         * Load a user if there is one to load
-         */
-        Main::loadUser();
 
         /*
          * Restore any previously saved requests

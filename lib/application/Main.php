@@ -71,13 +71,13 @@ class Main
     }
 
     /**
-     * populates the current ticket
+     * Initialize the current component
      *
-     * @return  void
+     * @return void
      */
-    public static function populateCurrent()
+    public static function loadCurrent()
     {
-        global $current, $config;
+        global $current;
 
         $current = null;
         if (Session::get(AppConstants::LAST_CURRENT_KEY)) {
@@ -96,6 +96,16 @@ class Main
              */
             $current = new Current();
         }
+    }
+
+    /**
+     * populates the current ticket
+     *
+     * @return  void
+     */
+    public static function populateCurrent()
+    {
+        global $current, $config;
 
         $current->id = Params::request('id', 0);
 
@@ -178,20 +188,40 @@ class Main
         global $config, $current;
 
         $policy = PolicyManager::getInstance();
-        if ($user = $policy->restore()) {
-            $current->user =& $user;
-            Session::set(AppConstants::TIME_KEY, time());
-        }
-
-        if (!$current->component) {
+        $user = $policy->restore();
+        if (!$user) {
             return;
         }
 
-        if ((!$current->component->allows($current->action))                        /* current action denied */
-            || (!$current->user && Params::request(AppConstants::FORCE_LOGIN_KEY))) /* request to log in (but not user) */
-        {
-            $config->info('User not found, loading Application::login');
+        $current->user =& $user;
+        Session::set(AppConstants::TIME_KEY, time());
+    }
 
+    /**
+     * Defines the user access rules
+     *
+     * @return void
+     */
+    public static function accessRules()
+    {
+        global $current, $config;
+
+        $denied = false;
+
+        /* current action denied */
+        if (!$current->component->allows($current->action)) {
+            $config->info('permission denied by component access rules, loading Application::login');
+            $denied = true;
+        }
+
+        /* request to log in (but not user) */
+        if (!$current->user && Params::request(AppConstants::FORCE_LOGIN_KEY))
+        {
+            $config->info('permission denied by force-login rule, loading Application::login');
+            $denied = true;
+        }
+
+        if ($denied) {
             Application::login($current);
         }
     }
