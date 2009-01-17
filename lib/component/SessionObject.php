@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -36,18 +36,18 @@
 abstract class SessionObject extends RequestObject
 {
     /**
-     * Returns the current class as an object from the session 
+     * Returns the current class as an object from the session
      *
      * @access public
-     * @static 
+     * @static
      * @param string $key the key to retrieve
      * @return object the class instaniation or null if there is none
      */
-    public static function FromSession($key)
+    public static function fromSession($key)
     {
         return unserialize(Params::SESSION($key));
     }
-    
+
     /**
      * Saves the object into the session
      *
@@ -58,7 +58,7 @@ abstract class SessionObject extends RequestObject
     public function save($key)
     {
         $_SESSION[$key] = serialize($this);
-    }    
+    }
 }
 
 ?>
