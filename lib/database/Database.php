@@ -323,7 +323,25 @@ class Database
      */
     public function transaction()
     {
-        return $this->pdo->beginTransaction();
+        $msg = '';
+        $start = 0;
+        if ($this->time) {
+            $start = microtime(true);
+        }
+
+        $ret = $this->pdo->beginTransaction();
+
+        if ($this->time) {
+            $this->totalTime += ($start - microtime(true));
+        }
+
+        if ($this->log) {
+            global $config;
+
+            $config->info("TRANSACTION");
+        }
+
+        return $ret;
     }
 
     /**
@@ -334,7 +352,25 @@ class Database
      */
     public function rollback()
     {
-        return $this->pdo->rollBack();
+        $msg = '';
+        $start = 0;
+        if ($this->time) {
+            $start = microtime(true);
+        }
+
+        $ret = $this->pdo->rollBack();
+
+        if ($this->time) {
+            $this->totalTime += ($start - microtime(true));
+        }
+
+        if ($this->log) {
+            global $config;
+
+            $config->info("ROLLBACK");
+        }
+
+        return $ret;
     }
 
     /**
@@ -345,7 +381,26 @@ class Database
      */
     public function commit()
     {
-        return $this->pdo->commit();
+
+        $msg = '';
+        $start = 0;
+        if ($this->time) {
+            $start = microtime(true);
+        }
+
+        $ret = $this->pdo->commit();
+
+        if ($this->time) {
+            $this->totalTime += ($start - microtime(true));
+        }
+
+        if ($this->log) {
+            global $config;
+
+            $config->info("COMMIT");
+        }
+
+        return $ret;
     }
 
     /**
