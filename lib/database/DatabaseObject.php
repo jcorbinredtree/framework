@@ -127,48 +127,15 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $database->lock($this->table, Database::LOCK_WRITE);
         {
             $sql = "INSERT INTO `$this->table` SET ";
+            $sql .= $this->getFieldSetSQL();
 
-            $fields = $this->getFields();
-            $values = array();
-            foreach ($fields as $property => $field) {
-                $def = $database->getTableFieldDefinition($this->table, $field);
-                if (!$def) {
-                    continue;
-                }
-                if ($property == 'id' || $field == $this->key) {
-                    continue;
-                }
-
-                $def = $def[0];
-                switch (strtolower(Params::generic($def, 'native_type'))) {
-                    // TODO how about some symmetry with getColumnsSQL since it
-                    // transfers a number, but this mess uses fragile string
-                    // formatting (as in, disregards timezones for starters)
-                    case 'time':
-                        array_push($values,
-                            Database::formatTime($this->$property)
-                        );
-                        break;
-                    case 'date':
-                        array_push($values, date('Y-m-d', (int) $this->$property));
-                        break;
-                    case 'datetime':
-                    case 'timestamp':
-                        array_push($values, date('Y-m-d H:i:s', (int) $this->$property));
-                        break;
-                    default:
-                        array_push($values, $this->$property);
-                }
-
-                $sql .= "`$field`=?,";
-            }
-
-            $sql = substr($sql, 0, (strlen($sql) - 1));
             if (!$database->prepare($sql)) {
                 $config->error("could not prepare db object");
                 $database->unlock();
                 return false;
             }
+
+            $values = $this->getFieldSetValues();
 
             if (!$database->execute($values)) {
                 $config->error("could not execute insert on db object");
@@ -221,49 +188,15 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         global $database;
 
-        $fields = $this->getFields();
         $sql = "UPDATE `$this->table` SET ";
-        $values = array();
-        foreach ($fields as $property => $field) {
-            $def = $database->getTableFieldDefinition($this->table, $field);
-            if (!$def) {
-                continue;
-            }
-            if ($property == 'id' || $field == $this->key) {
-                continue;
-            }
-
-
-            $def = $def[0];
-            switch (strtolower(Params::generic($def, 'native_type'))) {
-                // TODO how about some symmetry with getColumnsSQL since it
-                // transfers a number, but this mess uses fragile string
-                // formatting (as in, disregards timezones for starters)
-                case 'time':
-                    array_push($values,
-                        Database::formatTime($this->$property)
-                    );
-                    break;
-                case 'date':
-                    array_push($values, date('Y-m-d', (int) $this->$property));
-                    break;
-                case 'datetime':
-                case 'timestamp':
-                    array_push($values, date('Y-m-d H:i:s', (int) $this->$property));
-                    break;
-                default:
-                    array_push($values, $this->$property);
-            }
-
-            $sql .= "`$field`=?,";
-        }
-
-        $sql = substr($sql, 0, (strlen($sql) - 1));
+        $sql .= $this->getFieldSetSQL();
         $sql .= " WHERE `$this->key` = ? LIMIT 1";
+
         if (!$database->prepare($sql)) {
             return false;
         }
 
+        $values = $this->getFieldSetValues();
         array_push($values, $this->id);
 
         if (! $database->execute($values)) {
@@ -337,6 +270,79 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         }
 
         return implode(', ', $sql);
+    }
+
+    /**
+     * Builds the needed SQL fragment to update or insert fields.
+     *
+     * @return string like "col1=:?, col2=:?"
+     */
+    public function getFieldSetSQL()
+    {
+        global $database;
+
+        $fields = $this->getFields();
+        $set = array();
+
+        foreach ($fields as $property => $column) {
+            $def = $database->getTableFieldDefinition($this->table, $column);
+            if (!$def) {
+                continue;
+            }
+            if ($property == 'id' || $column == $this->key) {
+                continue;
+            }
+
+            array_push($set, "`$column`=?");
+        }
+
+        return implode(', ', $set);
+    }
+
+    /**
+     * Returns a value list for executing a prepared sql statement containing
+     * the fragment returned by getFieldSetSQL.
+     *
+     * @return array value list
+     */
+    public function getFieldSetValues()
+    {
+        global $database;
+
+        $fields = $this->getFields();
+        $values = array();
+
+        foreach ($fields as $property => $column) {
+            $def = $database->getTableFieldDefinition($this->table, $column);
+            if (!$def) {
+                continue;
+            }
+            if ($property == 'id' || $column == $this->key) {
+                continue;
+            }
+
+            $def = $def[0];
+            switch (strtolower(Params::generic($def, 'native_type'))) {
+                // TODO how about some symmetry with getColumnsSQL since it
+                // transfers a number, but this mess uses fragile string
+                // formatting (as in, disregards timezones for starters)
+                case 'time':
+                    $value = Database::formatTime((int) $this->$property);
+                    break;
+                case 'date':
+                    $value = date('Y-m-d', (int) $this->$property);
+                    break;
+                case 'datetime':
+                case 'timestamp':
+                    $value = date('Y-m-d H:i:s', (int) $this->$property);
+                    break;
+                default:
+                    $value = $this->$property;
+            }
+            array_push($values, $value);
+        }
+
+        return $values;
     }
 
     /**

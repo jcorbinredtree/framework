@@ -132,14 +132,19 @@ class DatabaseObject_Test extends FrameworkTestCase
         $table = $dummy->table;
         $key = $dummy->key;
 
+        $fieldSet = $dummy->getFieldSetSQL();
+        $this->assertEqual(
+            $fieldSet,
+            '`a_date`=?, `a_date_time`=?, `a_time`=?, `mess`=?'
+        );
+
         { // Create a dummy
             $this->populate($dummy);
             // TODO populate really should be a method on the object or its meta
 
             $this->expectExact('lock', "LOCK TABLES $table WRITE");
             $this->expectExact('prepare',
-                "INSERT INTO `$table` SET ".
-                '`a_date`=?,`a_date_time`=?,`a_time`=?,`mess`=?'
+                "INSERT INTO `$table` SET $fieldSet"
             );
             $this->expectExact('execute', json_encode(array(
                 date('Y-m-d', (int) $dummy->aDate),
@@ -161,9 +166,7 @@ class DatabaseObject_Test extends FrameworkTestCase
         { // Change the dummy and save
             $this->populate($dummy);
             $this->expectExact('prepare',
-                "UPDATE `$table` SET ".
-                '`a_date`=?,`a_date_time`=?,`a_time`=?,`mess`=? '.
-                "WHERE `$key` = ? LIMIT 1"
+                "UPDATE `$table` SET $fieldSet WHERE `$key` = ? LIMIT 1"
             );
             $this->expectExact('execute', json_encode(array(
                 date('Y-m-d', (int) $dummy->aDate),
