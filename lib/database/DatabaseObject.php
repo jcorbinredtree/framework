@@ -39,8 +39,8 @@
  * becomes public $userName, this_other_field becomes public $thisOtherField,
  * and so on. It's likely that you have public properties that don't map to
  * field names, and that's not a problem.
- * 3.) Set $this->table to the appropriate table
- * 4.) Set $this->key to the name of your primary key field
+ * 3.) Define public static $table to the appropriate table
+ * 4.) Define public static $key to the name of your primary key field
  *
  * Relationships are generally up to you, but it's often enough to
  * just override the methods of IDatabaseObject as appropriate.
@@ -62,14 +62,14 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      *
      * @var string
      */
-    public $table = '';
+    static public $table = '';
 
     /**
      * The name of our primary key field
      *
      * @var string
      */
-    public $key = '';
+    static public $key = '';
 
     /**
      * A simple property to track memoization

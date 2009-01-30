@@ -268,8 +268,8 @@ class DBODummy extends DatabaseObject
     /**
      * Definitions
      */
-    public $table = 'dbodummy';
-    public $key = 'dbodummy_id';
+    static public $table = 'dbodummy';
+    static public $key = 'dbodummy_id';
     static public $CreateSpec = array(
         'dbodummy_id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
         'mess VARCHAR(255)',
