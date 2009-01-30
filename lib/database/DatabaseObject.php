@@ -242,18 +242,15 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $prefix = preg_replace('/[.]$/', '', $prefix);
 
         $sql = array();
-        $fields = $this->getFields();
+        $meta = $this->meta();
+        $fields = $meta->getColumnMap();
 
         foreach ($fields as $property => $column) {
             if ($column == $this->key) {
                 continue;
             }
-            $def = $database->getTableFieldDefinition($this->table, $column);
-            if (!$def) {
-                continue;
-            }
 
-            $def = $def[0];
+            $def = $meta->getColumnDefinition($column);
             switch (strtolower(Params::generic($def, 'native_type'))) {
                 // FIXME how about a timezone?
                 case 'time':
@@ -282,9 +279,8 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      */
     public function getFieldSetSQL($bindByName=true)
     {
-        global $database;
-
-        $fields = $this->getFields();
+        $meta = $this->meta();
+        $fields = $meta->getColumnMap();
         $set = array();
 
         foreach ($fields as $property => $column) {
@@ -294,10 +290,6 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 $value = '?';
             }
 
-            $def = $database->getTableFieldDefinition($this->table, $column);
-            if (!$def) {
-                continue;
-            }
             if ($property == 'id' || $column == $this->key) {
                 continue;
             }
@@ -319,21 +311,15 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      */
     public function getFieldSetValues($byName=true)
     {
-        global $database;
-
-        $fields = $this->getFields();
+        $meta = $this->meta();
+        $fields = $meta->getColumnMap();
         $values = array();
 
         foreach ($fields as $property => $column) {
-            $def = $database->getTableFieldDefinition($this->table, $column);
-            if (!$def) {
-                continue;
-            }
             if ($property == 'id' || $column == $this->key) {
                 continue;
             }
-
-            $def = $def[0];
+            $def = $meta->getColumnDefinition($column);
             switch (strtolower(Params::generic($def, 'native_type'))) {
                 // TODO how about some symmetry with getColumnsSQL since it
                 // transfers a number, but this mess uses fragile string
@@ -362,26 +348,16 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     }
 
     /**
-     * Returns an associative array mapping member namse to database columns
+     * Returns the meta object for this DatabaseObject's class
      *
-     * @return array
+     * @see DatabaseObject_Meta
+     *
+     * @return object DatabaseObject_Meta
      */
-    public function getFields()
+    public function &meta()
     {
-        $fields = get_class_vars(get_class($this));
-        $description = array();
-
-        foreach ($fields as $field => $value) {
-            if ($field == 'id') {
-                $description['id'] = $this->key;
-            } else {
-                $description[$field] = Params::propertyToField($field);
-            }
-        }
-
-        ksort($description);
-
-        return $description;
+        $meta = DatabaseObject_Meta::forClass(get_class($this));
+        return $meta;
     }
 
     /**

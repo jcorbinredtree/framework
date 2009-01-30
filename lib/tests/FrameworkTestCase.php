@@ -44,7 +44,7 @@ class FrameworkTestCase extends ASyncUnitTest
     {
         global $database;
 
-        $fields = $obj->getFields();
+        $fields = $obj->meta()->getColumnMap();
         foreach ($fields as $property => $field) {
             if ($field == $obj->key && isset($obj->$property)) {
                 continue;
