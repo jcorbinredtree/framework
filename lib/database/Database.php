@@ -547,7 +547,7 @@ class Database
      *
      * @return true upon success
      */
-    public function execute($param=null)
+    public function execute(&$param=null)
     {
         global $config;
 
@@ -556,11 +556,12 @@ class Database
             if (is_object($param)) {
                 $params = array();
                 $vars = get_object_vars($param);
-                foreach ($vars as $key => $val) {
+                foreach ($vars as $key => &$val) {
                     if (null !== $val) {
-                        $params[":$key"] = $val;
+                        $params[":$key"] =& $val;
                     }
                 }
+                unset($val);
             }
             else {
                 $params =& $param;
@@ -628,18 +629,19 @@ class Database
         {
             $args = array_slice(func_get_args(), 1);
             $index = 1;
-            for ($i = 0; $i < count($args); $i++) {
-                $arg = $args[$i];
+            foreach ($args as &$arg) {
                 if (is_array($arg)) {
-                    foreach ($arg as $a) {
+                    foreach ($arg as &$a) {
                         $this->bindValue($index++, $a);
                     }
+                    unset($a);
 
                     break;
-                }
+                } # else, not array
 
                 $this->bindValue($index++, $arg);
             }
+            unset($arg);
         }
 
         $res = $this->execute();
@@ -883,7 +885,7 @@ class Database
      * @param $value The value to bind to the parameter.
      * @return void
      */
-    public function bindValue($param, $value)
+    public function bindValue($param, &$value)
     {
         $this->statement->bindValue($param, $value);
 
