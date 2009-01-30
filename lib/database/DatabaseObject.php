@@ -135,6 +135,9 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 if (!$def) {
                     continue;
                 }
+                if ($property == 'id' || $field == $this->key) {
+                    continue;
+                }
 
                 $def = $def[0];
                 if ($this->isDate($def)) {
@@ -213,6 +216,10 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             if (!$def) {
                 continue;
             }
+            if ($property == 'id' || $field == $this->key) {
+                continue;
+            }
+
 
             $def = $def[0];
 
@@ -316,9 +323,9 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         foreach ($fields as $field => $value) {
             if ($field == 'id') {
                 $description['id'] = $this->key;
+            } else {
+                $description[$field] = Params::propertyToField($field);
             }
-
-            $description[$field] = Params::propertyToField($field);
         }
 
         return $description;
