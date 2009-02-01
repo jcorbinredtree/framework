@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -27,7 +27,7 @@
 
 /**
  * Represents a binary image
- * 
+ *
  * @static
  * @category     Image
  * @package        Utils
@@ -39,10 +39,10 @@ class Image
      *
      * @var string
      */
-    private $binary = '';    
-    
+    private $binary = '';
+
     public $width;
-    
+
     public $height;
 
     public function __construct($binary=null)
@@ -51,27 +51,23 @@ class Image
             $this->setBinary($binary);
         }
     }
-    
+
     public function __toString()
     {
-        if (get_magic_quotes_gpc()) {
-            return addslashes($this->binary);
-        }
-        
         return $this->binary;
     }
-    
+
     public function getBinary()
     {
         return $this->binary;
     }
-    
+
     public function setBinary($binary)
     {
         $this->binary = $binary;
-        
+
         if ($image = @imagecreatefromstring($this->binary)) {
-            $this->width = imagesx($image); 
+            $this->width = imagesx($image);
             $this->height = imagesy($image);
             return true;
         }
@@ -80,54 +76,54 @@ class Image
          * broken GD?
          */
         {
-            $name = tempnam('/tmp', 'broken-gd');        
+            $name = tempnam('/tmp', 'broken-gd');
             file_put_contents($name, $this->binary);
 
             list($this->width, $this->height) = getimagesize($name);
-            
+
             unlink($name);
-            
+
             return true;
         }
-        
+
         return false;
     }
-    
+
     public function limit($width, $height)
     {
         if ($this->width > $width) {
             $this->setBinary($this->useToolboxToLimit($width, 0));
         }
-                
-        if ($this->height > $height) { 
+
+        if ($this->height > $height) {
             $this->setBinary($this->useToolboxToLimit(0, $height));
         }
     }
-    
+
     public function download($mimeType)
     {
         $length = (int) strlen($this->binary);
         if (!$length) {
             return;
         }
-        
+
         header("Content-Type: $mimeType");
         header("Content-Length: $length");
 
         print $this->binary;
     }
-    
+
     private function useToolboxToLimit($width, $height)
     {
         $name = tempnam('/tmp', 'lame-toolbox');
-        
+
         file_put_contents($name, $this->binary);
-        
+
         $image = new Image_Toolbox($name);
-        $image->newOutputSize((int) $width, (int) $height, 1);        
-        
+        $image->newOutputSize((int) $width, (int) $height, 1);
+
         $binary = $image->asString();
-        
+
         /*
         header('Content-Type: image/jpeg');
         print $binary;
@@ -135,7 +131,7 @@ class Image
         */
 
         unlink($name);
-        
+
         return $binary;
     }
 }
