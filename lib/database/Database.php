@@ -329,6 +329,7 @@ class Database
             $start = microtime(true);
         }
 
+        $this->lazyLoad();
         $ret = $this->pdo->beginTransaction();
 
         if ($this->time) {
