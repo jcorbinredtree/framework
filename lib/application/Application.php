@@ -457,6 +457,8 @@ class Application
 
         Main::startSession();
 
+        $config->initalize();
+
         /*
          * This function should be defined in the site's index.php
          */
@@ -482,8 +484,6 @@ class Application
 
         $config->info("==> Framework v" . $config->getVersion() . ": New Request from " . Params::server('REMOTE_ADDR') .' - ' . Params::server('REQUEST_URI') . ' <==');
         Main::parseRequest();
-
-        $config->initalize();
 
         /**
          * Initialize the Current object
