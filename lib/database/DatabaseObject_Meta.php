@@ -89,6 +89,10 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
     private $columnMap; // Holds member <-> column map
     private $columnDef; // Holds database field definitions
 
+    # Holds sql strings
+    private $sqlCache;
+    private $customSqlCache;
+
     /**
      * Constructor
      *
@@ -103,6 +107,8 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
         global $config, $database;
 
         $this->class = $class;
+        $this->sqlCache = array();
+        $this->customSqlCache = array();
 
         // Introspect class's members
         $vars = get_class_vars($class);
@@ -207,6 +213,255 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Builds SQL statements
+     *
+     * @param op int the operation constant indicating what type of statement to build, one of:
+     *   DatabaseObject::SQL_SELECT
+     *   DatabaseObject::SQL_INSERT
+     *   DatabaseObject::SQL_UPDATE
+     *   DatabaseObject::SQL_DELETE
+     *
+     * @return string the SQL string
+     */
+    public function getSQL($op)
+    {
+        switch ($op) {
+        case DatabaseObject::SQL_SELECT:
+        case DatabaseObject::SQL_INSERT:
+        case DatabaseObject::SQL_UPDATE:
+        case DatabaseObject::SQL_DELETE:
+            if (! array_key_exists($op, $this->sqlCache)) {
+                $this->sqlCache[$op] = $this->buildSQL($op);
+            }
+            return $this->sqlCache[$op];
+        default:
+            throw new InvalidArgumentException("Invalid SQL op $op");
+        }
+    }
+
+    /**
+     * Private utility method called by getSQL to build a statment the first time around.
+     *
+     * @see getSQL
+     *
+     * @param op int as in getSQL
+     * @return string
+     */
+    private function buildSQL($op)
+    {
+        $table = $this->getTable();
+        $key = $this->getKey();
+
+        switch ($op) {
+        case DatabaseObject::SQL_SELECT:
+            return
+                "SELECT ".$this->getColumnsSQL(null) .
+                " FROM `$table` WHERE `$key` = ? LIMIT 1";
+        case DatabaseObject::SQL_INSERT:
+            return "INSERT INTO `$table` SET ".$this->getFieldSetSQL();
+        case DatabaseObject::SQL_UPDATE:
+            return
+                "UPDATE `$table` SET ".$this->getFieldSetSQL().
+                " WHERE `$key` = :$key LIMIT 1";
+        case DatabaseObject::SQL_DELETE:
+            return "DELETE FROM `$table` WHERE `$key` = ?";
+        }
+    }
+
+    /**
+     * Builds a list of colums for this class's fields, usable in a select statement.
+     *
+     * @param prefix string prefix to prepend to the column names, or null to return
+     *   bare column names. Optional, defaults to the table name as returned by
+     *   getTable())
+     * @param glue mixed if set to null, than an array of columns is returned,
+     *   otherwise glue is used to implode the array and a string is returned.
+     *   The default is to implode on ', '.
+     *
+     * @return mixed see glue parameter
+     */
+    public function getColumnsSQL($prefix='', $glue=', ')
+    {
+        if ( $prefix === null) {
+            $prefix = '';
+        } else {
+            if ($prefix == '') {
+                $prefix = $this->table;
+            } else {
+                # Why is this here... why shouldn't a consumer be able
+                # to specify "Database.Table" as a prefix?
+                $prefix = str_replace('.', '', $prefix);
+            }
+            $prefix = "`$prefix`.";
+        }
+
+        $sql = array();
+        $key = $this->getKey();
+        $fields = $this->getColumnMap();
+
+        foreach ($fields as $property => $column) {
+            if ($column == $key) {
+                continue;
+            }
+
+            $def = $this->getColumnDefinition($column);
+            switch (strtolower(Params::generic($def, 'native_type'))) {
+                // FIXME how about a timezone?
+                case 'time':
+                    array_push($sql, "TIME_TO_SEC($prefix`$column`) AS `$column`");
+                    break;
+                case 'date':
+                case 'datetime':
+                case 'timestamp':
+                    array_push($sql, "UNIX_TIMESTAMP($prefix`$column`) AS `$column`");
+                    break;
+                default:
+                    array_push($sql, "$prefix`$column` AS `$column`");
+            }
+        }
+
+        if ($glue) {
+            return implode($glue, $sql);
+        } else {
+            return $sql;
+        }
+    }
+
+    /**
+     * Builds the needed SQL fragment to update or insert fields.
+     *
+     * @param bindByName boolean whether to generate named bind parameters, true by
+     * default.
+     * @param glue mixed if set to null, than an array of columns is returned,
+     * otherwise glue is used to implode the array and a string is returned.
+     * The default is to implode on ', '.
+     *
+     * @return string like "col1=:?, col2=:?" or "col1=:col1, col2=:col2"
+     */
+    public function getFieldSetSQL($bindByName=true, $glue=', ')
+    {
+        $key = $this->getKey();
+        $fields = $this->getColumnMap();
+        $set = array();
+
+        foreach ($fields as $property => $column) {
+            if ($bindByName) {
+                $value = ":$column";
+            } else {
+                $value = '?';
+            }
+
+            if ($property == 'id' || $column == $key) {
+                continue;
+            }
+
+            array_push($set, "`$column`=$value");
+        }
+
+        if ($glue) {
+            return implode($glue, $set);
+        } else {
+            return $set;
+        }
+    }
+
+    /**
+     * Returns a value list for executing a prepared sql statement containing
+     * the fragment returned by getFieldSetSQL.
+     *
+     * @param object DatabaseObject the object whose propertise to bind
+     * @param byName boolean whether to return an associative array suitable for use
+     * with a sql fragment with named parameters, true by default.
+     *
+     * @return array value list
+     */
+    public function getFieldSetValues($object, $byName=true)
+    {
+        $key = $this->getKey();
+        $fields = $this->getColumnMap();
+        $values = array();
+
+        foreach ($fields as $property => $column) {
+            if ($property == 'id' || $column == $key) {
+                continue;
+            }
+            $def = $this->getColumnDefinition($column);
+            switch (strtolower(Params::generic($def, 'native_type'))) {
+                // TODO how about some symmetry with getColumnsSQL since it
+                // transfers a number, but this mess uses fragile string
+                // formatting (as in, disregards timezones for starters)
+                case 'time':
+                    $value = Database::formatTime((int) $object->$property);
+                    break;
+                case 'date':
+                    $value = date('Y-m-d', (int) $object->$property);
+                    break;
+                case 'datetime':
+                case 'timestamp':
+                    $value = date('Y-m-d H:i:s', (int) $object->$property);
+                    break;
+                default:
+                    $value = $object->$property;
+            }
+            if ($byName) {
+                $values[":$column"] = $value;
+            } else {
+                array_push($values, $value);
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Stores a custom sql statement
+     *
+     * Subclasses should use this when they build a custom database query, example:
+     *   class SomeClass extends DatabaseObject {
+     *     ...
+     *     const MY_CUSTOM_CODE=<unique integer>;
+     *     public function doSomething() {
+     *       $meta = $this->meta();
+     *       $sql = $meta->getCustomSQL(MY_CUSTOM_CODE);
+     *       if ($sql === false) {
+     *         $sql = buildSQLSomehowTheFirstTime();
+     *         $meta->setCustomSQL(MY_CUSTOM_CODE, $sql);
+     *       }
+     *       $database->doSomethingWith($sql);
+     *       ...
+     *     }
+     *     ...
+     *   };
+     *
+     * @see DatabaseObject_Meta::getCustomSQL
+     * @param code int code representing this statement
+     * @param sql string the statement
+     *
+     * @return void
+     */
+    public function setCustomSQL($code, $sql)
+    {
+        $this->sqlCache[$code] = $sql;
+    }
+
+    /**
+     * Retrieves a cusotm sql statement stored by setCustomSQL
+     *
+     * @see setCustomSQL
+     * @param code int as in setCustomSQL
+     * @return mixed if the code exists, the stored string is returned, otherwise
+     *   the false value.
+     */
+    public function getCustomSQL($code)
+    {
+        if (! array_key_exists($code, $this->customSqlCache)) {
+            return false;
+        } else {
+            return $this->customSqlCache[$code];
         }
     }
 }

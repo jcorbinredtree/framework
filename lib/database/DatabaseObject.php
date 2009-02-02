@@ -72,6 +72,14 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     static public $key = null;
 
     /**
+     * Statement type constantes used by DatabaseObject_Meta::getSQL
+     */
+    const SQL_SELECT=0;
+    const SQL_INSERT=1;
+    const SQL_UPDATE=2;
+    const SQL_DELETE=3;
+
+    /**
      * A simple property to track memoization
      *
      * @var array
@@ -130,8 +138,8 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         $database->lock($table, Database::LOCK_WRITE);
         {
-            $sql = "INSERT INTO `$table` SET ";
-            $sql .= $this->getFieldSetSQL();
+            $meta = $this->meta();
+            $sql = $meta->getSQL(DatabaseObject::SQL_INSERT);
 
             if (!$database->prepare($sql)) {
                 $config->error("could not prepare db object");
@@ -139,7 +147,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 return false;
             }
 
-            $values = $this->getFieldSetValues();
+            $values = $meta->getFieldSetValues($this);
 
             if (!$database->execute($values)) {
                 $config->error("could not execute insert on db object");
@@ -170,12 +178,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         global $database;
 
-        $meta = $this->meta();
-        $table = $meta->getTable();
-        $key = $meta->getKey();
-
-        $sql = "SELECT " . $this->getColumnsSQL() . " FROM `$table`";
-        $sql .= " WHERE `$key` = ? LIMIT 1";
+        $sql = $this->meta()->getSQL(DatabaseObject::SQL_SELECT);
         if ($database->executef($sql, $id) && $database->count()) {
             $row = $database->getRow();
             Params::ArrayToObject($row, $this);
@@ -200,15 +203,13 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $table = $meta->getTable();
         $key = $meta->getKey();
 
-        $sql = "UPDATE `$table` SET ";
-        $sql .= $this->getFieldSetSQL();
-        $sql .= " WHERE `$key` = :$key LIMIT 1";
+        $sql = $meta->getSQL(DatabaseObject::SQL_UPDATE);
 
         if (!$database->prepare($sql)) {
             return false;
         }
 
-        $values = $this->getFieldSetValues();
+        $values = $meta->getFieldSetValues($this);
         $values[":$key"] = $this->id;
 
         if (! $database->execute($values)) {
@@ -235,11 +236,9 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         global $database;
 
-        $meta = $this->meta();
-        $table = $meta->getTable();
-        $key = $meta->getKey();
+        $sql = $this->meta()->getSQL(DatabaseObject::SQL_DELETE);
 
-        if ($database->executef("DELETE FROM `$table` WHERE `$key` = ?", $this->id)) {
+        if ($database->executef($sql, $this->id)) {
             $this->id = -1;
             return true;
         }
@@ -247,124 +246,17 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         return false;
     }
 
+    /**
+     * DEPRECATED
+     */
     public function getColumnsSQL($prefix='')
     {
-        global $database;
-
-        $meta = $this->meta();
-
-        if (!$prefix) {
-            $prefix = $meta->getTable();
-        }
-
-        $prefix = preg_replace('/[.]$/', '', $prefix);
-
-        $sql = array();
-        $key = $meta->getKey();
-        $fields = $meta->getColumnMap();
-
-        foreach ($fields as $property => $column) {
-            if ($column == $key) {
-                continue;
-            }
-
-            $def = $meta->getColumnDefinition($column);
-            switch (strtolower(Params::generic($def, 'native_type'))) {
-                // FIXME how about a timezone?
-                case 'time':
-                    array_push($sql, "TIME_TO_SEC(`$prefix`.`$column`) AS `$column`");
-                    break;
-                case 'date':
-                case 'datetime':
-                case 'timestamp':
-                    array_push($sql, "UNIX_TIMESTAMP(`$prefix`.`$column`) AS `$column`");
-                    break;
-                default:
-                    array_push($sql, "`$prefix`.`$column` AS `$column`");
-            }
-        }
-
-        return implode(', ', $sql);
-    }
-
-    /**
-     * Builds the needed SQL fragment to update or insert fields.
-     *
-     * @param bindByName boolean whether to generate named bind parameters, true by
-     * default.
-     *
-     * @return string like "col1=:?, col2=:?" or "col1=:col1, col2=:col2"
-     */
-    public function getFieldSetSQL($bindByName=true)
-    {
-        $meta = $this->meta();
-        $key = $meta->getKey();
-        $fields = $meta->getColumnMap();
-        $set = array();
-
-        foreach ($fields as $property => $column) {
-            if ($bindByName) {
-                $value = ":$column";
-            } else {
-                $value = '?';
-            }
-
-            if ($property == 'id' || $column == $key) {
-                continue;
-            }
-
-            array_push($set, "`$column`=$value");
-        }
-
-        return implode(', ', $set);
-    }
-
-    /**
-     * Returns a value list for executing a prepared sql statement containing
-     * the fragment returned by getFieldSetSQL.
-     *
-     * @param byName boolean whether to return an associative array suitable for use
-     * with a sql fragment with named parameters, true by default.
-     *
-     * @return array value list
-     */
-    public function getFieldSetValues($byName=true)
-    {
-        $meta = $this->meta();
-        $key = $meta->getKey();
-        $fields = $meta->getColumnMap();
-        $values = array();
-
-        foreach ($fields as $property => $column) {
-            if ($property == 'id' || $column == $key) {
-                continue;
-            }
-            $def = $meta->getColumnDefinition($column);
-            switch (strtolower(Params::generic($def, 'native_type'))) {
-                // TODO how about some symmetry with getColumnsSQL since it
-                // transfers a number, but this mess uses fragile string
-                // formatting (as in, disregards timezones for starters)
-                case 'time':
-                    $value = Database::formatTime((int) $this->$property);
-                    break;
-                case 'date':
-                    $value = date('Y-m-d', (int) $this->$property);
-                    break;
-                case 'datetime':
-                case 'timestamp':
-                    $value = date('Y-m-d H:i:s', (int) $this->$property);
-                    break;
-                default:
-                    $value = $this->$property;
-            }
-            if ($byName) {
-                $values[":$column"] = $value;
-            } else {
-                array_push($values, $value);
-            }
-        }
-
-        return $values;
+        global $config;
+        $config->deprecatedComplain(
+            'DatabaseObject->getColumnsSQL()',
+            'DatabaseObject->meta()->getColumnsSQL()'
+        );
+        return $this->meta()->getColumnsSQL($prefix='');
     }
 
     /**

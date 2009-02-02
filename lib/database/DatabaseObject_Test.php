@@ -128,6 +128,31 @@ class DatabaseObject_Test extends FrameworkTestCase
             $this->assertEqual($colMap["aTime"],     "a_time");
             $this->assertEqual($colMap["mess"],      "mess");
             $this->assertEqual($colMap["id"],        "dbodummy_id");
+
+            $fieldSet = $meta->getFieldSetSQL();
+            $this->assertEqual($fieldSet, implode(', ', array(
+                '`a_date`=:a_date',
+                '`a_date_time`=:a_date_time',
+                '`a_time`=:a_time',
+                '`mess`=:mess'
+            )));
+
+            $pfx = "`$table`.";
+            $colSQL = $meta->getColumnsSQL();
+            $this->assertEqual($colSQL, implode(', ', array(
+                "UNIX_TIMESTAMP($pfx`a_date`) AS `a_date`",
+                "UNIX_TIMESTAMP($pfx`a_date_time`) AS `a_date_time`",
+                "TIME_TO_SEC($pfx`a_time`) AS `a_time`",
+                "$pfx`mess` AS `mess`"
+            )));
+
+            $colSQL = $meta->getColumnsSQL(null);
+            $this->assertEqual($colSQL, implode(', ', array(
+                "UNIX_TIMESTAMP(`a_date`) AS `a_date`",
+                "UNIX_TIMESTAMP(`a_date_time`) AS `a_date_time`",
+                "TIME_TO_SEC(`a_time`) AS `a_time`",
+                "`mess` AS `mess`"
+            )));
         }
 
         $drop = "DROP TABLE IF EXISTS $table";
@@ -144,14 +169,6 @@ class DatabaseObject_Test extends FrameworkTestCase
         $this->db->perform($create);
 
         $dummy = new DBODummy();
-
-        $fieldSet = $dummy->getFieldSetSQL();
-        $this->assertEqual($fieldSet, implode(', ', array(
-            '`a_date`=:a_date',
-            '`a_date_time`=:a_date_time',
-            '`a_time`=:a_time',
-            '`mess`=:mess'
-        )));
 
         { // Create a dummy
             $this->populate($dummy);
@@ -209,15 +226,8 @@ class DatabaseObject_Test extends FrameworkTestCase
             );
             $dummy = null;
 
-            $pfx = "`$table`.";
             $this->expectExact('prepare',
-                'SELECT '.implode(', ', array(
-                    "UNIX_TIMESTAMP($pfx`a_date`) AS `a_date`",
-                    "UNIX_TIMESTAMP($pfx`a_date_time`) AS `a_date_time`",
-                    "TIME_TO_SEC($pfx`a_time`) AS `a_time`",
-                    "$pfx`mess` AS `mess`"
-                )).
-                " FROM `$table` WHERE `$key` = ? LIMIT 1"
+                "SELECT $colSQL FROM `$table` WHERE `$key` = ? LIMIT 1"
             );
             $this->expectExact('executef', json_encode(array($dummyId)));
 

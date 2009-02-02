@@ -112,7 +112,7 @@ class QueryBuilder
                 $sql .= "$this->fields ";
             }
             else {
-                $sql .= "`$table`.`$key`," . $dbo->getColumnsSQL() . ' ';
+                $sql .= "`$table`.`$key`," . $meta->getColumnsSQL() . ' ';
             }
         }
         elseif ($this->fields) {
