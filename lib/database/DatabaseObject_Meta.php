@@ -359,6 +359,18 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
                 continue;
             }
 
+            $def = $this->getColumnDefinition($column);
+            switch (strtolower(Params::generic($def, 'native_type'))) {
+                case 'time':
+                    $value = "SEC_TO_TIME($value)";
+                    break;
+                case 'date':
+                case 'datetime':
+                case 'timestamp':
+                    $value = "FROM_UNIXTIME($value)";
+                    break;
+            }
+
             array_push($set, "`$column`=$value");
         }
 
@@ -389,28 +401,10 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
             if ($property == 'id' || $column == $key) {
                 continue;
             }
-            $def = $this->getColumnDefinition($column);
-            switch (strtolower(Params::generic($def, 'native_type'))) {
-                // TODO how about some symmetry with getColumnsSQL since it
-                // transfers a number, but this mess uses fragile string
-                // formatting (as in, disregards timezones for starters)
-                case 'time':
-                    $value = Database::formatTime((int) $object->$property);
-                    break;
-                case 'date':
-                    $value = date('Y-m-d', (int) $object->$property);
-                    break;
-                case 'datetime':
-                case 'timestamp':
-                    $value = date('Y-m-d H:i:s', (int) $object->$property);
-                    break;
-                default:
-                    $value = $object->$property;
-            }
             if ($byName) {
-                $values[":$column"] = $value;
+                $values[":$column"] =& $object->$property;
             } else {
-                array_push($values, $value);
+                array_push($values, &$object->$property);
             }
         }
 

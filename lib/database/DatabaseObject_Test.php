@@ -131,9 +131,9 @@ class DatabaseObject_Test extends FrameworkTestCase
 
             $fieldSet = $meta->getFieldSetSQL();
             $this->assertEqual($fieldSet, implode(', ', array(
-                '`a_date`=:a_date',
-                '`a_date_time`=:a_date_time',
-                '`a_time`=:a_time',
+                '`a_date`=FROM_UNIXTIME(:a_date)',
+                '`a_date_time`=FROM_UNIXTIME(:a_date_time)',
+                '`a_time`=SEC_TO_TIME(:a_time)',
                 '`mess`=:mess'
             )));
 
@@ -179,9 +179,9 @@ class DatabaseObject_Test extends FrameworkTestCase
                 "INSERT INTO `$table` SET $fieldSet"
             );
             $this->expectExact('execute', json_encode(array(
-                ":a_date"      => date('Y-m-d', (int) $dummy->aDate),
-                ":a_date_time" => date('Y-m-d H:i:s', (int) $dummy->aDateTime),
-                ":a_time"      => Database::formatTime($dummy->aTime),
+                ":a_date"      => (int) $dummy->aDate,
+                ":a_date_time" => (int) $dummy->aDateTime,
+                ":a_time"      => (int) $dummy->aTime,
                 ":mess"        => $dummy->mess
             )));
             $this->expectExact('lastInsertId', 1); // The table is virgin
@@ -201,9 +201,9 @@ class DatabaseObject_Test extends FrameworkTestCase
                 "UPDATE `$table` SET $fieldSet WHERE `$key` = :$key LIMIT 1"
             );
             $this->expectExact('execute', json_encode(array(
-                ":a_date"      => date('Y-m-d', (int) $dummy->aDate),
-                ":a_date_time" => date('Y-m-d H:i:s', (int) $dummy->aDateTime),
-                ":a_time"      => Database::formatTime($dummy->aTime),
+                ":a_date"      => (int) $dummy->aDate,
+                ":a_date_time" => (int) $dummy->aDateTime,
+                ":a_time"      => (int) $dummy->aTime,
                 ":mess"        => $dummy->mess,
                 ":dbodummy_id" => $dummy->id
             )));
