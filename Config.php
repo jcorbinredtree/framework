@@ -133,14 +133,14 @@ class Config
      *
      * @var String
      */
-    private $defaultComponent = 'Login';
+    private $defaultComponent = 'DefaultComponent';
 
     /**
      * The default or "home page" action
      *
      * @var String
      */
-    private $defaultAction = 'login';
+    private $defaultAction = 'home';
 
     /**
      * The default theme
