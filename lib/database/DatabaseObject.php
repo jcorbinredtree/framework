@@ -253,6 +253,13 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         return false;
     }
 
+    /**
+     * Tests whether the given column definition is a date field
+     *
+     * @see Database::getTableFieldDefinition
+     * @param def mixed the column definition
+     * @return boolean
+     */
     private function isDate($def)
     {
         switch (strtolower(Params::generic($def, 'native_type'))) {
@@ -297,6 +304,11 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         return substr($sql, 0, (strlen($sql) - 2));
     }
 
+    /**
+     * Returns an associative array mapping member namse to database columns
+     *
+     * @return array
+     */
     public function getFields()
     {
         $fields = get_class_vars(get_class($this));

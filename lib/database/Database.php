@@ -503,7 +503,8 @@ class Database
      * Executes a prepared statement
      *
      * @param mixed $param an object, assoc array mapping to the names of
-     * the bound columns
+     * the bound columns, or a normal array containing the values in order
+     *
      * @return true upon success
      */
     public function execute($param=null)
