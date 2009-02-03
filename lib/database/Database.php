@@ -177,7 +177,7 @@ class Database
         /*
          * parse the dsn
          */
-        if (preg_match('|^(.+?)[:][/]{2}(.+?)[:](.*?)[@](.+)[/](.+)|', $this->dsn, $matches)) {
+        if (preg_match('|^(.+?)://(.+?):(.*?)@(.+)/(.+)|', $sDsn, $matches)) {
             $dsn->driver = $matches[1];
             $dsn->user = $matches[2];
             $dsn->password = $matches[3];
