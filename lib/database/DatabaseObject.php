@@ -126,7 +126,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         $database->lock($this->table, Database::LOCK_WRITE);
         {
-            $sql = sprintf("INSERT INTO `%s` SET ", $this->table);
+            $sql = "INSERT INTO `$this->table` SET ";
 
             $fields = $this->getFields();
             $values = array();
@@ -282,26 +282,25 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         $prefix = preg_replace('/[.]$/', '', $prefix);
 
+        $sql = array();
         $fields = $this->getFields();
-        $sql = '';
-        foreach ($fields as $property => $field) {
-            $def = $database->getTableFieldDefinition($this->table, $field);
+
+        foreach ($fields as $property => $column) {
+            $def = $database->getTableFieldDefinition($this->table, $column);
             if (!$def) {
                 continue;
             }
 
             $def = $def[0];
             if ($this->isDate($def)) {
-                $sql .= "UNIX_TIMESTAMP(`$prefix`.`$field`) AS `$field`";
+                array_push($sql, "UNIX_TIMESTAMP(`$prefix`.`$column`) AS `$column`");
             }
             else {
-                $sql .= "`$prefix`.`$field`";
+                array_push($sql, "`$prefix`.`$column`");
             }
-
-            $sql .= ', ';
         }
 
-        return substr($sql, 0, (strlen($sql) - 2));
+        return implode(', ', $sql);
     }
 
     /**
