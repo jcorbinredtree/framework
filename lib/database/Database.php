@@ -155,20 +155,43 @@ class Database
     {
         global $config;
 
-        $this->dsn = ($dsn ? $dsn : $config->getDatabaseInfo());
-        $this->dbOptions = ($options ? $options : $config->getDatabaseOptions());
+        if (isset($dsn)) {
+            $this->dsn = $dsn;
+        } else {
+            $this->dsn = $config->getDatabaseInfo();
+        }
+
+        if (isset($options)) {
+            $this->dbOptions = $options;
+        } else {
+            $this->dbOptions = $config->getDatabaseOptions();
+        }
 
         $this->init();
     }
 
     /**
-     * A method for initializing the class
+     * Parses a DSN string
      *
-     * @access private
-     * @return void
+     * Expects a string formated like:
+     *   driver://user:password@host/db
+     * and returns an object with the following fields defined:
+     *   driver
+     *   user
+     *   password
+     *   host
+     *   db
+     * with the obvious correspondence with the string
+     *
+     * @param sDsn string, the dsn string
+     *
+     * @return Object the parsed dsn
      */
-    private function init()
-    {
+    public static function parseDSN($sDsn) {
+        if (! isset($sDsn) || ! $sDsn) {
+            return null;
+        }
+
         global $config;
 
         $dsn = new stdClass();
@@ -183,13 +206,23 @@ class Database
             $dsn->password = $matches[3];
             $dsn->host = $matches[4];
             $dsn->db = $matches[5];
-        }
-        else {
+        } else {
             $config->fatal("Unable to parse the dsn: $this->dsn");
             die('Unable to parse dsn');
         }
 
-        $this->parsedDSN = $dsn;
+        return $dsn;
+    }
+
+    /**
+     * A method for initializing the class
+     *
+     * @access private
+     * @return void
+     */
+    private function init()
+    {
+        $this->parsedDSN = Database::parseDSN($this->dsn);
     }
 
     private function lazyLoad()
