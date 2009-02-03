@@ -92,22 +92,8 @@ class Main
     {
         global $current;
 
-        $current = null;
         if (Session::get(AppConstants::LAST_CURRENT_KEY)) {
             $current = Application::popSavedCurrent();
-        }
-        else {
-            /**
-             * The current variable is the third of three global variables
-             * in the application. This variable holds the current state
-             * of the application such as the physical path, and messages
-             * between the application and user.
-             *
-             * @global Current $current
-             * @see Current;
-             * @var Current
-             */
-            $current = new Current();
         }
     }
 

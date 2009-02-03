@@ -477,6 +477,19 @@ class Application
         }
 
         /**
+         * The current variable is the third of three global variables
+         * in the application. This variable holds the current state
+         * of the application such as the physical path, and messages
+         * between the application and user.
+         *
+         * @global Current $current
+         * @see Current;
+         * @var Current
+         */
+        global $current;
+        $current = new Current();
+
+        /**
          * Two of three global variables. The entire
          * application revolves around the database,
          * so a good database class is indispensible.
@@ -495,7 +508,7 @@ class Application
         $config->info("==> Framework v" . $config->getVersion() . ": New Request from " . Params::server('REMOTE_ADDR') .' - ' . Params::server('REQUEST_URI') . ' <==');
         Main::parseRequest();
 
-        // Initialize the Current object
+        // Restores the Current object from the session if needed
         Main::loadCurrent();
 
         // Load a user if there is one to load
