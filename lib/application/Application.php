@@ -142,9 +142,7 @@ class Application
             include_once "$config->fwAbsPath/lib/util/File.php";
         }
 
-        /*
-         * autoload classes at the current->path
-         */
+        // autoload classes at the current->path
         if ($current) {
             Application::$class = $class;
             File::find(array('Application', 'findClass'), $current->path);
@@ -154,11 +152,28 @@ class Application
             }
         }
 
-        $targets = array("$config->absPath/SITE/local/components", "$config->fwAbsPath/components",  // components
-        				 "$config->absPath/SITE/local/modules", "$config->fwAbsPath/modules",        // modules
-        				 "$config->absPath/SITE/local/lib", "$config->fwAbsPath/lib",                // lib
-                         "$config->absPath/SITE/local/themes", "$config->fwAbsPath/themes",          // themes
-                         "$config->absPath/SITE/local/extensions", "$config->fwAbsPath/extensions"); // extensions
+        $targets = array(
+            // components
+            "$config->absPath/SITE/local/components",
+            "$config->fwAbsPath/components",
+
+            // modules
+            "$config->absPath/SITE/local/modules",
+            "$config->fwAbsPath/modules",
+
+            // lib
+            "$config->absPath/SITE/local/lib",
+            "$config->fwAbsPath/lib",
+
+            // themes
+            "$config->absPath/SITE/local/themes",
+            "$config->fwAbsPath/themes",
+
+            // extensions
+            "$config->absPath/SITE/local/extensions",
+            "$config->fwAbsPath/extensions"
+        );
+
         foreach ($targets as $target) {
             $config->debug("examining $target");
 
@@ -434,9 +449,7 @@ class Application
     {
         Application::requireMinimum();
 
-        /*
-         * load app data
-         */
+        // load app data
         ApplicationData::initialize();
     }
 
@@ -447,7 +460,6 @@ class Application
 
     /**
      * Starts the web application
-     *
      */
     public static function startWeb()
     {
@@ -459,9 +471,7 @@ class Application
 
         $config->initalize();
 
-        /*
-         * This function should be defined in the site's index.php
-         */
+        // This function should be defined in the site's index.php
         if (function_exists('onConfig')) {
             onConfig($config);
         }
@@ -485,50 +495,36 @@ class Application
         $config->info("==> Framework v" . $config->getVersion() . ": New Request from " . Params::server('REMOTE_ADDR') .' - ' . Params::server('REQUEST_URI') . ' <==');
         Main::parseRequest();
 
-        /**
-         * Initialize the Current object
-         */
+        // Initialize the Current object
         Main::loadCurrent();
 
-        /*
-         * Load a user if there is one to load
-         */
+        // Load a user if there is one to load
         Main::loadUser();
 
-        /*
-         * fill out the current ticket
-         */
+        // fill out the current ticket
         Main::populateCurrent();
 
-        /*
-         * Perform access rules
-         */
+        // Perform access rules
         Main::accessRules();
 
         LifeCycleManager::onRequestStart();
 
         /*
-         * if this should be a secure request, make sure we're
+         * If this should be a secure request, make sure we're
          * using https. if we're not we need to come back to this
          * request securely.
          */
         Main::secureRequest();
 
-        /*
-         * Has session timed out? (only for timed-sessions)
-         */
+        // Has session timed out? (only for timed-sessions)
         Main::sessionTimeout();
 
-        /*
-         * Restore any previously saved requests
-         */
+        // Restore any previously saved requests
         Main::restoreRequest();
 
         Main::setLanguageAndTheme();
 
-        /*
-         * debug values
-         */
+        // debug values
         if ($config->isDebugMode()) {
             $config->debug('GET: ' . print_r($_GET, true));
             $config->debug('POST: ' . print_r($_POST, true));
