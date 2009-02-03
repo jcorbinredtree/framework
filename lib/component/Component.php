@@ -98,11 +98,11 @@ abstract class Component extends ActionProvider
      */
     final public static function getInstance($c)
     {
-        if (array_key_exists($c, Component::$instances)) {
-            return Component::$instances[$c];
+        if (! array_key_exists($c, Component::$instances)) {
+            Component::$instances[$c] = new $c();
         }
 
-        return Component::$instances[$c] = new $c();
+        return Component::$instances[$c];
     }
 
     /**
