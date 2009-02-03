@@ -86,12 +86,14 @@ catch (Exception $ex) {
 
 if ($config->isDebugMode()) {
     $pageTime = (microtime(true) - $__start);
-    $databaseTime = $database->getTotalTime();
-    $databaseQueries = $database->getTotalQueries();
     $message = '==> Request Served in ' . (sprintf('%.4f', $pageTime)) . ' seconds; ';
-    $message .= $database->getTotalQueries() . ' queries executed in ';
-    $message .= sprintf('%.4f', $database->getTotalTime()) . ' seconds, ';
-    $message .= sprintf('%.2f', (($databaseTime / $pageTime) * 100)) . '% of total time <==';
+    if (isset($database)) {
+        $databaseTime = $database->getTotalTime();
+        $databaseQueries = $database->getTotalQueries();
+        $message .= $database->getTotalQueries() . ' queries executed in ';
+        $message .= sprintf('%.4f', $database->getTotalTime()) . ' seconds, ';
+        $message .= sprintf('%.2f', (($databaseTime / $pageTime) * 100)) . '% of total time <==';
+    }
 
     $config->info($message);
 }
