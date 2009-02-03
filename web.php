@@ -44,17 +44,44 @@ try {
     Application::startWeb();
 }
 catch (Exception $ex) {
-    LifeCycleManager::onException($ex);
+    try {
+        LifeCycleManager::onException($ex);
 
-    @ob_end_clean();
+        @ob_end_clean();
 
-    $policy = PolicyManager::getInstance();
-    $theme = $policy->getExceptionTheme();
-    $layout = new LayoutDescription();
-    $layout->content = $ex;
-    $theme->onDisplay($layout);
+        # stuff all output in case the broken catcher is broken
+        ob_start();
 
-    print $theme->getBuffer();
+        $policy = PolicyManager::getInstance();
+        $theme = $policy->getExceptionTheme();
+        $layout = new LayoutDescription();
+        $layout->content = $ex;
+        $theme->onDisplay($layout);
+
+        print $theme->getBuffer();
+
+        # it managed to do its thing, so let it through
+        ob_end_flush();
+    } catch (Exception $rex) {
+        # Throw away any output that the failed exception handling created
+        @ob_end_clean();
+
+        # Hopelessly broken policy/theme/whatever, we'll just do it ourselves
+        $l = array(
+            'Broken exception handler' => $rex,
+            'Original exception' => $ex
+        );
+        foreach ($l as $title => $e) {
+            print "<p><h1>$title:</h1>\n";
+            print $e->getMessage() . "<br />\n";
+            print "Trace:<ol>\n";
+            print "  <li>".htmlentities($e->getFile()).':'.$e->getLine()."</li>\n";
+            foreach ($e->getTrace() as $frame) {
+            print "  <li>".htmlentities($frame['file']).':'.$frame['line']."</li>\n";
+            }
+            print "</ol></p>\n";
+        }
+    }
 }
 
 if ($config->isDebugMode()) {
