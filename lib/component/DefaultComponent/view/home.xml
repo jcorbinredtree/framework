@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+	<h1>welcome ${=this.where}</h1>
+</template>
