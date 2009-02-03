@@ -1,0 +1,24 @@
+RedTree Systems Framework - http://framework.redtreesystems.com
+
+The latest version currently resides at
+  git://github.com/jcorbinredtree/framework.git
+
+
+Basic site layout:
+  site_document_root/
+    SITE/
+      framework/ -- this repository
+      local/     -- site specific components, modules, themes, etc
+      writable/  -- contains resources writable by the webserver
+
+
+Example site initialization:
+  % mkdir site && cd site
+  % git init
+  % mkdir -p SITE/{local,writable}
+  % echo 'cache/*' > SITE/writable/.gitignore
+  % git add SITE/writable
+  % git submodule add git://github.com/jcorbinredtree/framework.git SITE/framework
+  % cp SITE/framework/index.php .
+  % git add index.php
+  % git commit -m 'Initial commit'
