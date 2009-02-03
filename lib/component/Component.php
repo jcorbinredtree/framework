@@ -89,6 +89,13 @@ abstract class Component extends ActionProvider
      */
     private static $instances = array();
 
+    /*
+     * Returns the singleton instance of the given component class
+     *
+     * @param c string class name
+     *
+     * @return Object a sub class of Component
+     */
     final public static function getInstance($c)
     {
         if (array_key_exists($c, Component::$instances)) {
