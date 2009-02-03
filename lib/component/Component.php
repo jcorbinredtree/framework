@@ -142,7 +142,8 @@ abstract class Component extends ActionProvider
      */
     static public function load($component)
     {
-        $c = call_user_func(array($component, 'getInstance'), $component);
+        $c = Component::getInstance($component);
+
         Application::setPath($c->getPath());
 
         return $c;
