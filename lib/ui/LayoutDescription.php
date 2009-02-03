@@ -121,261 +121,261 @@ class LayoutDescription
      *
      * @var array
      */
-     public $scripts = array();
+    public $scripts = array();
 
-     /**
-      * The stylesheets to include
-      *
-      * @var array
-      */
-     public $stylesheets = array();
+    /**
+     * The stylesheets to include
+     *
+     * @var array
+     */
+    public $stylesheets = array();
 
-     /**
-      * Breadcrumbs used for this page
-      *
-      * @var array
-      */
-     public $breadCrumbs;
+    /**
+     * Breadcrumbs used for this page
+     *
+     * @var array
+     */
+    public $breadCrumbs;
 
-     /**
-      * The current component
-      *
-      * @var Component
-      */
-     public $component;
+    /**
+     * The current component
+     *
+     * @var Component
+     */
+    public $component;
 
-     /**
-      * The current component's buffer
-      *
-      * @var string
-      */
-     public $content;
+    /**
+     * The current component's buffer
+     *
+     * @var string
+     */
+    public $content;
 
-     /**
-      * The current top level item
-      *
-      * @var NavigatorItem
-      */
-     public $topLevelItem;
+    /**
+     * The current top level item
+     *
+     * @var NavigatorItem
+     */
+    public $topLevelItem;
 
-     /**
-      * The current item
-      *
-      * @var NavigatorItem
-      */
-     public $currentItem;
+    /**
+     * The current item
+     *
+     * @var NavigatorItem
+     */
+    public $currentItem;
 
-     /**
-      * Determines if this is the home page
-      *
-      * @var boolean
-      */
-     public $isHomePage;
+    /**
+     * Determines if this is the home page
+     *
+     * @var boolean
+     */
+    public $isHomePage;
 
-     /**
-      * Determines if this is a popup window
-      *
-      * @var boolean
-      */
-     public $isPopup;
+    /**
+     * Determines if this is a popup window
+     *
+     * @var boolean
+     */
+    public $isPopup;
 
-     /**
-      * The search phrase
-      *
-      * @var string
-      */
-     public $searchWord;
+    /**
+     * The search phrase
+     *
+     * @var string
+     */
+    public $searchWord;
 
-     /**
-      * Gets the current set of warnings
-      *
-      * @return array
-      */
-     public function getWarnings()
-     {
-         global $current;
+    /**
+     * Gets the current set of warnings
+     *
+     * @return array
+     */
+    public function getWarnings()
+    {
+        global $current;
 
-         return $current->getWarnings();
-     }
+        return $current->getWarnings();
+    }
 
-     /**
-      * Gets the current set of notices
-      *
-      * @return array
-      */
-     public function getNotices()
-     {
-         global $current;
+    /**
+     * Gets the current set of notices
+     *
+     * @return array
+     */
+    public function getNotices()
+    {
+        global $current;
 
-         return $current->getNotices();
-     }
+        return $current->getNotices();
+    }
 
-     /**
-      * Adds a top module
-      *
-      * @param Module $module
-      * @return void
-      */
-     public function addTopModule(Module &$module)
-     {
-         array_push($this->topModules, $module);
-     }
+    /**
+     * Adds a top module
+     *
+     * @param Module $module
+     * @return void
+     */
+    public function addTopModule(Module &$module)
+    {
+        array_push($this->topModules, $module);
+    }
 
-     /**
-      * Gets the modules meant for the top of the page
-      *
-      * @return array
-      */
-     public function getTopModules()
-     {
-         return array_merge($this->topModules, LifeCycleManager::onGetTopModules());
-     }
+    /**
+     * Gets the modules meant for the top of the page
+     *
+     * @return array
+     */
+    public function getTopModules()
+    {
+        return array_merge($this->topModules, LifeCycleManager::onGetTopModules());
+    }
 
-     /**
-      * Adds a left module
-      *
-      * @param Module $module
-      * @return void
-      */
-     public function addLeftModule(Module &$module)
-     {
-         array_push($this->leftModules, $module);
-     }
+    /**
+     * Adds a left module
+     *
+     * @param Module $module
+     * @return void
+     */
+    public function addLeftModule(Module &$module)
+    {
+        array_push($this->leftModules, $module);
+    }
 
-     /**
-      * Gets the modules meant for the left of the page
-      *
-      * @return array
-      */
-     public function getLeftModules()
-     {
-        return array_merge($this->leftModules, LifeCycleManager::onGetLeftModules());
-     }
+    /**
+     * Gets the modules meant for the left of the page
+     *
+     * @return array
+     */
+    public function getLeftModules()
+    {
+       return array_merge($this->leftModules, LifeCycleManager::onGetLeftModules());
+    }
 
-     /**
-      * Adds a right module
-      *
-      * @param Module $module
-      * @return void
-      */
-     public function addRightModule(Module &$module)
-     {
-         array_push($this->rightModules, $module);
-     }
+    /**
+     * Adds a right module
+     *
+     * @param Module $module
+     * @return void
+     */
+    public function addRightModule(Module &$module)
+    {
+        array_push($this->rightModules, $module);
+    }
 
-     /**
-      * Gets the modules meant for the right of the page
-      *
-      * @return array
-      */
-     public function getRightModules()
-     {
-         return array_merge($this->rightModules, LifeCycleManager::onGetRightModules());
-     }
+    /**
+     * Gets the modules meant for the right of the page
+     *
+     * @return array
+     */
+    public function getRightModules()
+    {
+        return array_merge($this->rightModules, LifeCycleManager::onGetRightModules());
+    }
 
-     /**
-      * Adds a bottom module
-      *
-      * @param Module $module
-      * @return void
-      */
-     public function addBottomModule(Module &$module)
-     {
-         array_push($this->bottomModules, $module);
-     }
+    /**
+     * Adds a bottom module
+     *
+     * @param Module $module
+     * @return void
+     */
+    public function addBottomModule(Module &$module)
+    {
+        array_push($this->bottomModules, $module);
+    }
 
-     /**
-      * Gets the modules meant for the bottom of the page
-      *
-      * @return array
-      */
-     public function getBottomModules()
-     {
-        return array_merge($this->bottomModules, LifeCycleManager::onGetBottomModules());
-     }
+    /**
+     * Gets the modules meant for the bottom of the page
+     *
+     * @return array
+     */
+    public function getBottomModules()
+    {
+       return array_merge($this->bottomModules, LifeCycleManager::onGetBottomModules());
+    }
 
-     /**
-      * Adds a top module
-      *
-      * @param Navigation $module
-      * @return void
-      */
-     public function addTopNavigation(NavigatorItem &$navigation)
-     {
-         array_push($this->topNavigation, $navigation);
-     }
+    /**
+     * Adds a top module
+     *
+     * @param Navigation $module
+     * @return void
+     */
+    public function addTopNavigation(NavigatorItem &$navigation)
+    {
+        array_push($this->topNavigation, $navigation);
+    }
 
-     /**
-      * Gets the navigation meant for the top of the page
-      *
-      * @return array
-      */
-     public function getTopNavigation()
-     {
-         return array_merge($this->topNavigation, LifeCycleManager::onGetTopNavigation());
-     }
+    /**
+     * Gets the navigation meant for the top of the page
+     *
+     * @return array
+     */
+    public function getTopNavigation()
+    {
+        return array_merge($this->topNavigation, LifeCycleManager::onGetTopNavigation());
+    }
 
-     /**
-      * Adds a left module
-      *
-      * @param Navigation $module
-      * @return void
-      */
-     public function addLeftNavigation(NavigatorItem &$navigation)
-     {
-         array_push($this->leftNavigation, $navigation);
-     }
+    /**
+     * Adds a left module
+     *
+     * @param Navigation $module
+     * @return void
+     */
+    public function addLeftNavigation(NavigatorItem &$navigation)
+    {
+        array_push($this->leftNavigation, $navigation);
+    }
 
-     /**
-      * Gets the navigation meant for the left of the page
-      *
-      * @return array
-      */
-     public function getLeftNavigation()
-     {
-        return array_merge($this->leftNavigation, LifeCycleManager::onGetLeftNavigation());
-     }
+    /**
+     * Gets the navigation meant for the left of the page
+     *
+     * @return array
+     */
+    public function getLeftNavigation()
+    {
+       return array_merge($this->leftNavigation, LifeCycleManager::onGetLeftNavigation());
+    }
 
-     /**
-      * Adds a right module
-      *
-      * @param Navigation $module
-      * @return void
-      */
-     public function addRightNavigation(NavigatorItem &$navigation)
-     {
-         array_push($this->rightNavigation, $navigation);
-     }
+    /**
+     * Adds a right module
+     *
+     * @param Navigation $module
+     * @return void
+     */
+    public function addRightNavigation(NavigatorItem &$navigation)
+    {
+        array_push($this->rightNavigation, $navigation);
+    }
 
-     /**
-      * Gets the navigation meant for the right of the page
-      *
-      * @return array
-      */
-     public function getRightNavigation()
-     {
-         return array_merge($this->rightNavigation, LifeCycleManager::onGetRightNavigation());
-     }
+    /**
+     * Gets the navigation meant for the right of the page
+     *
+     * @return array
+     */
+    public function getRightNavigation()
+    {
+        return array_merge($this->rightNavigation, LifeCycleManager::onGetRightNavigation());
+    }
 
-     /**
-      * Adds a bottom module
-      *
-      * @param Navigation $module
-      * @return void
-      */
-     public function addBottomNavigation(NavigatorItem &$navigation)
-     {
-         array_push($this->bottomNavigation, $navigation);
-     }
+    /**
+     * Adds a bottom module
+     *
+     * @param Navigation $module
+     * @return void
+     */
+    public function addBottomNavigation(NavigatorItem &$navigation)
+    {
+        array_push($this->bottomNavigation, $navigation);
+    }
 
-     /**
-      * Gets the navigation meant for the bottom of the page
-      *
-      * @return array
-      */
-     public function getBottomNavigation()
-     {
-        return array_merge($this->bottomNavigation, LifeCycleManager::onGetBottomNavigation());
-     }
+    /**
+     * Gets the navigation meant for the bottom of the page
+     *
+     * @return array
+     */
+    public function getBottomNavigation()
+    {
+       return array_merge($this->bottomNavigation, LifeCycleManager::onGetBottomNavigation());
+    }
 }
 ?>
