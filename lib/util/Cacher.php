@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -26,7 +26,7 @@
  */
 
 /**
- * Defines standard methods the system may use to ascertain 
+ * Defines standard methods the system may use to ascertain
  * information about this objects subclass.
  *
  * @static
@@ -37,10 +37,10 @@ class Cacher
 {
     /**
      * Constructor; Private
-     * 
+     *
      * @access private
      * @return Cacher a new instance
-     */    
+     */
     private function __construct()
     {
 
@@ -48,11 +48,11 @@ class Cacher
 
     /*
      * @TODO: implement theme + request caching
-     */ 
+     */
 
     /**
      * Writes the given component's buffer to the disk, for later retreival.
-     * 
+     *
      * @static
      * @access public
      * @param ICacheable $obj the cachable object
@@ -71,9 +71,9 @@ return false;
         if (!$path) {
             return false;
         }
-        
+
         $file = "$path/cache";
-        
+
         if (!file_put_contents($file, serialize($data))) {
             $config->error("couldn't create file $file");
             return false;
@@ -86,7 +86,7 @@ return false;
 
     /**
      * Returns the date in unix time our copy of this component/action cache.
-     * 
+     *
      * @static
      * @access public
      * @param ICacheable $obj the ICacheable object
@@ -104,7 +104,7 @@ return false;
         if (!$path) {
             return false;
         }
-        
+
         $file = "$path/cache";
 
         return (file_exists($file) ? filemtime($file) : false);
@@ -112,7 +112,7 @@ return false;
 
     /**
      * Uses the cache, if available.
-     * 
+     *
      * @static
      * @access public
      * @param ICacheable $obj the object we're operating on
@@ -121,7 +121,7 @@ return false;
     public static function useCache(ICacheable &$obj)
     {
         global $config;        return false;
-        
+
         if (!($cacheModifiedTime = Cacher::isCached($obj))) {
             return false;
         }
@@ -135,18 +135,18 @@ return false;
             return false;
         }
 
-        $config->info("using cache for $path");        
-        
+        $config->info("using cache for $path");
+
         return $buffer;
     }
-    
+
     /**
      * This method is usually called when the current action is a candidate for
      * complete caching, such as non or semi dynamic javascript files or images.
      * It will always set the Last-Modified and Expires headers, and if an
      * If-Modified-Since header was sent, it will return 304 as appropriate.
      * This does require apache 2.0 handler compliation to function.
-     * 
+     *
      * @param int $ourModificationTime the most recent modification date of the item you
      * wish to cache
      * @param int $expires the unix time from now you want the item to expire. the default
@@ -158,7 +158,7 @@ return false;
         if (!function_exists('apache_request_headers')) {
             return;
         }
-        
+
         /*
          * @WARNING: this is apache-specific
          */
@@ -166,9 +166,9 @@ return false;
         $ifModifiedSince = (isset($headers['If-Modified-Since'])
                            ? strtotime($headers['If-Modified-Since'])
                            : 0);
-                                                
+
         header('Pragma: cache');
-        header('Cache-Control: private');                                                
+        header('Cache-Control: private');
         header("Last-Modified: " . gmdate("D, d M Y H:i:s", $ourModificationTime) . " GMT");
         header('Expires: '       . gmdate("D, d M Y H:i:s", (time() + $expires))  . " GMT");
 
@@ -177,15 +177,15 @@ return false;
         {
             header('HTTP/1.1 304 Not Modified');
             exit(0);
-        }        
+        }
     }
-    
+
     /**
      * Returns the last update date of the specified table.
      * Note that this is MySQL specific, so if your target db changes,
      * you'll want to modify this accordingly, if a similar
      * facility exists at all.
-     * 
+     *
      * @static
      * @access public
      * @param string $table the name of a table
@@ -210,7 +210,7 @@ return false;
         }
 
         return 0;
-    }    
+    }
 
     /**
      * A convenience method that returns true if the specified
@@ -218,14 +218,14 @@ return false;
      * that this is MySQL specific, so if your target db changes,
      * you'll want to modify this accordingly, if a similar
      * facility exists at all.
-     * 
+     *
      * @static
      * @access public
      * @param mixed $tables the name of a table, or an array of
      * table names
      * @param int $time the time argument in unix time
      * @return boolean true if the given table(s) have been
-     * modified since $time    
+     * modified since $time
      */
     public static function tablesModifiedSince($tables, $time)
     {
@@ -242,7 +242,7 @@ return false;
             while ($row = $database->getObject('stdClass', false)) {
                 if (in_array($row->name, $tables)) {
                     $updateTime = strtotime($row->update_time);
-            
+
                     if ($updateTime < $time) {
                         return true;
                     }
@@ -259,7 +259,7 @@ return false;
      * Builds a standardized directory structure given an object code and action.
      * This takes the values of $_GET and $_POST into account for a truly unique
      * cache per request.
-     * 
+     *
      * @static
      * @access private
      * @param ICacheable $obj the object that implements ICacheable
@@ -272,21 +272,21 @@ return false;
         $params = get_class($obj);
         $request = array_merge($_GET, $_POST);
 
-        foreach ($request as $name => $value) {            
+        foreach ($request as $name => $value) {
             $params .= (is_array($name) ? implode(',', $name) : $name);
             $params .= (is_array($value) ? implode(',', $value) : $value);
         }
 
         $params .= ($current->user ? $current->user->id : -1);
-        
-        $path = $config->absPath . "/cache/objects/" . md5($params);             
+
+        $path = $config->absPath . "/cache/objects/" . md5($params);
         if (!file_exists($path)) {
             if (!mkdir($path, 0775, true)) {
                 $config->error("unable to make dir $path");
                 return false;
             }
         }
-        
+
         return $path;
     }
 }

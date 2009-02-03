@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -38,28 +38,28 @@ class Stage
      */
     private function __construct()
     {
-        
+
     }
-    
+
     /**
      * The view stage
-     * 
+     *
      * @var int
      */
     const VIEW = 1;
-    
+
     /**
      * The validate stage
-     * 
+     *
      * @var int
-     */    
+     */
     const VALIDATE = 2;
-    
+
     /**
      * The perform stage
-     * 
+     *
      * @var int
-     */    
+     */
     const PERFORM = 3;
 }
 

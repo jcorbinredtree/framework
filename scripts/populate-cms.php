@@ -1,19 +1,19 @@
 <?php
 
-function insert($label, $parentId) 
+function insert($label, $parentId)
 {
 	$item = new CMSItem();
 	$item->seo = new CMSSEOProperties();
 	$item->label = $label;
-	
+
 	if (!$item->create()) {
 		die("wtf man");
 	}
-	
+
 	if ($parentId) {
 	   if (!CMSRelationship::add($item->id, $parentId)) {
-         die('no luv');        
-       }		
+         die('no luv');
+       }
 	}
 	else {
 	   $relationship = new CMSRelationship();
@@ -23,16 +23,16 @@ function insert($label, $parentId)
        $relationship->distance = 0;
        if (!$relationship->create()) {
             die('relationship issues');
-       }		
+       }
 	}
-    
+
     return $item->id;
 }
 
-function getLabel() 
+function getLabel()
 {
 	global $words;
-	
+
     $numWords = mt_rand(1, 3);
     $label = '';
 
@@ -40,11 +40,11 @@ function getLabel()
     	if ($i) {
     		$label .= ' ';
     	}
-    	
+
     	$index = mt_rand(0, (count($words) - 1));
     	$label .= $words[$index];
     }
-    
+
     return $label;
 }
 
@@ -88,11 +88,11 @@ TRUNCATE `cms_seo_properties`;\n";
 
 foreach ($topLevel as $word) {
 	$topLevelId = insert($word, 0);
-	
+
 	$children = mt_rand(5, 15);
 	for ($i = 0; $i < $children; $i++) {
 		$childId = insert(getLabel(), $topLevelId);
-		
+
 		$subTree = mt_rand(5, 15);
 		for ($x = 0; $x < $subTree; $x++) {
 			insert(getLabel(), $childId);

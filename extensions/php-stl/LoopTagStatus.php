@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is
@@ -28,9 +28,9 @@
 
 /**
  * LoopTagStatus
- * 
- * This is the status class that mirrors javax.servlet.jsp.jstl.core.LoopTagStatus 
- * 
+ *
+ * This is the status class that mirrors javax.servlet.jsp.jstl.core.LoopTagStatus
+ *
  * @category Tag
  */
 class LoopTagStatus
@@ -43,27 +43,27 @@ class LoopTagStatus
     {
         return $this->count;
     }
-    
+
     public function getCurrent()
     {
         return $this->current;
     }
-    
+
     public function getIndex()
     {
         return $this->index;
     }
-    
+
     public function isFirst()
     {
         return !$this->count;
     }
-    
+
     public function isLast()
     {
-        return !(($this->index + 1) < $this->count);        
+        return !(($this->index + 1) < $this->count);
     }
-    
+
     public function isAltRow()
     {
         return ($this->index % 2);

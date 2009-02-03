@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -29,7 +29,7 @@
  * This is an interface to standardize parameter handling. It is
  * somewhere between a data access object and a form object.
  * This class should be implemented by most helper classes.
- * 
+ *
  * @see RequestObject
  * @package        Utils
  */
@@ -40,27 +40,27 @@ interface IRequestObject {
      * and have a helper object populated with the fields.
      * Unfortuantly, this has to be implemented in the subclass.
      *
-     * @abstract 
-     * @access public 
+     * @abstract
+     * @access public
      * @param array $where The associtive array from whose keys that
      * match will be copied to the object
      * @return object an object of subclasses type
      */
     public static function From(&$where);
-    
+
     /**
      * Validates the current object. Useful for form processing.
-     * 
-     * @abstract 
-     * @access public 
+     *
+     * @abstract
+     * @access public
      * @return boolean true if all is well
      */
     public function validate();
-    
+
     /**
      * Merges the current object with the specified associtive array.
-     * 
-     * @access public 
+     *
+     * @access public
      * @return void
      */
     public function merge(&$with);

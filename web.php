@@ -40,7 +40,7 @@ $__start = microtime(true);
 $config = new Config();
 require "$config->fwAbsPath/lib/application/Application.php";
 
-try {    
+try {
     Application::startWeb();
 }
 catch (Exception $ex) {

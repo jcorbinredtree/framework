@@ -1,21 +1,21 @@
 <?php
 
-class DefaultLocationPolicy implements ILocationPolicy 
+class DefaultLocationPolicy implements ILocationPolicy
 {
     public function getTemplatesDir()
     {
         global $config;
-        
+
         return "$config->absPath/SITE/writable/cache/templates";
     }
-    
+
     public function getLogsDir()
     {
         global $config;
-        
+
         return "$config->absPath/SITE/writable/logs";
     }
-    
+
     /**
      * Gets the location of the cache directory.
      * This directory should be writable.
@@ -25,14 +25,14 @@ class DefaultLocationPolicy implements ILocationPolicy
     public function getCacheDir()
     {
         global $config;
-        
-        return "$config->absPath/SITE/writable/cache";            
+
+        return "$config->absPath/SITE/writable/cache";
     }
-    
+
     public function logs()
     {
         global $config;
-        
+
         $logDir = DefaultLocationPolicy::getLogsDir();
         if (file_exists($logDir)) {
             if (!is_writable($logDir)) {
@@ -45,7 +45,7 @@ class DefaultLocationPolicy implements ILocationPolicy
         }
         else {
             $config->setLog(Log::singleton('null'));
-        }                
+        }
     }
 }
 

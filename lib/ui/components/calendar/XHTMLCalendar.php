@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -38,13 +38,13 @@ class XHTMLCalendar
     const MONTH_VIEW = 0x01;
     const WEEK_VIEW = 0x02;
     const DAY_VIEW = 0x03;
-    
+
     public $date;
     public $view = XHTMLCalendar::MONTH_VIEW;
-    
+
     public $dateCallback = null;
     public $timeCallback = null;
-    
+
     /*
      * month
      */
@@ -53,29 +53,29 @@ class XHTMLCalendar
     public $monthCellClicked = null;
     public $printMonthHeaders = true;
     public $monthHeaderFormat = 'l';
-    
+
     /*
      * week
      */
     public $weekHeaderFormat = 'D, M j';
     public $weekHourFormat = 'g A';
-    
+
     /*
      * day
      */
     public $dayHeaderFormat = 'D, M j';
     public $dayHourFormat = 'g A';
-    
+
     public function __construct()
     {
         $this->date = time();
     }
-    
+
     public function draw()
     {
         $template = new CalendarTemplate();
         $template->assign('calendar', $this);
-        
+
         switch($this->view) {
             case XHTMLCalendar::MONTH_VIEW:
                 $template->display('view/Month.tpl.php');

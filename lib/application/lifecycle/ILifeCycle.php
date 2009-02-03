@@ -2,10 +2,10 @@
 
 /* NOTE: these are documented in the order in which they are called */
 interface ILifeCycle
-{    
+{
     /**
      * Called when an exception is generated from the system
-     * 
+     *
      * @param Exception $ex the exception
      * @return void
      */
@@ -17,10 +17,10 @@ interface ILifeCycle
      * @return void
      */
     public function onInitialize();
-    
+
     /**
      * Invoked to parse GET and POST info out of the URL.
-     * Returning a true value stops the processor and leaves 
+     * Returning a true value stops the processor and leaves
      * the parsing up to you. Tread lightly!
      *
      * @return boolean true if you handled the operation
@@ -33,7 +33,7 @@ interface ILifeCycle
      * @return void
      */
     public function onRequestStart();
-    
+
     /**
      * Called when an action is invoked. Returning a boolean value here will prevent the action
      * from being called, and pass your value through to the framework. There are no guarantees
@@ -52,21 +52,21 @@ interface ILifeCycle
      * @return array of NavigatorItem objects
      */
     public function onGetTopNavigation();
-    
+
     /**
      * Called to get items for the right navigation
      *
      * @return array of NavigatorItem objects
-     */    
+     */
     public function onGetRightNavigation();
-    
+
     /**
      * Called to get items for the bottom navigation
      *
      * @return array of NavigatorItem objects
-     */    
+     */
     public function onGetBottomNavigation();
-    
+
     /**
      * Called to get items for the left navigation
      *
@@ -78,28 +78,28 @@ interface ILifeCycle
      * Called to get items for the top modules
      *
      * @return array of NavigatorItem objects
-     */    
+     */
     public function onGetTopModules();
-    
+
     /**
      * Called to get items for the right modules
      *
      * @return array of NavigatorItem objects
-     */    
+     */
     public function onGetRightModules();
-    
+
     /**
      * Called to get items for the bottom modules
      *
      * @return array of NavigatorItem objects
      */
     public function onGetBottomModules();
-    
+
     /**
      * Called to get items for the left modules
      *
      * @return array of NavigatorItem objects
-     */    
+     */
     public function onGetLeftModules();
 
     /**
@@ -116,7 +116,7 @@ interface ILifeCycle
      *
      * @return void
      */
-    public function onPostRender();        
+    public function onPostRender();
 }
 
 ?>

@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -40,14 +40,14 @@ interface ICacheable {
      * @return boolean true if the object is cacheable
      */
     public function isCacheable();
-    
+
     /**
      * Determines if the object should be retrieved from the cache
      *
      * @access public
      * @param int $cacheModifiedTime the last time (as unix time)
      * the cache was modified for this item
-     * @return boolean true if the object should be retrieved from the cache 
+     * @return boolean true if the object should be retrieved from the cache
      */
     public function useCache($cacheModifiedTime);
 }

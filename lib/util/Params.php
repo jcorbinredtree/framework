@@ -51,16 +51,16 @@ class Params
     {
 
     }
-    
+
     /**
      * preg callback
-     * 
+     *
      * @param $x
      * @return transformed $x
      */
     private static function fieldToPropertyCallback($x)
     {
-        return strtoupper($x[0][1]);        
+        return strtoupper($x[0][1]);
     }
 
     /**
@@ -76,10 +76,10 @@ class Params
     {
         return preg_replace_callback('/_(\w)/', array('Params', 'fieldToPropertyCallback'), $name);
     }
-    
+
     /**
      * preg callback
-     * 
+     *
      * @param $x
      * @return transformed $x
      */

@@ -126,11 +126,11 @@ class HTMLTag extends Tag
         $checked = $this->getUnquotedAttr($element, 'checked', false);
 
         $this->compiler->write('<input type="radio" name="' . $name . '" ');
-        
+
         if ($id) {
             $this->compiler->write('id="' . $id . '" ');
         }
-        
+
         $this->compiler->write('value="<?php echo ' . $value . '; ?>" ');
 
         if ($checked) {

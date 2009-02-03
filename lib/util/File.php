@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -26,7 +26,7 @@
  */
 
 /**
- * Defines standard methods the system may use to ascertain 
+ * Defines standard methods the system may use to ascertain
  * information about this objects subclass.
  *
  * @static
@@ -45,35 +45,35 @@ class File
      * @return void
      */
     public static function find($closure, $path, $excludeDirs=true)
-    {    	    
+    {
         global $config;
-        
+
     	if (is_dir($path)) {
     	    if (!$excludeDirs) {
-    	        call_user_func($closure, $path);    	        
+    	        call_user_func($closure, $path);
     	    }
     	}
     	else {
             call_user_func($closure, $path);
             return;
     	}
-        
+
         $fh = opendir($path);
         if (!$fh) {
             throw new Exception("$path does not exist or is inaccessible");
         }
-            
-        while (false !== ($file = readdir($fh))) {        
+
+        while (false !== ($file = readdir($fh))) {
             if ($file[0] == '.') {
                 continue;
             }
 
             File::find($closure, "$path/$file", $excludeDirs);
         }
-            
-        closedir($fh);        
+
+        closedir($fh);
     }
-    
+
     /**
      * Gets from the $_FILE superglobal, based on $key, the binary
      * content that was uploaded
@@ -86,7 +86,7 @@ class File
         if (!isset($_FILES[$key])) {
             return null;
         }
-        
+
         $tmp_name = $_FILES[$key]['tmp_name'];
         $fname = $_FILES[$key]['name'];
         $size = $_FILES[$key]['size'];
@@ -95,11 +95,11 @@ class File
         if (!file_exists($tmp_name)) {
             return null;
         }
-        
+
         if (!is_uploaded_file($tmp_name)) {
             return null;
         }
-                
+
         return file_get_contents($tmp_name);
     }
 }

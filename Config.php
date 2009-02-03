@@ -155,17 +155,17 @@ class Config
      * @var string
      */
     private $defaultExceptionTheme = 'DefaultExceptionTheme';
-    
+
     /**
      * Holds the user configuration values
-     *  
+     *
      * @var array
      */
     private $userConfig = array();
-    
+
     /**
      * Sets a configuration value
-     * 
+     *
      * @param $key
      * @param $value
      * @return void
@@ -174,10 +174,10 @@ class Config
     {
         $this->userConfig[$key] = $value;
     }
-    
+
     /**
      * Gets a user set configuration value
-     * 
+     *
      * @param $key
      * @return mixed
      */

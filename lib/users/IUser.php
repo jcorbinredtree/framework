@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -48,7 +48,7 @@ interface IUser
      * @return boolean true if this user belongs to the group
      */
     public function inGroupName($name);
-    
+
     /**
      * Returns the groups this user belongs to
      *

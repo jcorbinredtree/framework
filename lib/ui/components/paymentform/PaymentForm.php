@@ -9,7 +9,7 @@ class PaymentForm extends SessionObject
      */
     public $provider;
     public $test = false;
-    
+
     public $firstName;
     public $lastName;
     public $phoneNumber;
@@ -27,11 +27,11 @@ class PaymentForm extends SessionObject
     public $customerBirthMonth;
     public $customerBirthDay;
     public $customerBirthYear;
-    
+
     public $apiUsername = "";
     public $apiPassword = "";
     public $apiSignature = "";
-    public $live = false;    
+    public $live = false;
 
 
     /**
@@ -46,32 +46,32 @@ class PaymentForm extends SessionObject
         $us->merge($where);
         return $us;
     }
-    
+
     public function draw()
     {
         $template = new Template();
-        
+
         $path = Application::setPath(dirname(__FILE__));
-        
+
         $template->assign('payment', $this);
         $template->display('view/view.xml');
-        
+
         Application::setPath($path);
     }
-    
+
     public function validate()
     {
         $gateway = new $this->provider();
         Params::arrayToObject($this, $gateway);
-        
+
         return $gateway->validate();
     }
-    
+
     public function purchase()
     {
-        $gateway = new $this->provider();        
+        $gateway = new $this->provider();
         Params::ArrayToObject($this, $gateway);
-                
+
         return $gateway->purchase();
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
 class ApplicationData
-{   
+{
     private static $dirty = false;
-    private static $data;    
-    
+    private static $data;
+
     private function __construct() { }
-    
+
     public static function initialize()
     {
         global $config;
-                
+
         /*
          * try to load our data from the session
          */
@@ -25,26 +25,26 @@ class ApplicationData
         $file = ApplicationData::getDataFile();
         if (!file_exists($file)) {
             $config->warn('application file not found, rebuilding');
-            
+
             file_put_contents($file, serialize(array()));
-        }   
+        }
 
         ApplicationData::$data = unserialize(file_get_contents($file));
     }
-    
+
     public static function unintialize()
     {
         if (!ApplicationData::$dirty) {
             return;
         }
-        
-        $file = ApplicationData::getDataFile();        
+
+        $file = ApplicationData::getDataFile();
         $data = ApplicationData::$data;
         $data = serialize($data);
-        
-        file_put_contents($file, $data);        
+
+        file_put_contents($file, $data);
     }
-    
+
     public static function getDataFile()
     {
         $policy = PolicyManager::getInstance();
@@ -62,8 +62,8 @@ class ApplicationData
                 ob_end_flush();
             }
         }
-        
-        return "$dir/application.data";        
+
+        return "$dir/application.data";
     }
 
     /**
@@ -77,12 +77,12 @@ class ApplicationData
     {
         ApplicationData::$data[$key] = $d;
         Session::set(AppConstants::APPLICATION_DATA_KEY, ApplicationData::$data);
-                
-        ApplicationData::$dirty = true;        
+
+        ApplicationData::$dirty = true;
     }
 
     /**
-     * Retrieves the data associated with $key. 
+     * Retrieves the data associated with $key.
      *
      * @param string $key the key name for this data
      * @return mixed this value will be set to null if no data is found
@@ -92,21 +92,21 @@ class ApplicationData
         if (!ApplicationData::$data) {
             return null;
         }
-        
+
         if (!array_key_exists($key, ApplicationData::$data)) {
             return null;
         }
-        
+
         return ApplicationData::$data[$key];
     }
-    
+
     public static function addClassEntry($className, $file)
     {
        $map =& ApplicationData::get(AppConstants::CLASSMAP_KEY);
        if (!is_array($map)) {
            $map = array();
        }
-       
+
        $map[$className] = $file;
        ApplicationData::$data[AppConstants::CLASSMAP_KEY] =& $map;
        ApplicationData::$dirty = true;

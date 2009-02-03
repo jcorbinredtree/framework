@@ -2,7 +2,7 @@
     <tr>
         <th class = "xhtml-calendar-week-hour-column"><?php echo date('Y', $this->calendar->date); ?></th>
         <?php
-        $offsetDate = $localTime = $this->calendar->date; 
+        $offsetDate = $localTime = $this->calendar->date;
         while (date('w', $localTime))    {
             $offsetDate = $localTime -= 86400;
         }
@@ -33,7 +33,7 @@
         <td colspan = "8">&nbsp;</td>
     </tr>
     <?php
-        for ($hour = 0.0; $hour < 24; $hour += 0.25) {        
+        for ($hour = 0.0; $hour < 24; $hour += 0.25) {
             print '<tr>';
             print '<td class = "xhtml-calendar-week-hour-column">';
 
@@ -54,17 +54,17 @@
             $offsetDate += $hour;
             for ($i = 0; $i < 7; $i++) {
         print '<td';
-    
+
         if (date('Ymd') == date('Ymd', $offsetDate)) {
             print ' class="xhtml-calendar-week-view-today"';
         }
-    
-        print '>' . $this->timeCallback($offsetDate) . '</td>';        
+
+        print '>' . $this->timeCallback($offsetDate) . '</td>';
         $offsetDate += 86400;
             }
-            
+
             $offsetDate -= (86400 * 7);
-            
+
             print '</tr>';
         }
     ?>

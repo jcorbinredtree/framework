@@ -26,7 +26,7 @@
  */
 
 /**
- * Defines a link policy. An implementation of this policy may be set to change the 
+ * Defines a link policy. An implementation of this policy may be set to change the
  * framework's standard behavior.
  *
  * @category     Policies
@@ -43,8 +43,8 @@ interface ILinkPolicy
 
     /**
      * Returns text in href form suitable for linking to other actions within the framework.
-     * 
-     * @static 
+     *
+     * @static
      * @access public
      * @param string a component class name
      * @param string $action the action id you want to link to
@@ -52,7 +52,7 @@ interface ILinkPolicy
      * @param int $stage the stage you want to link to, default Stage::VIEW
      * @return string text to use in an href upon success; null upon failure
      */
-    public function getActionURI($component, $action, $options=array(), $stage=Stage::VIEW);    
+    public function getActionURI($component, $action, $options=array(), $stage=Stage::VIEW);
 }
 
 ?>

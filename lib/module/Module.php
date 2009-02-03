@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -39,28 +39,28 @@ abstract class Module extends BufferedObject implements ICacheable
      * @var int
      */
     const POSITION_LEFT = 1;
-    
+
     /**
      * Describes the top position
      *
      * @var int
-     */    
-    const POSITION_TOP = 2;  
+     */
+    const POSITION_TOP = 2;
 
     /**
      * Describes the right position
      *
      * @var int
-     */    
+     */
     const POSITION_RIGHT = 3;
-    
+
     /**
      * Describes the bottom position
      *
      * @var int
-     */    
+     */
     const POSITION_BOTTOM = 4;
-    
+
     /**
      * Called when the module is first loaded
      *
@@ -68,9 +68,9 @@ abstract class Module extends BufferedObject implements ICacheable
      */
     public function onInitialize()
     {
-        
-    }   
-    
+
+    }
+
     /**
      * Gets the name of the current class
      *
@@ -78,27 +78,27 @@ abstract class Module extends BufferedObject implements ICacheable
      */
     public function getClass() {
         return get_class($this);
-    }     
-    
+    }
+
     /**
      * Displays the current module
-     * 
+     *
      * @param LayoutDescription $layout a populated LayoutDescription
      * @return void
      */
-    abstract public function onDisplay($position);    
-    
+    abstract public function onDisplay($position);
+
     /**
      * Returns an instance of the specified module, and performs basic initializations on it.
-     * 
+     *
      * @static
      * @access public
      * @param string $module module class name
      * @return Module an instance of the specified module on success; null otherwise
-     */    
+     */
     static public function load($module)
     {
-        global $config, $database, $current;       
+        global $config, $database, $current;
 
         if (!class_exists($module)) {
             $path = "$config->absPath/modules/$module/$module.php";
@@ -114,15 +114,15 @@ abstract class Module extends BufferedObject implements ICacheable
 
         $obj = new $module();
         $obj->onInitialize();
-        
+
         Application::setPath($path);
-        
+
         return $obj;
-    }    
+    }
 
     /**
      * Determines if the component is cacheable for this action. Always returns false.
-     * 
+     *
      * @return boolean false
      */
     public function isCacheable()
@@ -141,13 +141,13 @@ abstract class Module extends BufferedObject implements ICacheable
     public function useCache($cacheModifiedTime)
     {
         return false;
-    }       
-    
+    }
+
     /**
      * A simple method to simply view a template, optionally setting aruments
-     * 
+     *
      * @param string name the location of the template
-     * @param array arguments [optional] the arguments to pass to the template, 
+     * @param array arguments [optional] the arguments to pass to the template,
      * expressed as name/value pairs
      * @return void
      */
@@ -155,7 +155,7 @@ abstract class Module extends BufferedObject implements ICacheable
     {
         $template = new Template();
         $template->setArguments($arguments);
-        
+
         $this->write($template->fetch($name));
     }
 }

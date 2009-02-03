@@ -47,7 +47,7 @@ class CalendarTemplate extends Template
     if ($this->calendar->dateCallback) {
         return call_user_func($this->calendar->dateCallback, $time);
     }
-    
+
     return '&nbsp;';
     }
 
@@ -56,14 +56,14 @@ class CalendarTemplate extends Template
     if ($this->calendar->timeCallback) {
         return call_user_func($this->calendar->timeCallback, $time);
     }
-    
+
     return '&nbsp;';
     }
 
     function formatHour($format, $hour)
     {
         $buf = '';
-    
+
         for ($i = 0; $i < strlen($format); $i++) {
         switch($format[$i]) {
              case 'a':
@@ -88,7 +88,7 @@ class CalendarTemplate extends Template
                  $buf .= $format[$i];
              }
         }
-        
+
         return $buf;
     }
 }

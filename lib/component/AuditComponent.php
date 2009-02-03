@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -35,7 +35,7 @@ abstract class AuditComponent extends Component
     /**
      * Records an audit trail
      *
-     * @param array $desc the associtive array mapping the 
+     * @param array $desc the associtive array mapping the
      * db field names from the audit_log table to values
      */
     public function audit($desc)
@@ -44,7 +44,7 @@ abstract class AuditComponent extends Component
         if (!$audit->validate()) {
             return false;
         }
-        
+
         return $audit->create();
     }
 }

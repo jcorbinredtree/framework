@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is
@@ -28,7 +28,7 @@
 
 /**
  * Tag
- * 
+ *
  * This class provides a tag handler base class
  *
  * @category     Tag
@@ -41,17 +41,17 @@ abstract class Tag
      * @var Compiler
      */
     protected $compiler;
-    
+
     /**
      * Constructor
      *
-     * @param Compiler $compiler 
+     * @param Compiler $compiler
      */
     public function __construct(Compiler &$compiler)
     {
         $this->compiler = $compiler;
     }
-    
+
     /**
      * Requires the attribute to be on $element
      *
@@ -65,10 +65,10 @@ abstract class Tag
         if (!$element->hasAttribute($attr)) {
             die("required attribute $attr missing from element $element->nodeName");
         }
-        
+
         return ($quote ? $this->quote($element->getAttribute($attr)) : $element->getAttribute($attr));
     }
-    
+
     /**
      * Get an attribute from $element
      *
@@ -81,7 +81,7 @@ abstract class Tag
     {
         return $this->quote($element->hasAttribute($attr) ? $element->getAttribute($attr) : $default);
     }
-    
+
     /**
      * Get a raw attribute from $element
      *
@@ -93,8 +93,8 @@ abstract class Tag
     protected function getUnquotedAttr(DOMElement &$element, $attr, $default=null)
     {
         return ($element->hasAttribute($attr) ? $element->getAttribute($attr) : $default);
-    }    
-    
+    }
+
     /**
      * Get a boolean attribute from $element
      *
@@ -108,7 +108,7 @@ abstract class Tag
         if (!$element->hasAttribute($attr)) {
             return $default;
         }
-        
+
         switch ($element->getAttribute($attr)) {
             case 'true':
             case 'yes':
@@ -117,10 +117,10 @@ abstract class Tag
             case 'no':
                 return false;
         }
-        
+
         die("Invalid boolean attribute $attr specified for $element->nodeName");
-    }    
-    
+    }
+
     /**
      * Processes child elements
      *
@@ -135,7 +135,7 @@ abstract class Tag
             }
         }
     }
-    
+
     /**
      * Quotes a subject if it's found to require one
      *
@@ -147,21 +147,21 @@ abstract class Tag
         if ($this->needsQuote($val)) {
             return "'$val'";
         }
-        
+
         return $val;
     }
-    
+
     /**
      * Returns true if the value requires quoting
-     * 
+     *
      * @return boolean
      */
     protected function needsQuote($val)
     {
         $char = strlen($val) ? $val[0] : '';
-        
+
         return (($char != '$') && ($char != '@'));
-    }    
+    }
 }
 
 ?>

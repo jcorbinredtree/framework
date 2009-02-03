@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -36,17 +36,17 @@ class I18N
 {
     /**
      * Holds the current language code
-     * 
+     *
      * @static
      * @access private
      * @var string
      */
     private static $lang = 'en';
-    
+
     /**
      * Holds a LangPack instance, the current language
-     * 
-     * @static 
+     *
+     * @static
      * @access private
      * @var LangPack
      */
@@ -54,7 +54,7 @@ class I18N
 
     /**
      * Constructor; Private
-     * 
+     *
      * @static
      * @access private
      * @return I18N a new instance
@@ -68,7 +68,7 @@ class I18N
     /**
      * Gets the specified language pack, and assigns it to
      * the static variable $pack.
-     * 
+     *
      * @static
      * @access private
      * @param string $lcLang the language code, lowercase
@@ -94,7 +94,7 @@ class I18N
 
     /**
      * Sets the current language
-     * 
+     *
      * @static
      * @access public
      * @param mixed $lang a language code, or language id
@@ -112,13 +112,13 @@ class I18N
             $config->fatal("Problem loading language pack '$lang'. Does it exist? Is it in the right place?");
             exit(1);
         }
-        
+
         return true;
     }
 
     /**
      * Filters the string/key through the current language pack.
-     * 
+     *
      * @static
      * @access public
      * @param string $string the string/key you wish to retrieve a translation for

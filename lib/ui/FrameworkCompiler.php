@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is
@@ -27,7 +27,7 @@
 
 /**
  * FrameworkCompiler
- * 
+ *
  * This class overrides the default php-stl Compiler to provide more functionality
  */
 class FrameworkCompiler extends Compiler
@@ -42,7 +42,7 @@ class FrameworkCompiler extends Compiler
         parent::__construct($file);
         $this->write('<?php global $current,$config; ?>');
     }
-    
+
     /**
      * Specifies the replacement rules for this template
      *
@@ -52,7 +52,7 @@ class FrameworkCompiler extends Compiler
     public function replaceRules($output)
     {
         $output = preg_replace('/[$][{](?:[=])?params[.](.+?)[.](.+?)[}]/i', 'Params::$1("$2")', $output);
-        return parent::replaceRules($output);                
+        return parent::replaceRules($output);
     }
 }
 

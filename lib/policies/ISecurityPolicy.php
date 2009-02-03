@@ -39,7 +39,7 @@ interface ISecurityPolicy
      * @return string the login url
      */
     public function getLoginUrl();
-    
+
     /**
      * Called when a user attemtps to log in. Return true and set up a value in the session
      * if this user is authenticated by the credentials.

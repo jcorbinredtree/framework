@@ -27,16 +27,16 @@
  * @category   I18N
  * @package    Core
  */
-class I18N_EN implements LangPack 
+class I18N_EN implements LangPack
 {
     private $translation = array();
 
-    public function __construct() 
+    public function __construct()
     {
         $this->translation['_INTERNAL_ERROR'] = 'Internal Error';
     }
 
-    public function get($string) 
+    public function get($string)
     {
         global $config;
 
@@ -48,7 +48,7 @@ class I18N_EN implements LangPack
         return $this->translation[$string];
     }
 
-    public function getLanguageName() 
+    public function getLanguageName()
     {
         return 'US English';
     }

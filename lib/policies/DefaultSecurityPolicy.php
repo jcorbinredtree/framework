@@ -9,10 +9,10 @@ class DefaultSecurityPolicy implements ISecurityPolicy
     public function getLoginUrl()
     {
         global $config;
-        
+
         return "$config->absUri/login";
     }
-        
+
     /**
      * @see ISecurityPolicy::login()
      *

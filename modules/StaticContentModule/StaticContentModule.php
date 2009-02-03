@@ -6,16 +6,16 @@ class StaticContentModule extends Module
     {
         $this->viewTemplate('view/content.xml');
     }
-    
-    public function isCacheable() 
-    { 
-        return true; 
+
+    public function isCacheable()
+    {
+        return true;
     }
-    
-    public function useCache($time) 
-    { 
+
+    public function useCache($time)
+    {
         global $config;
-        
+
         return (filemtime("$config->absPath/modules/StaticContentModule/view/content.xml") <= $time);
     }
 }

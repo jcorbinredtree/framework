@@ -26,7 +26,7 @@
  */
 
 /**
- * Defines a location policy. An implementation of this policy may be set to change the 
+ * Defines a location policy. An implementation of this policy may be set to change the
  * framework's standard behavior.
  *
  * @category     Policies
@@ -48,8 +48,8 @@ interface ILocationPolicy
      *
      * @return string the location of the cache directory.
      */
-    public function getCacheDir();    
-    
+    public function getCacheDir();
+
     /**
      * Gets the location of the logs directory.
      * This directory should be writable.
@@ -57,11 +57,11 @@ interface ILocationPolicy
      * @return string the location of the logs directory.
      */
     public function getLogsDir();
-    
+
     /**
      * Implements the log policy based on the current conditions.
      * This method should configure the global logger at Config#log
-     * 
+     *
      * @return void
      */
     public function logs();

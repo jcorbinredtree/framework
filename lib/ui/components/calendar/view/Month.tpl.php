@@ -2,19 +2,19 @@
 <?php
     $daysInMonth = date('t', $this->calendar->date);
     $currentDay = date('j', $this->calendar->date);
-    
+
     $scratchDay = $currentDay;
     $firstDay = $this->calendar->date;
     while ($scratchDay != 1) {
         $firstDay -= 86400;
         $scratchDay = date('j', $firstDay);
     }
-    
+
     $currentDate = $firstDay;
-    
+
     $index = -1 * date('w', $firstDay); /* negative offset */
     $counter = 0;
-    
+
     if ($this->calendar->printMonthHeaders) {
         $headerDate = strtotime('2005-05-01'); /* just some time when sunday started the month */
         print '<tr>';
@@ -29,11 +29,11 @@
     $isCurrentMonth = false;
     $class = '';
         $printedIndex = (1 + $index);
-         
+
         if ($counter && (($counter % 7) == 0)) {
             print '</tr><tr>';
         }
-        
+
         print '<td ';
         if (($printedIndex > 0) && (date('Ymd') == date('Ymd', $currentDate))) {
             $class = "calendar-current-day";
@@ -60,23 +60,23 @@
             if ($this->calendar->monthCellOut) {
                 print ' onmouseout="' . $this->calendar->monthCellOut . '(this, ' . $currentDate . ');"';
             }
-                
+
             if ($this->calendar->monthCellClicked) {
                 print ' onclick="' . $this->calendar->monthCellClicked . '(this, ' . $currentDate . ');"';
             }
         }
-        
+
     print '><div class = "calendar-index ' . $class . '">' . "$printedIndex</div>";
-    
+
     if ($isCurrentMonth) {
         print $this->dateCallback($currentDate);
     }
     else {
         print '&nbsp;';
     }
-    
+
     print "</td>";
-    
+
     if ($isCurrentMonth) {
             $currentDate += 86400;
     }
@@ -94,7 +94,7 @@
     while ($index--) {
         print '<td class = "calendar-next-month"><div class = "calendar-index">' . $counter++ . "</div></td>";
     }
-    
+
     print '</tr>';
 ?>
 </table>

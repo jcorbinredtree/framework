@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -42,35 +42,35 @@ class AppConstants
      * @var string
      */
     const COMPONENT_KEY = '_c';
-    
+
     /**
      * The key used for passing action back and forth
      *
      * @var string
      */
     const ACTION_KEY = '_a';
-            
+
     /**
      * The key used for passing stage back and forth
      *
      * @var string
      */
     const STAGE_KEY = '_s';
-    
+
     /**
      * The key used for setting no html
      *
      * @var string
      */
     const NO_HTML_KEY = '_nh';
-            
+
     /**
      * The key used for determining secure requests
      *
      * @var string
      */
-    const SECURE_KEY = '_se';    
-    
+    const SECURE_KEY = '_se';
+
     /**
      * The key used to store the application data
      */
@@ -78,109 +78,109 @@ class AppConstants
 
     /**
      * The key used to store class information
-     * 
+     *
      * @var string
      */
     const CLASSMAP_KEY = 'applicationclassmap';
-    
+
     /**
      * The key used to store application lifecycle objects
      *
      * @var string
      */
     const LIFECYCLE_KEY = 'lifecycleobjects';
-        
+
     /**
      * The key used to store application lifecycle objects
      *
      * @var string
      */
     const FILES_KEY = 'fileobjects';
-    
+
     /**
      * Component key
-     * 
+     *
      * @var string
      */
     const COMPONENT_FILE_KEY = '_cfk';
-    
+
     /**
      * The key used in saved requests
-     * 
+     *
      * @var string
      */
     const SAVED_REQUEST_KEY = '_sr';
-    
+
     /**
      * The key used to save the Current structure
-     * 
+     *
      * @var string
      */
     const LAST_CURRENT_KEY = '_lc';
 
     /**
      * A key used to force user login
-     * 
+     *
      * @var string
      */
     const FORCE_LOGIN_KEY = '_fl';
-    
+
     /**
      * Language key
-     * 
+     *
      * @var string
      */
     const LANGUAGE_KEY = '_la';
-    
+
     /**
      * Theme key
-     * 
+     *
      * @var string
      */
     const THEME_KEY = '_tk';
-    
+
     /**
      * Popup key
-     * 
+     *
      * @var string
      */
     const POPUP_KEY = '_po';
-    
+
     /**
      * Search key
-     * 
+     *
      * @var string
      */
     const SEARCH_KEY = '_sh';
-    
+
     /**
      * Keyword key
      *
      * @var string
      */
     const KEYWORD_KEY = '_keyword';
-    
+
     /**
      * Language cookie name
      *
      * @var string
      */
     const LANGUAGE_COOKIE = 'lang';
-    
+
     /**
      * Theme cookie name
      *
      * @var string
-     */    
+     */
     const THEME_COOKIE = 'theme';
-    
+
     /**
      * Session time key
      *
      * @var string
      */
     const TIME_KEY = '__time';
-    
+
     /**
      * private constructor
      *

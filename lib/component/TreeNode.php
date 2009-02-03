@@ -12,7 +12,7 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is Red Tree Systems Code.
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
@@ -35,48 +35,48 @@ abstract class TreeNode
 {
     /**
      * Holds the id of the current node
-     * 
+     *
      * @access public
      * @var int
-     */    
+     */
     public $id;
-    
+
     /**
      * Holds the id of the parent TreeNode
-     * 
+     *
      * @access public
      * @var int
-     */    
+     */
     public $parentId;
-    
+
     /**
      * Holds a link to the parent TreeNode
-     * 
+     *
      * @access public
      * @var TreeNode
      */
     public $parent;
-    
+
     /**
      * Holds links to the children TreeNode
-     * 
+     *
      * @access public
      * @var array
      */
     public $children = array();
-    
+
     /**
      * Returns the top-level parent from this item
      *
      * @return TreeNode the parent who has no parent
      */
-    public function getTopLevelParent() 
+    public function getTopLevelParent()
     {
         $parent = $this;
         while ($parent->parent) {
             $parent = $parent->parent;
         }
-        
+
         return $parent;
     }
 
@@ -93,7 +93,7 @@ abstract class TreeNode
     {
         $item->setParent($this);
         array_push($this->children, $item);
-        
+
         return $item;
     }
 
@@ -103,13 +103,13 @@ abstract class TreeNode
      *
      * @access public
      * @param TreeNode $item
-     * @return TreeNode the treenode passed in 
+     * @return TreeNode the treenode passed in
      */
     public function setParent(TreeNode &$item)
     {
         return $this->parent = $item;
     }
-    
+
     /**
      * Removes the node from the tree
      *
@@ -132,10 +132,10 @@ abstract class TreeNode
                         array_push($children, $child);
                     }
                 }
-                
+
                 $this->parent->children = $children;
             }
-            
+
             return;
         }
 
@@ -143,16 +143,16 @@ abstract class TreeNode
         foreach ($this->children as $child) {
             if ($child->id != $id) {
                 array_push($children, $child);
-            }            
+            }
         }
-        
+
         $this->children = $children;
     }
-    
+
     /**
      * Determines whether the current node
      * contains the specified $id as a descendant.
-     * 
+     *
      * @param int $id The id to check for
      * @return boolean true if we have a descendant
      */
@@ -161,13 +161,13 @@ abstract class TreeNode
         if ($this->id == $id) {
             return true;
         }
-        
+
         foreach ($this->children as $child) {
             if ($child->hasDescendant($id)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -181,7 +181,7 @@ abstract class TreeNode
     {
         return count($this->children);
     }
-    
+
     /**
      * Finds a particular TreeNode
      *
@@ -189,23 +189,23 @@ abstract class TreeNode
      * @param array $list the list of elements to search
      * @return Treenode upon success; null on failure
      */
-    public static function find($id, array &$list) 
+    public static function find($id, array &$list)
     {
         foreach ($list as $item) {
             if ($item->id == $id) {
                 return $item;
             }
-            
+
             if ($item->hasChildren()) {
                 if ($current = TreeNode::find($id, $item->children)) {
                     return $current;
-                }                
+                }
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Adds several TreeNodes at once to the current node.
      * Note that this method sets the appropriate parent and
@@ -217,22 +217,22 @@ abstract class TreeNode
     public function addMembers(&$members)
     {
         global $config;
-        
+
         /*
          * mmmmmmmmm, inefficent!
-         */        
+         */
         for ($i = 0; $i < count($members); $i++) {
             for ($x = $i; $x < count($members); $x++) {
                 if (!($members[$x] instanceof TreeNode)) {
                     $config->fatal("member $x is not a TreeNode!");
                     die("[an error has occurred]");
                 }
-                
+
                 if (!($members[$i] instanceof TreeNode)) {
                     $config->fatal("member $i is not a TreeNode!");
                     die("[an error has occurred]");
-                }                
-                
+                }
+
                 if ($members[$x]->parentId == $members[$i]->id) {
                     $members[$i]->addChild($members[$x]);
                 }
@@ -245,7 +245,7 @@ abstract class TreeNode
             if (!$members[$i]->parentId) {
                 array_push($this->children, $members[$i]);
             }
-        }        
+        }
     }
 }
 

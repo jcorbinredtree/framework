@@ -38,13 +38,13 @@
             print '</td>';
 
             $currentDate += $hour;
-            
-            print '<td';    
+
+            print '<td';
             if ($currentDay) {
         print ' class="xhtml-calendar-day-view-today"';
-            }    
+            }
             print '>' . $this->timeCallback($currentDate) . '</td>';
-            
+
             print '</tr>';
         }
     ?>
