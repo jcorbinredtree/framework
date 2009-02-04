@@ -1,0 +1,3 @@
+[submodule "extensions/php-stl"]
+	path = extensions/php-stl
+	url = githubredtree:jcorbinredtree/php-stl.git
