@@ -573,17 +573,16 @@ class Database
 
         $time = $start = 0;
 
-        if ($this->time) {
-            $start = microtime(true);
-        }
-
         try {
+            if ($this->time) {
+                $start = microtime(true);
+            }
+
             $result = false;
 
             if ($params) {
                 $result = $this->statement->execute($params);
-            }
-            else {
+            } else {
                 $result = $this->statement->execute();
             }
 
@@ -591,30 +590,41 @@ class Database
                 $config->error("execute failed", 3);
                 return false;
             }
+
+            if ($this->time) {
+                $time = microtime(true) - $start;
+                $this->totalTime += $time;
+            }
         } catch (PDOException $e) {
-            $config->error('execute failed for query: ' . ($this->statement ? $this->statement->queryString : '{no statement}') . '; message: ' . $e->getMessage(), 3);
+            if ($this->statement) {
+                $queryString = $this->statement->queryString;
+            } else {
+                $queryString = '{no statement}';
+            }
+            $config->error(
+                "execute failed for query: '$queryString'; message: " . $e->getMessage(),
+                3 # it's not the caller's fault, blame the caller's caller
+            );
             return false;
         }
 
-        $params = ($params ? join(',', $params) : '');
+        if ($this->log || $this->time) {
+            $mess = 'execute('.$this->statement->queryString;
+            if ($params) {
+                $mess .= '|'.print_r($params, true);
+            }
+            $mess .= ')';
 
-        if ($this->time) {
-            $time = microtime(true) - $start;
-            $this->totalTime += $time;
-        }
+            if ($this->time) {
+                $mess .= sprintf(' performed in %.4f seconds', $time);
+            } else {
+                $this->totalQueries++;
+                $mess .= ' succeeded';
+            }
 
-        $rows = $this->count();
+            $mess .= sprintf(', %d rows returned', $this->count());
 
-        if ($this->log && $this->time) {
-            $this->totalQueries++;
-            $config->info(sprintf('execute(%s|%s) performed in %.4f seconds, %d rows returned', $this->statement->queryString, $params, $time, $rows), 3);
-        }
-        elseif ($this->time) {
-            $config->info(sprintf('execute(%s|%s) performed in %.4f seconds, %d rows returned', $this->statement->queryString, $params, $time, $rows), 3);
-        }
-        elseif ($this->log) {
-            $this->totalQueries++;
-            $config->info(sprintf('execute(%s|%s) succeeded, %d rows returned', $this->statement->queryString, $params, $rows), 3);
+            $config->info($mess, 3);
         }
 
         return true;
@@ -665,36 +675,30 @@ class Database
 
         $this->log = $logging;
         $this->time = $timing;
-        if ($this->time) {
+        if ($this->log || $this->time) {
             global $config;
 
-            $time = (microtime(true) - $start);
-
-            ++$this->totalQueries;
-            $this->totalTime += $time;
-
-            if ($this->log) {
-                $str = '';
-                for ($i = 1; $i < count($args); $i++) {
-                    $arg = $args[$i];
-                    if (is_array($arg)) {
-                        foreach ($arg as $a) {
-                            $str .= ",$a";
-                        }
-
-                        break;
-                    }
-
-                    $str .= ",$arg";
-                }
-
-                if ($str) {
-                    $str = substr($str, 1, strlen($str));
-                    $str = "|\"$str\"";
-                }
-
-                $config->info(sprintf("executef(%s%s) executed in %.4f seconds, %d rows returned", $sqlf, $str, $time, $this->count()), 3);
+            if ($this->time) {
+                $time = (microtime(true) - $start);
+                $this->totalTime += $time;
             }
+
+            $mess = "executef($sqlf";
+            if (count($args)) {
+                $mess .= '|'.print_r($args,true);
+            }
+            $mess .= ")";
+
+            if ($this->time) {
+                $mess .= sprintf(' performed in %.4f seconds', $time);
+            } else {
+                $this->totalQueries++;
+                $mess .= ' succeeded';
+            }
+
+            $mess .= sprintf(', %d rows returned', $this->count());
+
+            $config->info($mess, 3);
         }
 
         return $res;
