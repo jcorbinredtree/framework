@@ -241,19 +241,23 @@ class Database
         try {
             $dsn =& $this->parsedDSN;
 
-            if (is_array($this->dbOptions)) {
-                $this->dbOptions[PDO::ATTR_PERSISTENT] = true;
-            }
-            else {
-                $this->dbOptions = array(PDO::ATTR_PERSISTENT => true);
+            if (! is_array($this->dbOptions)) {
+                $this->dbOptions = array();
             }
 
-            $this->dbOptions[PDO::ATTR_CASE] = PDO::CASE_NATURAL;
-            $this->dbOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-            $this->dbOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+            $this->dbOptions = array_merge($this->dbOptions, array(
+                PDO::ATTR_PERSISTENT               => true,
+                PDO::ATTR_CASE                     => PDO::CASE_NATURAL,
+                PDO::ATTR_ERRMODE                  => PDO::ERRMODE_EXCEPTION,
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+            ));
 
-            $this->pdo = new PDO("$dsn->driver:host=$dsn->host;dbname=$dsn->db",
-                                 $dsn->user, $dsn->password, $this->dbOptions);
+            $this->pdo = new PDO(
+                "$dsn->driver:host=$dsn->host;dbname=$dsn->db",
+                $dsn->user,
+                $dsn->password,
+                $this->dbOptions
+            );
         } catch (PDOException $e) {
             $config->fatal($e->getMessage());
             die("Unable to connect to the database");
