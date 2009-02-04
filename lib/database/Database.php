@@ -68,7 +68,7 @@ class Database
      * DB options used to connect
      *
      * @access public
-     * @var boolean
+     * @var array
      */
     public $dbOptions = null;
 
@@ -225,6 +225,11 @@ class Database
         $this->parsedDSN = Database::parseDSN($this->dsn);
     }
 
+    /**
+     * Connects to the database if not already connected.
+     *
+     * @return void
+     */
     private function lazyLoad()
     {
         global $config;
@@ -269,6 +274,8 @@ class Database
     /**
      * Returns the total time queries have taken to execute.
      * Only available if timing was enabled.
+     *
+     * @return int
      */
     public function getTotalTime()
     {
@@ -408,7 +415,7 @@ class Database
     }
 
     /**
-     * Rolls a transaction back
+     * Commits a transaction
      *
      * @see http://us.php.net/manual/en/pdo.commit.php
      * @return boolean true on success
@@ -467,7 +474,7 @@ class Database
         return true;
     }
 
-	/**
+    /**
      * Performs an arbitrary SQL statement.
      *
      * @access public
