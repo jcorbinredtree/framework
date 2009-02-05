@@ -320,9 +320,8 @@ class Database
         $this->lazyLoad();
 
         if ($this->statement) {
-           $arr = $this->statement->errorInfo();
-        }
-        else {
+            $arr = $this->statement->errorInfo();
+        } else {
             $arr = $this->pdo->errorInfo();
         }
 
@@ -737,10 +736,10 @@ class Database
         $time = (microtime(true) - $start);
         if ($this->time) {
             $this->totalTime += $time;
-            ++$this->totalQueries;
         }
 
         if ($this->log) {
+            $this->totalQueries++;
             $config->info(sprintf("prepare(%s) analyzed in %.4f seconds", $sql, $time), 3);
         }
 
