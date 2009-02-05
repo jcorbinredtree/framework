@@ -493,39 +493,38 @@ class Database
         global $config;
 
         $rows = 0;
-        $time = $start = 0;
 
         $this->lazyLoad();
 
-        if ($this->time) {
-            $start = microtime(true);
-        }
-
         try {
+            if ($this->time) {
+                $time = 0;
+                $start = microtime(true);
+            }
+
             $rows = $this->pdo->exec($sql);
+
+            if ($this->time) {
+                $time = microtime(true) - $start;
+                $this->totalTime += $time;
+            }
         } catch (PDOException $e) {
             $config->error(sprintf('%s { %s } failed: %s', $type, $sql, $e->getMessage()), 3);
             return false;
         }
 
-        if ($this->time) {
-            $time = microtime(true) - $start;
-            $this->totalTime += $time;
-        }
+        if ($this->log || $this->time) {
+            $mess = $type.'('.$sql.')';
 
-        if ($this->log && $this->time) {
-            $this->totalQueries++;
-            $config->info(sprintf('%s(%s) performed in %.4f seconds, %d rows affected',
-                         $type, $sql, $time, $rows), 3);
-        }
-        elseif ($this->time) {
-            $config->info(sprintf('%s performed in %.4f seconds, %d rows affected',
-                         $type, $time, $rows), 3);
-        }
-        elseif ($this->log) {
-            $this->totalQueries++;
-            $config->info(sprintf('%s(%s) %d rows affected',
-                         $type, $sql, $rows), 3);
+            if ($this->time) {
+                $mess .= sprintf(' performed in %.4f seconds', $time);
+            } else {
+                $this->totalQueries++;
+            }
+
+            $mess .= sprintf(', %d rows affected', $rows);
+
+            $config->info($mess, 3);
         }
 
         return $rows;
@@ -571,10 +570,9 @@ class Database
             }
         }
 
-        $time = $start = 0;
-
         try {
             if ($this->time) {
+                $time = 0;
                 $start = microtime(true);
             }
 
@@ -639,12 +637,16 @@ class Database
      */
     public function executef($sqlf)
     {
-        $start = microtime(true);
+        if ($this->time) {
+            $time = 0;
+            $start = microtime(true);
+        }
+
+        // Temporarily disable logging and timing
         $logging = $this->log;
         $timing = $this->time;
-
-        //global $config; $config->warn("2.) $sqlf");
         $this->log = $this->time = false;
+
         if (!$this->prepare($sqlf)) {
             $this->log = $logging;
             $this->time = $timing;
@@ -673,8 +675,10 @@ class Database
 
         $res = $this->execute();
 
+        // Restore logging and timing
         $this->log = $logging;
         $this->time = $timing;
+
         if ($this->log || $this->time) {
             global $config;
 
@@ -777,19 +781,18 @@ class Database
             $this->totalTime += $time;
         }
 
-        if ($this->log && $this->time) {
-            $this->totalQueries++;
-            $config->info(sprintf('query(%s) executed in %.4f seconds, %d rows returned',
-                         $sql, $time, $this->count()), 3);
-        }
-        elseif ($this->log) {
-            $this->totalQueries++;
-            $config->info(sprintf('query(%s) %d rows returned',
-                         $sql, $this->count()), 3);
-        }
-        elseif ($this->time) {
-            $config->info(sprintf('query executed in %.4f seconds, %d rows returned',
-                         $time, $this->count()), 3);
+        if ($this->log || $this->time) {
+            $mess = 'query('.$sql.')';
+
+            if ($this->time) {
+                $mess .= sprintf(' executed in %.4f seconds', $time);
+            } else {
+                $this->totalQueries++;
+            }
+
+            $mess .= sprintf(' %d rows returned', $this->count());
+
+            $config->info($mess, 3);
         }
 
         array_push($this->statementStack, $this->statement);
