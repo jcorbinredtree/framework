@@ -461,8 +461,6 @@ class Database
      */
     public function lock($tables, $type=Database::LOCK_READ)
     {
-        global $config;
-
         if (!is_array($tables)) {
             $tables = array($tables);
         }
@@ -478,6 +476,18 @@ class Database
         }
 
         return true;
+    }
+
+    /**
+     * Unlocks any tables previousy locked. It's assumed to be safe to call this
+     * even if you haven't locked any tables.
+     *
+     * @access public
+     * @return boolean true upon success; false otherwise
+     */
+    public function unlock()
+    {
+        return ($this->perform("UNLOCK TABLES", 'unlock') < 0);
     }
 
     /**
@@ -530,18 +540,6 @@ class Database
         }
 
         return $rows;
-    }
-
-    /**
-     * Unlocks any tables previousy locked. It's assumed to be safe to call this
-     * even if you haven't locked any tables.
-     *
-     * @access public
-     * @return boolean true upon success; false otherwise
-     */
-    public function unlock()
-    {
-        return ($this->perform("UNLOCK TABLES", 'unlock') < 0);
     }
 
     /**
