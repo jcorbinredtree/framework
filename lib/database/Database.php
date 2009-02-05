@@ -375,9 +375,7 @@ class Database
         $this->endTiming();
 
         if ($this->log) {
-            global $config;
-
-            $config->info("TRANSACTION");
+            $this->infoLog('transaction(start)');
         }
 
         return $ret;
@@ -400,9 +398,7 @@ class Database
         $this->endTiming();
 
         if ($this->log) {
-            global $config;
-
-            $config->info("ROLLBACK");
+            $this->infoLog('transaction(rollback)');
         }
 
         return $ret;
@@ -425,9 +421,7 @@ class Database
         $this->endTiming();
 
         if ($this->log) {
-            global $config;
-
-            $config->info("COMMIT");
+            $this->infoLog('transaction(commit)');
         }
 
         return $ret;
@@ -496,7 +490,7 @@ class Database
 
             $rows = $this->pdo->exec($sql);
 
-            $time = $this->endTiming();
+            $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
 
@@ -504,18 +498,9 @@ class Database
             return false;
         }
 
-        if ($this->log || $this->time) {
-            $mess = $type.'('.$sql.')';
-
-            if ($this->time) {
-                $mess .= sprintf(' performed in %.4f seconds', $time);
-            } else {
-                $this->totalQueries++;
-            }
-
-            $mess .= sprintf(', %d rows affected', $rows);
-
-            $config->info($mess, 3);
+        if ($this->log) {
+            $what = $this->whatStatement($type, $sql);
+            $this->infoLog($what, $rows);
         }
 
         return $rows;
@@ -567,7 +552,7 @@ class Database
                 return false;
             }
 
-            $time = $this->endTiming();
+            $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
 
@@ -583,23 +568,9 @@ class Database
             return false;
         }
 
-        if ($this->log || $this->time) {
-            $mess = 'execute('.$this->statement->queryString;
-            if ($params) {
-                $mess .= '|'.print_r($params, true);
-            }
-            $mess .= ')';
-
-            if ($this->time) {
-                $mess .= sprintf(' performed in %.4f seconds', $time);
-            } else {
-                $this->totalQueries++;
-                $mess .= ' succeeded';
-            }
-
-            $mess .= sprintf(', %d rows returned', $this->count());
-
-            $config->info($mess, 3);
+        if ($this->log) {
+            $what = $this->whatStatement('execute', null, $params);
+            $this->infoLog($what, $this->count());
         }
 
         return true;
@@ -647,30 +618,14 @@ class Database
 
         $res = $this->execute();
 
-        $time = $this->endTiming();
+        $this->endTiming();
 
         // Restore logging
         $this->log = $logging;
 
-        if ($this->log || $this->time) {
-            global $config;
-
-            $mess = "executef($sqlf";
-            if (count($args)) {
-                $mess .= '|'.print_r($args,true);
-            }
-            $mess .= ")";
-
-            if ($this->time) {
-                $mess .= sprintf(' performed in %.4f seconds', $time);
-            } else {
-                $this->totalQueries++;
-                $mess .= ' succeeded';
-            }
-
-            $mess .= sprintf(', %d rows returned', $this->count());
-
-            $config->info($mess, 3);
+        if ($this->log) {
+            $what = $this->whatStatement('executef', $sqlf, $args);
+            $this->infoLog($what, $this->count());
         }
 
         return $res;
@@ -693,7 +648,7 @@ class Database
 
             $this->statement = $this->pdo->prepare($sql);
 
-            $time = $this->endTiming();
+            $this->endTiming();
         }
         catch (PDOException $e) {
             $this->endTiming();
@@ -703,8 +658,7 @@ class Database
         }
 
         if ($this->log) {
-            $this->totalQueries++;
-            $config->info(sprintf("prepare(%s) analyzed in %.4f seconds", $sql, $time), 3);
+            $this->infoLog($this->whatStatement('prepare', $sql));
         }
 
         array_push($this->statementStack, $this->statement);
@@ -730,7 +684,7 @@ class Database
 
             $this->statement = $this->pdo->query($sql);
 
-            $time = $this->endTiming();
+            $this->endTiming();
         }
         catch (PDOException $e) {
             $this->endTiming();
@@ -739,18 +693,9 @@ class Database
             return false;
         }
 
-        if ($this->log || $this->time) {
-            $mess = 'query('.$sql.')';
-
-            if ($this->time) {
-                $mess .= sprintf(' executed in %.4f seconds', $time);
-            } else {
-                $this->totalQueries++;
-            }
-
-            $mess .= sprintf(' %d rows returned', $this->count());
-
-            $config->info($mess, 3);
+        if ($this->log) {
+            $what = $this->whatStatement('query', $sql);
+            $this->infoLog($what, $this->count());
         }
 
         array_push($this->statementStack, $this->statement);
@@ -877,14 +822,12 @@ class Database
      */
     public function lastInsertId()
     {
-        global $config;
-
         $this->lazyLoad();
 
         $id = $this->pdo->lastInsertId();
 
         if ($this->log) {
-            $config->info("lastInsertID($id)");
+            $this->infoLog("lastInsertId($id)");
         }
 
         return $id;
@@ -914,13 +857,11 @@ class Database
      */
     public function bindValue($param, $value)
     {
-        global $config;
+        $this->statement->bindValue($param, $value);
 
         if ($this->log) {
-            $config->info("bindValue($param=$value)", 3);
+            $this->infoLog("bindValue($param=$value)");
         }
-
-        $this->statement->bindValue($param, $value);
     }
 
     /**
@@ -1052,6 +993,86 @@ class Database
         $this->totalTime += $this->lastTimeDelta;
 
         return $this->lastTimeDelta;
+    }
+
+    /**
+     * Logging utility
+     */
+
+    /**
+     * Logs an info message through Config.
+     *
+     * This method does NOT check the $log flag first, the caller should do that
+     * such that caller doesn't spend time building $what just to have it thrown
+     * away.
+     *
+     * @param what string what the caller did, e.g. "query(DELETE FROM table)"
+     * @param rows int number of rows affected by what happened (optional)
+     *
+     * @return void
+     */
+    private function infoLog($what, $rows=null)
+    {
+        global $config;
+
+        $this->totalQueries++;
+
+        $parts = array($what);
+
+        if ($this->time && isset($this->lastTimeDelta)) {
+            array_push($parts,
+                sprintf('time: %.4f seconds', $this->lastTimeDelta)
+            );
+        }
+
+        if (isset($rows)) {
+            array_push($parts, sprintf('rows: %d', $rows));
+        }
+
+        $config->info(
+            # Usually looks something like:
+            #   Database::action(details), time: n.mmmm seconds, rows: n
+            'Database::'.implode(', ', $parts),
+            4 # try to pin it on Database's consumer
+        );
+    }
+
+    /**
+     * Returns a what clause for use with other logging functions, such as:
+     *
+     * @param action string single word like 'execute' or 'prepare'
+     * @param sql string the statement, if null will attempt to get from $statement
+     * @param params string|array (optional) if an array is given, will be
+     * passed through json_encode (or print_r if not available)
+     *
+     * @return string "action(sql|params)"
+     */
+    private function whatStatement($action, $sql, $params)
+    {
+        if (! isset($sql)) {
+            if (isset($this->statement)) {
+                $sql = $this->statement->queryString;
+            } else {
+                $sql = '{no statement}';
+            }
+        }
+
+        $what = "$action($sql";
+        if (isset($params)) {
+            if (is_array($params) && count($params)) {
+                if (function_exists('json_encode')) {
+                    $params = json_encode($params);
+                } else {
+                    $params = print_r($params, true);
+                }
+            }
+            if ($params) {
+                $what .= "|$params";
+            }
+        }
+        $what .= ')';
+
+        return $what;
     }
 }
 
