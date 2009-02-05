@@ -366,13 +366,13 @@ class Database
      */
     public function transaction()
     {
+        $this->lazyLoad();
         $msg = '';
         $start = 0;
         if ($this->time) {
             $start = microtime(true);
         }
 
-        $this->lazyLoad();
         $ret = $this->pdo->beginTransaction();
 
         if ($this->time) {
@@ -396,6 +396,8 @@ class Database
      */
     public function rollback()
     {
+        $this->lazyLoad();
+
         $msg = '';
         $start = 0;
         if ($this->time) {
@@ -425,6 +427,7 @@ class Database
      */
     public function commit()
     {
+        $this->lazyLoad();
 
         $msg = '';
         $start = 0;
