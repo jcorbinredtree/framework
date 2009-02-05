@@ -367,17 +367,12 @@ class Database
     public function transaction()
     {
         $this->lazyLoad();
-        $msg = '';
-        $start = 0;
-        if ($this->time) {
-            $start = microtime(true);
-        }
+
+        $this->startTiming();
 
         $ret = $this->pdo->beginTransaction();
 
-        if ($this->time) {
-            $this->totalTime += ($start - microtime(true));
-        }
+        $this->endTiming();
 
         if ($this->log) {
             global $config;
@@ -398,17 +393,11 @@ class Database
     {
         $this->lazyLoad();
 
-        $msg = '';
-        $start = 0;
-        if ($this->time) {
-            $start = microtime(true);
-        }
+        $this->startTiming();
 
         $ret = $this->pdo->rollBack();
 
-        if ($this->time) {
-            $this->totalTime += ($start - microtime(true));
-        }
+        $this->endTiming();
 
         if ($this->log) {
             global $config;
@@ -429,17 +418,11 @@ class Database
     {
         $this->lazyLoad();
 
-        $msg = '';
-        $start = 0;
-        if ($this->time) {
-            $start = microtime(true);
-        }
+        $this->startTiming();
 
         $ret = $this->pdo->commit();
 
-        if ($this->time) {
-            $this->totalTime += ($start - microtime(true));
-        }
+        $this->endTiming();
 
         if ($this->log) {
             global $config;
@@ -509,18 +492,14 @@ class Database
         $this->lazyLoad();
 
         try {
-            if ($this->time) {
-                $time = 0;
-                $start = microtime(true);
-            }
+            $this->startTiming();
 
             $rows = $this->pdo->exec($sql);
 
-            if ($this->time) {
-                $time = microtime(true) - $start;
-                $this->totalTime += $time;
-            }
+            $time = $this->endTiming();
         } catch (PDOException $e) {
+            $this->endTiming();
+
             $config->error(sprintf('%s { %s } failed: %s', $type, $sql, $e->getMessage()), 3);
             return false;
         }
@@ -571,10 +550,7 @@ class Database
         }
 
         try {
-            if ($this->time) {
-                $time = 0;
-                $start = microtime(true);
-            }
+            $this->startTiming();
 
             $result = false;
 
@@ -585,15 +561,16 @@ class Database
             }
 
             if (!$result) {
+                $this->endTiming();
+
                 $config->error("execute failed", 3);
                 return false;
             }
 
-            if ($this->time) {
-                $time = microtime(true) - $start;
-                $this->totalTime += $time;
-            }
+            $time = $this->endTiming();
         } catch (PDOException $e) {
+            $this->endTiming();
+
             if ($this->statement) {
                 $queryString = $this->statement->queryString;
             } else {
@@ -637,19 +614,14 @@ class Database
      */
     public function executef($sqlf)
     {
-        if ($this->time) {
-            $time = 0;
-            $start = microtime(true);
-        }
-
-        // Temporarily disable logging and timing
+        // Temporarily disable logging
         $logging = $this->log;
-        $timing = $this->time;
-        $this->log = $this->time = false;
+        $this->log = false;
+
+        $this->startTiming();
 
         if (!$this->prepare($sqlf)) {
             $this->log = $logging;
-            $this->time = $timing;
             return false;
         }
 
@@ -675,17 +647,13 @@ class Database
 
         $res = $this->execute();
 
-        // Restore logging and timing
+        $time = $this->endTiming();
+
+        // Restore logging
         $this->log = $logging;
-        $this->time = $timing;
 
         if ($this->log || $this->time) {
             global $config;
-
-            if ($this->time) {
-                $time = (microtime(true) - $start);
-                $this->totalTime += $time;
-            }
 
             $mess = "executef($sqlf";
             if (count($args)) {
@@ -720,23 +688,18 @@ class Database
 
         $this->lazyLoad();
 
-        $start = microtime(true);
-
         try {
-            if ($config->isDebugMode()) {
-                $config->debug("prepare: $sql");
-            }
+            $this->startTiming();
 
             $this->statement = $this->pdo->prepare($sql);
+
+            $time = $this->endTiming();
         }
         catch (PDOException $e) {
+            $this->endTiming();
+
             $config->error("prepare '$sql' failed: " . $e->getMessage(), 3);
             return false;
-        }
-
-        $time = (microtime(true) - $start);
-        if ($this->time) {
-            $this->totalTime += $time;
         }
 
         if ($this->log) {
@@ -762,23 +725,18 @@ class Database
 
         $this->lazyLoad();
 
-        $time = $start = 0;
-
-        if ($this->time) {
-            $start = microtime(true);
-        }
-
         try {
+            $this->startTiming();
+
             $this->statement = $this->pdo->query($sql);
+
+            $time = $this->endTiming();
         }
         catch (PDOException $e) {
+            $this->endTiming();
+
             $config->error("query '$sql' failed: " . $e->getMessage(), 3);
             return false;
-        }
-
-        if ($this->time) {
-            $time = (microtime(true) - $start);
-            $this->totalTime += $time;
         }
 
         if ($this->log || $this->time) {
@@ -1048,6 +1006,52 @@ class Database
 
         $sth = array_pop($this->statementStack);
         $this->statement =& end($this->statementStack);
+    }
+
+    /**
+     * Timing utility
+     */
+
+    private $startTime = null;
+    private $lastTimeDelta = null;
+
+    /**
+     * Starts timing if enabled and not already timing.
+     *
+     * @return void
+     */
+    private function startTiming()
+    {
+        if (! $this->time || isset($this->startTime)) {
+            return;
+        }
+
+        $this->lastTimeDelta = null;
+        $this->startTime = microtime(true);
+    }
+
+    /**
+     * Ends timing if enabled and started.
+     *
+     * Sets lastTimeDelta to the number of microseconds since startTime, and
+     * returns it for convenience.
+     *
+     * Increments totalTime by lastTimeDelta.
+     *
+     * @return float
+     */
+    private function endTiming()
+    {
+        if (! $this->time || ! isset($this->startTime)) {
+            return;
+        }
+
+        $this->lastTimeDelta = microtime(true) - $this->startTime;
+        $this->startTime = null;
+
+        $this->totalTime += $this->lastTimeDelta;
+
+        return $this->lastTimeDelta;
     }
 }
 
