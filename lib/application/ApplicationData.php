@@ -72,7 +72,7 @@ class ApplicationData
                 $mess = ob_get_clean();
                 throw new Exception("Could not create $dir: $mess");
             } else {
-                ob_end_flush();
+                ob_end_clean();
             }
         }
 
