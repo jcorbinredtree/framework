@@ -494,7 +494,7 @@ class Database
         } catch (PDOException $e) {
             $this->endTiming();
 
-            $config->error(sprintf('%s { %s } failed: %s', $type, $sql, $e->getMessage()), 3);
+            $this->errorLog("$type($sql)", $e->getMessage());
             return false;
         }
 
@@ -548,7 +548,8 @@ class Database
             if (!$result) {
                 $this->endTiming();
 
-                $config->error("execute failed", 3);
+                $what = $this->whatStatement('execute', null, $params);
+                $this->errorLog($what, $this->error());
                 return false;
             }
 
@@ -556,15 +557,8 @@ class Database
         } catch (PDOException $e) {
             $this->endTiming();
 
-            if ($this->statement) {
-                $queryString = $this->statement->queryString;
-            } else {
-                $queryString = '{no statement}';
-            }
-            $config->error(
-                "execute failed for query: '$queryString'; message: " . $e->getMessage(),
-                3 # it's not the caller's fault, blame the caller's caller
-            );
+            $what = $this->whatStatement('execute', null, $params);
+            $this->errorLog($what, $e->getMessage());
             return false;
         }
 
@@ -653,7 +647,8 @@ class Database
         catch (PDOException $e) {
             $this->endTiming();
 
-            $config->error("prepare '$sql' failed: " . $e->getMessage(), 3);
+            $what = $this->whatStatement('prepare', $sql);
+            $this->errorLog($what, $e->getMessage());
             return false;
         }
 
@@ -689,7 +684,8 @@ class Database
         catch (PDOException $e) {
             $this->endTiming();
 
-            $config->error("query '$sql' failed: " . $e->getMessage(), 3);
+            $what = $this->whatStatement('query', $sql);
+            $this->errorLog($what, $e->getMessage());
             return false;
         }
 
@@ -1032,6 +1028,34 @@ class Database
         $config->info(
             # Usually looks something like:
             #   Database::action(details), time: n.mmmm seconds, rows: n
+            'Database::'.implode(', ', $parts),
+            4 # try to pin it on Database's consumer
+        );
+    }
+
+    /**
+     * Logs an error message through Config.
+     *
+     * @param what string what the caller did that went badly
+     * @param why string why it didn't work out (optional)
+     */
+    private function errorLog($what, $why=null)
+    {
+        global $config;
+
+        $parts = array($what);
+
+        array_push($parts, "failed: $why");
+
+        if ($this->time && isset($this->lastTimeDelta)) {
+            array_push($parts,
+                sprintf('time: %.4f seconds', $this->lastTimeDelta)
+            );
+        }
+
+        $config->error(
+            # Usually looks something like:
+            #   Database::action(details), failed: it didn't work out, time: n.mmmm seconds
             'Database::'.implode(', ', $parts),
             4 # try to pin it on Database's consumer
         );
