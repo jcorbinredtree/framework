@@ -15,6 +15,12 @@
 
 class FrameworkTestCase extends UnitTestCase
 {
+    /**
+     * Populates the given DatabaseObject with dummy data
+     *
+     * @param DatabaseObject $obj
+     * @return void
+     */
     protected function populate(DatabaseObject &$obj)
     {
         global $database;
