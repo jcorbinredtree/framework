@@ -15,6 +15,31 @@
 
 class FrameworkTestCase extends UnitTestCase
 {
+    /**
+     * A utility method to truncate the given table(s)
+     *
+     * @param mixed $tables the table(s) to be truncated. accepts a string or array of strings
+     * @return void
+     */
+    protected function truncate($tables)
+    {
+        global $database;
+
+        if (!is_array($tables)) {
+            $tables = array($tables);
+        }
+
+        foreach ($tables as $table) {
+            $database->query("TRUNCATE TABLE `$table`");
+        }
+    }
+
+    /**
+     * Populates the given DatabaseObject with dummy data
+     *
+     * @param DatabaseObject $obj
+     * @return void
+     */
     protected function populate(DatabaseObject &$obj)
     {
         global $database;
