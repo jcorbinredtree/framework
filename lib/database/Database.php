@@ -349,6 +349,9 @@ class Database
         try {
             $sql = "SELECT `$field` FROM `$table` LIMIT 1";
             $sth = $this->pdo->query($sql);
+            if (! $sth) {
+                throw new Exception($this->error());
+            }
             $desc = $sth->getColumnMeta(0);
             $out = array($desc);
             $out[0]['notnull'] = in_array('not_null', $desc);
