@@ -1,30 +1,45 @@
 <?php
 
-# Basic example index file
-#
-# Apache needs to be configured to rewrite all url onto this script like so:
-#   http://somehost/some/path/to/the/site
-#     becomes
-#   http://somehost/some/path/index.php/to/the/site
-#     presuming that the site's document root is at /some/path on somehost
-#
-# Furthermore, all direct requests to the SITE/ directory should be denyed
+/*
+ * Basic example index file
+ *
+ * Apache needs to be configured to rewrite all url onto this script like so:
+ * http://example.com/some/path/to/the/site
+ *     becomes
+ * http://example.com/some/path/index.php/to/the/site
+ *     presuming that the site's document root is at /some/path on example.com
+ *
+ * Furthermore, all direct requests to the SITE/ directory should be denied.
+ *
+ * An example apache config:
+    <Directory /path/to/project>
+        RewriteEngine On
+        RewriteBase /project
+
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteRule ^(.*)$ index.php [L]
+    </Directory>
+    <Directory /path/to/project/SITE>
+        Deny from all
+    </Directory>
+ */
 
 function onConfig(Config &$config)
 {
     $config->setDebugMode(true);
-    $config->setDatabaseInfo('mysql://redtreedev:redtreesystems@localhost/fw');
-    $config->setDatabaseTestInfo('mysql://redtreedev:redtreesystems@localhost/fw_test');
+    $config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
+    $config->setDatabaseTestInfo('mysql://name:pass@localhost/dbname_test');
     $config->addMailerOptions(array(
-        'From' => 'bprudent@redtreesystems.com',
-        'From Name' => 'Brandon Prudent',
-        'Host' => 'localhost'
+        'From'      => 'client@example.com',
+        'From Name' => 'Mr Person',
+        'Host'      => 'localhost'
     ));
 
-    # $config->setDefaultComponent('SomeComponent');
-    # $config->setDefaultAction('home');
+    // $config->setDefaultComponent('SomeComponent');
+    // $config->setDefaultAction('home');
 
-    # $config->addUrlMapping('some/weird/mapping.html', array('SomeComponent', 'home', 'id=2'));
+    // $config->addUrlMapping('some/weird/mapping.html', array('SomeComponent', 'home', 'id=2'));
 }
 
 include 'SITE/framework/start.php';
