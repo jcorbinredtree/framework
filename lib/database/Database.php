@@ -1007,6 +1007,115 @@ class Database
      * Logging utility
      */
 
+    private $observing = false;
+    private $observers = array();
+
+    const INFO=0;
+    const ERROR=1;
+
+    /**
+     * Registers an observer of database activity
+     *
+     * callable is passed 3 paramaters:
+     *   $type - one of Database::INFO or Database::ERROR
+     *   $what - string description
+     *   $data - associative array containing extra information
+     *           If type == Database::ERROR, this will contain at least one
+     *           item named 'why' containing detail on why $what failed.
+     * callable's return doesn't matter
+     *
+     * Example:
+     *   class Mumble
+     *   {
+     *     public function foo()
+     *     {
+     *       global $database;
+     *       $obsh = $database->observe(array($this, 'onDatabaseEvent'))
+     *       $database->spindleAndMutilate();
+     *       $database->stopObserving($obsh);
+     *     }
+     *
+     *     public function onDatabaseEvent($type, $what, $data)
+     *     {
+     *       switch ($type) {
+     *         case Database::INFO:
+     *           print "database->$what\n";
+     *           break;
+     *         case Database::ERROR:
+     *           print "database->$what failed $data['why']\n";
+     *           break;
+     *       }
+     *     }
+     *   }
+     *   $bla = new Mumble();
+     *   $bla->foo();
+     *   // prints:
+     *   //   database->spindleAndMutilate...
+     *   // or
+     *   //   database->spindleAndMutilate failed: the paper tore
+     *
+     *
+     * @param callable mixed a callable observer
+     * @see stopObeserving
+     * @return mixed returns reference to callable so that the caller can easily
+     *         stash it for later removal
+     */
+    public function &observe($callable)
+    {
+        if (! is_callable($callable)) {
+            throw new InvalidArgumentException("Argument isn't callable");
+        }
+
+        if (! in_array($callable, $this->observers)) {
+            array_push($this->observers, $callable);
+        }
+
+        $this->observing = count($this->observers) > 0 ? true : false;
+
+        return $callable;
+    }
+
+    /**
+     * Unregisters an observer registered with observe
+     *
+     * @param observer mixed as in observeu
+     * @see observe
+     * @return void
+     */
+    public function stopObserving(&$callable)
+    {
+        if (! is_callable($callable)) {
+            throw new InvalidArgumentException("Argument isn't callable");
+        }
+
+        $new = array();
+        foreach ($this->observers as &$observer) {
+            if ($observer !== $callable) {
+                array_push($new, $observer);
+            }
+        }
+        unset($observer);
+
+        $this->observers = $new;
+        $this->observing = count($this->observers) > 0 ? true : false;
+    }
+
+    /**
+     * Notifies all observers of an event
+     *
+     * @param type int INFO or ERROR
+     * @param what string what happened
+     * @param data array named extra data
+     *
+     * @return void
+     */
+    private function notifyObservers($type, $what, $data)
+    {
+        foreach ($this->observers as $observer) {
+            call_user_func($observer, $type, $what, $data);
+        }
+    }
+
     /**
      * Logs an info message through Config.
      *
@@ -1037,6 +1146,13 @@ class Database
             array_push($parts, sprintf('rows: %d', $rows));
         }
 
+        if ($this->observing) {
+            $data = array(
+                'extra' => array_slice($parts, 1)
+            );
+            $this->notifyObservers(INFO, $what, $data);
+        }
+
         $config->info(
             # Usually looks something like:
             #   Database::action(details), time: n.mmmm seconds, rows: n
@@ -1063,6 +1179,14 @@ class Database
             array_push($parts,
                 sprintf('time: %.4f seconds', $this->lastTimeDelta)
             );
+        }
+
+        if ($this->observing) {
+            $data = array(
+                'why' => $why,
+                'extra' => array_slice($parts, 1)
+            );
+            $this->notifyObservers(ERROR, $what, $data);
         }
 
         $config->error(
