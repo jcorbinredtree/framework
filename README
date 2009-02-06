@@ -15,9 +15,15 @@ Basic site layout:
 Example site initialization:
   % mkdir site && cd site
   % git init
-  % mkdir -p SITE/{local,writable}
+  % mkdir -p SITE/local
+  % for dir in SITE/writable SITE/writable/{cache,log}; do
+      mkdir -p $dir
+      chgrp www-data $dir
+      chmod g+ws $dir
+    done
   % echo 'cache/*' > SITE/writable/.gitignore
-  % git add SITE/writable
+  % echo 'log/*' >> SITE/writable/.gitignore
+  % git add SITE/writable/.gitignore
   % git submodule add git://github.com/jcorbinredtree/framework.git SITE/framework
   % cp SITE/framework/index.php .
   % git add index.php
