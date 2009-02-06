@@ -13,7 +13,7 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
 
-class FrameworkTestCase extends UnitTestCase
+class FrameworkTestCase extends ASyncUnitTest
 {
     /**
      * A utility method to truncate the given table(s)
