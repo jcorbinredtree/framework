@@ -68,7 +68,10 @@ class FrameworkTestCase extends UnitTestCase
                 case 'date':
                 case 'datetime':
                 case 'timestamp':
-                    $obj->$property = time() + (mt_rand(0, (86400 * 7)) * (mt_rand(0, 1) ? 1 : -1));
+                    // Fuzz two weeks around now
+                    $window = 1209600;  // 14 days * 24 hours * 60 minutes * 60 seconds
+                    $time = time() - $window/2 + mt_rand(0, $window);
+                    $obj->$property = $time;
                     break;
                 case 'var_string':
                     $obj->$property = 'dummy string content '.uniqid();
