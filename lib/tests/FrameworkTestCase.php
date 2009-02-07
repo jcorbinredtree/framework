@@ -71,6 +71,9 @@ class FrameworkTestCase extends UnitTestCase
                     // Fuzz two weeks around now
                     $window = 1209600;  // 14 days * 24 hours * 60 minutes * 60 seconds
                     $time = time() - $window/2 + mt_rand(0, $window);
+                    if ($type == 'date') {
+                        $time -= $time % 86400; // 24*60*60
+                    }
                     $obj->$property = $time;
                     break;
                 case 'var_string':
