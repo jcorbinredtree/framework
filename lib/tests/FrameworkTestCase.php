@@ -76,6 +76,12 @@ class FrameworkTestCase extends UnitTestCase
                     }
                     $obj->$property = $time;
                     break;
+                case 'time':
+                    // range is +- 838:59:59, but since this populate thing
+                    // isn't really all it could be anyhow, let's just do
+                    // positive values
+                    $obj->$property = mt_rand(1, 839*60*60-1);
+                    break;
                 case 'var_string':
                     $obj->$property = 'dummy string content '.uniqid();
                     break;
