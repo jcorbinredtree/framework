@@ -311,6 +311,9 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $fields = $this->getFields();
 
         foreach ($fields as $property => $column) {
+            if ($column == $this->key) {
+                continue;
+            }
             $def = $database->getTableFieldDefinition($this->table, $column);
             if (!$def) {
                 continue;
