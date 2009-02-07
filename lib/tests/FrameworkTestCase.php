@@ -75,7 +75,13 @@ class FrameworkTestCase extends UnitTestCase
                     $window = 1209600;  // 14 days * 24 hours * 60 minutes * 60 seconds
                     $time = time() - $window/2 + mt_rand(0, $window);
                     if ($type == 'date') {
-                        $time -= $time % 86400; // 24*60*60
+                        $lt = localtime($time, true);
+                        $time = mktime(0, 0, 0,
+                            $lt['tm_mday'],
+                            $lt['tm_mon']+1,
+                            $lt['tm_year']+1900
+                        );
+                        $lt = null;
                     }
                     $obj->$property = $time;
                     break;
