@@ -265,7 +265,20 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         }
 
         array_push($values, $this->id);
-        return $database->execute($values);
+
+        if (! $database->execute($values)) {
+            return false;
+        }
+
+        if ($database->count() != 1) {
+            $this->errorLog(
+                "update($this->table.$this->key = $this->id)",
+                'no rows updated, likely no such key'
+            );
+            return false;
+        }
+
+        return true;
     }
 
     /**
