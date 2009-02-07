@@ -337,6 +337,8 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             }
         }
 
+        ksort($description);
+
         return $description;
     }
 }
