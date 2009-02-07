@@ -219,7 +219,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      */
     public function update()
     {
-        global $database, $config;
+        global $database;
 
         $fields = $this->getFields();
         $sql = "UPDATE `$this->table` SET ";
@@ -261,7 +261,6 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $sql = substr($sql, 0, (strlen($sql) - 1));
         $sql .= " WHERE `$this->key` = ? LIMIT 1";
         if (!$database->prepare($sql)) {
-            $config->error("could not prepare db object");
             return false;
         }
 
