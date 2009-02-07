@@ -312,7 +312,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                     array_push($sql, "UNIX_TIMESTAMP(`$prefix`.`$column`) AS `$column`");
                     break;
                 default:
-                    array_push($sql, $this->$property);
+                    array_push($sql, "`$prefix`.`$column` AS `$column`");
             }
         }
 
