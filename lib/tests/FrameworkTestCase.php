@@ -46,6 +46,9 @@ class FrameworkTestCase extends UnitTestCase
 
         $fields = $obj->getFields();
         foreach ($fields as $property => $field) {
+            if ($field == $obj->key && isset($obj->$property)) {
+                continue;
+            }
             $def = $database->getTableFieldDefinition($obj->table, $field);
             if (!$def) {
                 continue;
