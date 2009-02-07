@@ -1074,7 +1074,7 @@ class Database
      *
      * @return string "action(sql|params)"
      */
-    private function whatStatement($action, $sql, $params)
+    private function whatStatement($action, $sql, $params=null)
     {
         if (! isset($sql)) {
             if (isset($this->statement)) {
