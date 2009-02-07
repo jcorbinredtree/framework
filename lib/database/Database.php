@@ -549,7 +549,7 @@ class Database
             if (!$result) {
                 $this->endTiming();
 
-                $what = $this->whatStatement('execute', null, $params);
+                $what = $this->whatStatement('execute', $params);
                 $this->errorLog($what, $this->error());
                 return false;
             }
@@ -558,13 +558,13 @@ class Database
         } catch (PDOException $e) {
             $this->endTiming();
 
-            $what = $this->whatStatement('execute', null, $params);
+            $what = $this->whatStatement('execute', $params);
             $this->errorLog($what, $e->getMessage());
             return false;
         }
 
         if ($this->log) {
-            $what = $this->whatStatement('execute', null, $params);
+            $what = $this->whatStatement('execute', $params);
             $this->infoLog($what, $this->count());
         }
 
@@ -580,16 +580,15 @@ class Database
      */
     public function executef($sqlf)
     {
-        // Temporarily disable logging
-        $logging = $this->log;
-        $this->log = false;
-
         $this->startTiming();
 
         if (!$this->prepare($sqlf)) {
-            $this->log = $logging;
             return false;
         }
+
+        // Temporarily disable logging
+        $logging = $this->log;
+        $this->log = false;
 
         /*
          * bind function args. if an array was passed, then flatten it
@@ -619,7 +618,7 @@ class Database
         $this->log = $logging;
 
         if ($this->log) {
-            $what = $this->whatStatement('executef', $sqlf, $args);
+            $what = $this->whatStatement('executef', $args);
             $this->infoLog($what, $this->count());
         }
 
@@ -1066,38 +1065,23 @@ class Database
      * Returns a what clause for use with other logging functions, such as:
      *
      * @param action string single word like 'execute' or 'prepare'
-     * @param sql string the statement, if null will attempt to get from $statement
-     * @param params string|array (optional) if an array is given, will be
-     * passed through json_encode (or print_r if not available)
+     * @param detail mixed detail of what action did, if not a string will be
+     * passed throuh json_encode
      *
-     * @return string "action(sql|params)"
+     * @return string "action(detail)"
      */
-    private function whatStatement($action, $sql, $params=null)
+    private function whatStatement($action, $detail)
     {
-        if (! isset($sql)) {
-            if (isset($this->statement)) {
-                $sql = $this->statement->queryString;
+        if (! is_string($detail)) {
+            if (function_exists('json_encode')) {
+                $detail = json_encode($detail);
             } else {
-                $sql = '{no statement}';
+                // TODO fake json since this should be shallow
+                $detail = print_r($detail, true);
             }
         }
 
-        $what = "$action($sql";
-        if (isset($params)) {
-            if (is_array($params) && count($params)) {
-                if (function_exists('json_encode')) {
-                    $params = json_encode($params);
-                } else {
-                    $params = print_r($params, true);
-                }
-            }
-            if ($params) {
-                $what .= "|$params";
-            }
-        }
-        $what .= ')';
-
-        return $what;
+        return "$action($detail)";
     }
 }
 
