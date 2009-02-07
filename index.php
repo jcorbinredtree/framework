@@ -32,7 +32,7 @@ function onConfig(Config &$config)
     $config->setDatabaseTestInfo('mysql://name:pass@localhost/dbname_test');
     $config->addMailerOptions(array(
         'From'      => 'client@example.com',
-        'From Name' => 'Mr Person',
+        'FromName'  => 'Mr Person',
         'Host'      => 'localhost'
     ));
 
