@@ -140,11 +140,22 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 }
 
                 $def = $def[0];
-                if ($this->isDate($def)) {
-                    array_push($values, date('Y-m-d H:i:s', (int) $this->$property));
-                }
-                else {
-                    array_push($values, $this->$property);
+                switch (strtolower(Params::generic($def, 'native_type'))) {
+                    // TODO how about some symmetry with getColumnsSQL since it
+                    // transfers a number, but this mess uses fragile string
+                    // formatting (as in, disregards timezones for starters)
+                    case 'time':
+                        array_push($values, date('H:i:s', (int) $this->$property));
+                        break;
+                    case 'date':
+                        array_push($values, date('Y-m-d', (int) $this->$property));
+                        break;
+                    case 'datetime':
+                    case 'timestamp':
+                        array_push($values, date('Y-m-d H:i:s', (int) $this->$property));
+                        break;
+                    default:
+                        array_push($values, $this->$property);
                 }
 
                 $sql .= "`$field`=?,";
@@ -222,12 +233,22 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
 
             $def = $def[0];
-
-            if ($this->isDate($def)) {
-                array_push($values, date('Y-m-d H:i:s', (int) $this->$property));
-            }
-            else {
-                array_push($values, $this->$property);
+            switch (strtolower(Params::generic($def, 'native_type'))) {
+                // TODO how about some symmetry with getColumnsSQL since it
+                // transfers a number, but this mess uses fragile string
+                // formatting (as in, disregards timezones for starters)
+                case 'time':
+                    array_push($values, date('H:i:s', (int) $this->$property));
+                    break;
+                case 'date':
+                    array_push($values, date('Y-m-d', (int) $this->$property));
+                    break;
+                case 'datetime':
+                case 'timestamp':
+                    array_push($values, date('Y-m-d H:i:s', (int) $this->$property));
+                    break;
+                default:
+                    array_push($values, $this->$property);
             }
 
             $sql .= "`$field`=?,";
@@ -260,25 +281,6 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         return false;
     }
 
-    /**
-     * Tests whether the given column definition is a date field
-     *
-     * @see Database::getTableFieldDefinition
-     * @param def mixed the column definition
-     * @return boolean
-     */
-    private function isDate($def)
-    {
-        switch (strtolower(Params::generic($def, 'native_type'))) {
-            case 'date':
-            case 'datetime':
-            case 'timestamp':
-                return true;
-        }
-
-        return false;
-    }
-
     public function getColumnsSQL($prefix='')
     {
         global $database;
@@ -299,11 +301,18 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             }
 
             $def = $def[0];
-            if ($this->isDate($def)) {
-                array_push($sql, "UNIX_TIMESTAMP(`$prefix`.`$column`) AS `$column`");
-            }
-            else {
-                array_push($sql, "`$prefix`.`$column`");
+            switch (strtolower(Params::generic($def, 'native_type'))) {
+                // FIXME how about a timezone?
+                case 'time':
+                    array_push($sql, "TIME_TO_SEC(`$prefix`.`$column`) AS `$column`");
+                    break;
+                case 'date':
+                case 'datetime':
+                case 'timestamp':
+                    array_push($sql, "UNIX_TIMESTAMP(`$prefix`.`$column`) AS `$column`");
+                    break;
+                default:
+                    array_push($values, $this->$property);
             }
         }
 
