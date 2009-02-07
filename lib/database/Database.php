@@ -606,9 +606,9 @@ class Database
          * bind function args. if an array was passed, then flatten it
          */
         {
-            $args = func_get_args();
+            $args = array_slice(func_get_args(), 1);
             $index = 1;
-            for ($i = 1; $i < count($args); $i++) {
+            for ($i = 0; $i < count($args); $i++) {
                 $arg = $args[$i];
                 if (is_array($arg)) {
                     foreach ($arg as $a) {
