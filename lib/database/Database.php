@@ -37,6 +37,18 @@
 
 class Database
 {
+    /**
+     * Utility to format a time string from a number of seconds
+     */
+    static public function formatTime($time)
+    {
+        $sec = $time % 60;
+        $time = ($time-$sec)/60;
+        $min = $time % 60;
+        $time = ($time-$min)/60;
+        return sprintf('%d:%02d:%02d', $time, $min, $sec);
+    }
+
     const LOCK_READ = 0x01;
     const LOCK_WRITE = 0x02;
 

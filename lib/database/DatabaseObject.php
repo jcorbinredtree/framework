@@ -145,7 +145,9 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                     // transfers a number, but this mess uses fragile string
                     // formatting (as in, disregards timezones for starters)
                     case 'time':
-                        array_push($values, date('H:i:s', (int) $this->$property));
+                        array_push($values,
+                            Database::formatTime($this->$property)
+                        );
                         break;
                     case 'date':
                         array_push($values, date('Y-m-d', (int) $this->$property));
@@ -238,7 +240,9 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 // transfers a number, but this mess uses fragile string
                 // formatting (as in, disregards timezones for starters)
                 case 'time':
-                    array_push($values, date('H:i:s', (int) $this->$property));
+                    array_push($values,
+                        Database::formatTime($this->$property)
+                    );
                     break;
                 case 'date':
                     array_push($values, date('Y-m-d', (int) $this->$property));
