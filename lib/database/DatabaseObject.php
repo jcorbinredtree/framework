@@ -291,6 +291,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         global $database;
 
         if ($database->executef("DELETE FROM `$this->table` WHERE `$this->key` = ?", $this->id)) {
+            $this->id = -1;
             return true;
         }
 
