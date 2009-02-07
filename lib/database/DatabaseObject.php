@@ -344,6 +344,21 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         return $description;
     }
+
+    /**
+     * Logs an error message through Config.
+     *
+     * @param what string what the caller did that went badly
+     * @param why string why it didn't work out (optional)
+     */
+    protected function errorLog($what, $why=null)
+    {
+        global $config;
+
+        $class = get_class($this);
+
+        $config->error("$clasS::$What failed: $why");
+    }
 }
 
 ?>
