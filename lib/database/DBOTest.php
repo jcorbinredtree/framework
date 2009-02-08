@@ -206,7 +206,7 @@ class DBOTest extends FrameworkTestCase
             $dummy = new $table();
             if (! $dummy->fetch($dummyId)) {
                 $this->fail("Failed to load dummy");
-            } elseif ($this->Verbose) {
+            } elseif ($this->verbose) {
                 print "Loaded dummy $dummyId";
             }
 
