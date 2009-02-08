@@ -1030,8 +1030,8 @@ class Database
     private $observing = false;
     private $observers = array();
 
-    const INFO=0;
-    const ERROR=1;
+    const INFO  = 0;
+    const ERROR = 1;
 
     /**
      * Registers an observer of database activity
@@ -1170,7 +1170,7 @@ class Database
             $data = array(
                 'extra' => array_slice($parts, 1)
             );
-            $this->notifyObservers(INFO, $what, $data);
+            $this->notifyObservers(Database::INFO, $what, $data);
         }
 
         $config->info(
