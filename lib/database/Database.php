@@ -132,6 +132,11 @@ class Database
     private $statementStack = array();
 
     /**
+     * The current transaction level (allows nestable transactions)
+     */
+    private $transactionLevel = 0;
+
+    /**
      * Serialize
      *
      * @access public
@@ -379,6 +384,11 @@ class Database
      */
     public function transaction()
     {
+        if ($this->transactionLevel++) {
+            $this->infoLog('transaction(ignore)');
+            return;
+        }
+
         $this->lazyLoad();
 
         $this->startTiming();
@@ -402,6 +412,11 @@ class Database
      */
     public function rollback()
     {
+        if (--$this->transactionLevel) {
+            $this->infoLog('transaction(ignore)');
+            return;
+        }
+
         $this->lazyLoad();
 
         $this->startTiming();
@@ -425,6 +440,11 @@ class Database
      */
     public function commit()
     {
+        if (--$this->transactionLevel) {
+            $this->infoLog('transaction(ignore)');
+            return;
+        }
+
         $this->lazyLoad();
 
         $this->startTiming();
