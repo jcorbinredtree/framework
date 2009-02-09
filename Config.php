@@ -685,6 +685,34 @@ class Config
 
         return implode('', $out);
     }
+
+    /**
+     * If debugging is on, files a complaint through php's error handling about
+     * use of a deprecated interface with optional advice on what to do instead.
+     *
+     * @param old string describing the old interface
+     * @param new string describing the new interface (optional)
+     *
+     * @return void
+     */
+    public function deprecatedComplain($old, $new=null)
+    {
+        if (! $this->debug) {
+            return;
+        }
+
+        $trace = debug_backtrace();
+        $trace = $trace[1];
+        $from = $trace['class'].$trace['type'].$trace['function'];
+        $at = $trace['file'].':'.$trace['line'];
+
+        $mess = "Call to deprecated $old from $from at $at";
+        if (isset($new)) {
+            $mess .= ", use $new instead";
+        }
+
+        trigger_error($mess);
+    }
 }
 
 ?>
