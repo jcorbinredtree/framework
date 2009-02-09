@@ -44,17 +44,16 @@ class FrameworkTestCase extends ASyncUnitTest
     {
         global $database;
 
-        $fields = $obj->meta()->getColumnMap();
+        $meta = $obj->meta();
+        $key = $meta->getKey();
+        $fields = $meta->getColumnMap();
         foreach ($fields as $property => $field) {
-            if ($field == $obj->key && isset($obj->$property)) {
-                continue;
-            }
-            $def = $database->getTableFieldDefinition($obj->table, $field);
-            if (!$def) {
+            if ($field == $key && isset($obj->$property)) {
                 continue;
             }
 
-            $type = strtolower(Params::generic($def[0], 'native_type'));
+            $def = $meta->getColumnDefinition($field);
+            $type = strtolower(Params::generic($def, 'native_type'));
             switch ($type) {
                 case 'int':
                 case 'integer':
