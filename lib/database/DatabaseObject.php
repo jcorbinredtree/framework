@@ -190,14 +190,14 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         $sql = "UPDATE `$this->table` SET ";
         $sql .= $this->getFieldSetSQL();
-        $sql .= " WHERE `$this->key` = ? LIMIT 1";
+        $sql .= " WHERE `$this->key` = :$this->key LIMIT 1";
 
         if (!$database->prepare($sql)) {
             return false;
         }
 
         $values = $this->getFieldSetValues();
-        array_push($values, $this->id);
+        $values[":$this->key"] = $this->id;
 
         if (! $database->execute($values)) {
             return false;
@@ -275,9 +275,12 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     /**
      * Builds the needed SQL fragment to update or insert fields.
      *
-     * @return string like "col1=:?, col2=:?"
+     * @param bindByName boolean whether to generate named bind parameters, true by
+     * default.
+     *
+     * @return string like "col1=:?, col2=:?" or "col1=:col1, col2=:col2"
      */
-    public function getFieldSetSQL()
+    public function getFieldSetSQL($bindByName=true)
     {
         global $database;
 
@@ -285,6 +288,12 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $set = array();
 
         foreach ($fields as $property => $column) {
+            if ($bindByName) {
+                $value = ":$column";
+            } else {
+                $value = '?';
+            }
+
             $def = $database->getTableFieldDefinition($this->table, $column);
             if (!$def) {
                 continue;
@@ -293,7 +302,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 continue;
             }
 
-            array_push($set, "`$column`=?");
+            array_push($set, "`$column`=$value");
         }
 
         return implode(', ', $set);
@@ -303,9 +312,12 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      * Returns a value list for executing a prepared sql statement containing
      * the fragment returned by getFieldSetSQL.
      *
+     * @param byName boolean whether to return an associative array suitable for use
+     * with a sql fragment with named parameters, true by default.
+     *
      * @return array value list
      */
-    public function getFieldSetValues()
+    public function getFieldSetValues($byName=true)
     {
         global $database;
 
@@ -339,7 +351,11 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 default:
                     $value = $this->$property;
             }
-            array_push($values, $value);
+            if ($byName) {
+                $values[":$column"] = $value;
+            } else {
+                array_push($values, $value);
+            }
         }
 
         return $values;

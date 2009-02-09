@@ -133,10 +133,12 @@ class DatabaseObject_Test extends FrameworkTestCase
         $key = $dummy->key;
 
         $fieldSet = $dummy->getFieldSetSQL();
-        $this->assertEqual(
-            $fieldSet,
-            '`a_date`=?, `a_date_time`=?, `a_time`=?, `mess`=?'
-        );
+        $this->assertEqual($fieldSet, implode(', ', array(
+            '`a_date`=:a_date',
+            '`a_date_time`=:a_date_time',
+            '`a_time`=:a_time',
+            '`mess`=:mess'
+        )));
 
         { // Create a dummy
             $this->populate($dummy);
@@ -147,10 +149,10 @@ class DatabaseObject_Test extends FrameworkTestCase
                 "INSERT INTO `$table` SET $fieldSet"
             );
             $this->expectExact('execute', json_encode(array(
-                date('Y-m-d', (int) $dummy->aDate),
-                date('Y-m-d H:i:s', (int) $dummy->aDateTime),
-                Database::formatTime($dummy->aTime),
-                $dummy->mess
+                ":a_date"      => date('Y-m-d', (int) $dummy->aDate),
+                ":a_date_time" => date('Y-m-d H:i:s', (int) $dummy->aDateTime),
+                ":a_time"      => Database::formatTime($dummy->aTime),
+                ":mess"        => $dummy->mess
             )));
             $this->expectExact('lastInsertId', 1); // The table is virgin
             $this->expectExact('unlock', 'UNLOCK TABLES');
@@ -166,14 +168,14 @@ class DatabaseObject_Test extends FrameworkTestCase
         { // Change the dummy and save
             $this->populate($dummy);
             $this->expectExact('prepare',
-                "UPDATE `$table` SET $fieldSet WHERE `$key` = ? LIMIT 1"
+                "UPDATE `$table` SET $fieldSet WHERE `$key` = :$key LIMIT 1"
             );
             $this->expectExact('execute', json_encode(array(
-                date('Y-m-d', (int) $dummy->aDate),
-                date('Y-m-d H:i:s', (int) $dummy->aDateTime),
-                Database::formatTime($dummy->aTime),
-                $dummy->mess,
-                $dummy->id
+                ":a_date"      => date('Y-m-d', (int) $dummy->aDate),
+                ":a_date_time" => date('Y-m-d H:i:s', (int) $dummy->aDateTime),
+                ":a_time"      => Database::formatTime($dummy->aTime),
+                ":mess"        => $dummy->mess,
+                ":dbodummy_id" => $dummy->id
             )));
 
             if (! $dummy->update()) {
