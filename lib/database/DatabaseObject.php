@@ -124,9 +124,13 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         global $database, $config;
 
-        $database->lock($this->table, Database::LOCK_WRITE);
+        $meta = $this->meta();
+        $table = $meta->getTable();
+        $key = $meta->getKey();
+
+        $database->lock($table, Database::LOCK_WRITE);
         {
-            $sql = "INSERT INTO `$this->table` SET ";
+            $sql = "INSERT INTO `$table` SET ";
             $sql .= $this->getFieldSetSQL();
 
             if (!$database->prepare($sql)) {
@@ -143,7 +147,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 return false;
             }
 
-            $p = Params::fieldToProperty($this->key);
+            $p = Params::fieldToProperty($key);
             if (property_exists($this, $p) && $this->$p) {
                 $this->id = $this->$p;
             }
@@ -166,8 +170,12 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         global $database;
 
-        $sql = "SELECT " . $this->getColumnsSQL() . " FROM `$this->table`";
-        $sql .= " WHERE `$this->key` = ? LIMIT 1";
+        $meta = $this->meta();
+        $table = $meta->getTable();
+        $key = $meta->getKey();
+
+        $sql = "SELECT " . $this->getColumnsSQL() . " FROM `$table`";
+        $sql .= " WHERE `$key` = ? LIMIT 1";
         if ($database->executef($sql, $id) && $database->count()) {
             $row = $database->getRow();
             Params::ArrayToObject($row, $this);
@@ -188,16 +196,20 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         global $database;
 
-        $sql = "UPDATE `$this->table` SET ";
+        $meta = $this->meta();
+        $table = $meta->getTable();
+        $key = $meta->getKey();
+
+        $sql = "UPDATE `$table` SET ";
         $sql .= $this->getFieldSetSQL();
-        $sql .= " WHERE `$this->key` = :$this->key LIMIT 1";
+        $sql .= " WHERE `$key` = :$key LIMIT 1";
 
         if (!$database->prepare($sql)) {
             return false;
         }
 
         $values = $this->getFieldSetValues();
-        $values[":$this->key"] = $this->id;
+        $values[":$key"] = $this->id;
 
         if (! $database->execute($values)) {
             return false;
@@ -205,7 +217,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         if ($database->count() != 1) {
             $this->errorLog(
-                "update($this->table.$this->key = $this->id)",
+                "update($table.$key = $this->id)",
                 'no rows updated, likely no such key'
             );
             return false;
@@ -223,7 +235,11 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         global $database;
 
-        if ($database->executef("DELETE FROM `$this->table` WHERE `$this->key` = ?", $this->id)) {
+        $meta = $this->meta();
+        $table = $meta->getTable();
+        $key = $meta->getKey();
+
+        if ($database->executef("DELETE FROM `$table` WHERE `$key` = ?", $this->id)) {
             $this->id = -1;
             return true;
         }
@@ -235,18 +251,20 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         global $database;
 
+        $meta = $this->meta();
+
         if (!$prefix) {
-            $prefix = $this->table;
+            $prefix = $meta->getTable();
         }
 
         $prefix = preg_replace('/[.]$/', '', $prefix);
 
         $sql = array();
-        $meta = $this->meta();
+        $key = $meta->getKey();
         $fields = $meta->getColumnMap();
 
         foreach ($fields as $property => $column) {
-            if ($column == $this->key) {
+            if ($column == $key) {
                 continue;
             }
 
@@ -280,6 +298,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     public function getFieldSetSQL($bindByName=true)
     {
         $meta = $this->meta();
+        $key = $meta->getKey();
         $fields = $meta->getColumnMap();
         $set = array();
 
@@ -290,7 +309,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 $value = '?';
             }
 
-            if ($property == 'id' || $column == $this->key) {
+            if ($property == 'id' || $column == $key) {
                 continue;
             }
 
@@ -312,11 +331,12 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     public function getFieldSetValues($byName=true)
     {
         $meta = $this->meta();
+        $key = $meta->getKey();
         $fields = $meta->getColumnMap();
         $values = array();
 
         foreach ($fields as $property => $column) {
-            if ($property == 'id' || $column == $this->key) {
+            if ($property == 'id' || $column == $key) {
                 continue;
             }
             $def = $meta->getColumnDefinition($column);

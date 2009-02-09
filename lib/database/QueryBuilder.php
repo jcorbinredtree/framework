@@ -50,16 +50,20 @@ class QueryBuilder
 
     public function joinObject(IDatabaseObject &$dboA, IDatabaseObject &$dboB, $keyA=null, $keyB=null)
     {
+        $metaA = $dboA->meta();
+        $metaB = $dboB->meta();
+        $tableA = $metaA->getTable();
+        $tableB = $metaB->getTable();
+
         if (!$keyA) {
-            $keyA = $dboA->key;
+            $keyA = $metaA->getKey();
         }
 
         if (!$keyB) {
             $keyB = $keyA;
         }
 
-        $sql = "INNER JOIN `$dboB->table` ON `$dboB->table`.`$keyB` = ";
-        $sql .= "`$dboA->table`.`$keyA`";
+        $sql = "INNER JOIN `$tableB` ON `$tableB`.`$keyB` = `$tableA`.`$keyA`";
 
         array_push($this->joins, $sql);
     }
@@ -97,6 +101,9 @@ class QueryBuilder
     public function __toString()
     {
         $dbo =& $this->dbo;
+        $meta = $dbo->meta();
+        $table = $meta->getTable();
+        $key = $meta->getKey();
         $sql = "$this->type ";
         $meat = '';
 
@@ -105,7 +112,7 @@ class QueryBuilder
                 $sql .= "$this->fields ";
             }
             else {
-                $sql .= "`$dbo->table`.`$dbo->key`," . $dbo->getColumnsSQL() . ' ';
+                $sql .= "`$table`.`$key`," . $dbo->getColumnsSQL() . ' ';
             }
         }
         elseif ($this->fields) {
@@ -119,7 +126,7 @@ class QueryBuilder
             throw new IllegalArgumentException('pager is mutually exclusive with limit');
         }
 
-        $meat = "FROM `$dbo->table` ";
+        $meat = "FROM `$table` ";
         foreach ($this->joins as $join) {
             $meat .= "$join ";
         }
