@@ -1206,7 +1206,7 @@ class Database
                 'why' => $why,
                 'extra' => array_slice($parts, 1)
             );
-            $this->notifyObservers(ERROR, $what, $data);
+            $this->notifyObservers(Database::ERROR, $what, $data);
         }
 
         $config->error(
