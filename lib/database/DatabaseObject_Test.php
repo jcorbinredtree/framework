@@ -113,8 +113,22 @@ class DatabaseObject_Test extends FrameworkTestCase
 
     public function testDummy()
     {
-        $dummy = new DBODummy();
-        $table = $dummy->table;
+        { // Test meta object
+            $meta = DatabaseObject_Meta::forClass('DBODummy');
+            $table = $meta->getTable();
+            $key = $meta->getKey();
+
+            $this->assertEqual('DBODummy', $meta->getClass());
+            $this->assertEqual('dbodummy', $table);
+            $this->assertEqual('dbodummy_id', $key);
+
+            $colMap = $meta->getColumnMap();
+            $this->assertEqual($colMap["aDate"],     "a_date");
+            $this->assertEqual($colMap["aDateTime"], "a_date_time");
+            $this->assertEqual($colMap["aTime"],     "a_time");
+            $this->assertEqual($colMap["mess"],      "mess");
+            $this->assertEqual($colMap["id"],        "dbodummy_id");
+        }
 
         $drop = "DROP TABLE IF EXISTS $table";
 
@@ -129,8 +143,7 @@ class DatabaseObject_Test extends FrameworkTestCase
         $this->db->perform($drop);
         $this->db->perform($create);
 
-        $table = $dummy->table;
-        $key = $dummy->key;
+        $dummy = new DBODummy();
 
         $fieldSet = $dummy->getFieldSetSQL();
         $this->assertEqual($fieldSet, implode(', ', array(
