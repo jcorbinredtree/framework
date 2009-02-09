@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DBOTest class definition
+ * DatabaseObject_Test class definition
  *
  * PHP version 5
  *
@@ -36,7 +36,7 @@ if (realpath($_SERVER['SCRIPT_FILENAME']) == __FILE__) {
  * DatabaseObject should be demonstrated here in some way.
  */
 
-class DBOTest extends FrameworkTestCase
+class DatabaseObject_Test extends FrameworkTestCase
 {
     private $dbObserverHandle;
     private $db = null;
