@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database Object class definition
+ * Database Object Meta interface definition
  *
  * PHP version 5
  *
@@ -26,17 +26,18 @@
  */
 
 /**
- * Simple ORM interface
+ * Simple ORM meta interface
  *
  * @category     Database
  * @package      Core
  */
-interface IDatabaseObject {
-    public function create();
-    public function fetch($id);
-    public function update();
-    public function delete();
-    public function &meta();
+interface IDatabaseObject_Meta {
+    public function getClass();
+    public function getTable();
+    public function getKey();
+    public function getColumnMap();
+    public function getColumnDefinition($column);
+    public function isColumn($member);
 }
 
 ?>

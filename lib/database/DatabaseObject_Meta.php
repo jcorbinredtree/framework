@@ -28,7 +28,7 @@
  * @see DatabaseObject::meta
  */
 
-class DatabaseObject_Meta
+class DatabaseObject_Meta implements IDatabaseObject_Meta
 {
     /**
      * Static storage for meta objects
