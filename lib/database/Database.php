@@ -385,7 +385,7 @@ class Database
     public function transaction()
     {
         if ($this->transactionLevel++) {
-            $this->infoLog('transaction(ignore)');
+            $this->infoLog('transaction(start ignored)');
             return;
         }
 
@@ -413,7 +413,7 @@ class Database
     public function rollback()
     {
         if (--$this->transactionLevel) {
-            $this->infoLog('transaction(ignore)');
+            $this->infoLog('transaction(rollback ignored)');
             return;
         }
 
@@ -441,7 +441,7 @@ class Database
     public function commit()
     {
         if (--$this->transactionLevel) {
-            $this->infoLog('transaction(ignore)');
+            $this->infoLog('transaction(commit ignored)');
             return;
         }
 
