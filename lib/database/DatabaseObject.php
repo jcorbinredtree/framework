@@ -62,14 +62,14 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      *
      * @var string
      */
-    static public $table = '';
+    static public $table = null;
 
     /**
      * The name of our primary key field
      *
      * @var string
      */
-    static public $key = '';
+    static public $key = null;
 
     /**
      * A simple property to track memoization

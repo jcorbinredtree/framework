@@ -59,9 +59,9 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
         return self::$ClassMeta[$class];
     }
 
-    private $class;
-    private $table;
-    private $key;
+    private $class=null;
+    private $table=null;
+    private $key=null;
 
     /**
      * @return string the name of the class represented by this meta object.
@@ -100,15 +100,44 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
      */
     function __construct($class)
     {
-        global $database;
+        global $config, $database;
 
         $this->class = $class;
 
         // Introspect class's members
         $vars = get_class_vars($class);
 
-        $this->table = $vars['table'];
-        $this->key = $vars['key'];
+        // Compatability for old subclasses
+        foreach (array('table', 'key') as $prop) {
+            if (array_key_exists($prop, $vars) && isset($vars[$prop])) {
+                $this->$prop = $vars[$prop];
+            }
+            if (! isset($this->$prop)) {
+                $inst = new $class();
+                if (
+                    property_exists($inst, $prop) &&
+                    isset($inst->$prop) &&
+                    !empty($inst->$prop)
+                ) {
+                    $this->$prop = $inst->$prop;
+                    trigger_error(
+                        "Instances of $class carry a $prop property, ".
+                        "this should be static"
+                    );
+                }
+            }
+        }
+
+        if (! isset($this->table)) {
+            throw new RuntimeException(
+                "Cannot determine database table for $class"
+            );
+        }
+        if (! isset($this->key)) {
+            throw new RuntimeException(
+                "Cannot determine database key for $class"
+            );
+        }
 
         // columnMap, just a basic under_scored to camelCased translation
         $this->columnMap = array();
