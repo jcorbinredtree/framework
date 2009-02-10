@@ -702,9 +702,8 @@ class Config
         }
 
         $trace = debug_backtrace();
-        $trace = $trace[1];
-        $from = $trace['class'].$trace['type'].$trace['function'];
-        $at = $trace['file'].':'.$trace['line'];
+        $from = $trace[2]['class'].$trace[2]['type'].$trace[2]['function'];
+        $at = $trace[1]['file'].':'.$trace[1]['line'];
 
         $mess = "Call to deprecated $old from $from at $at";
         if (isset($new)) {
