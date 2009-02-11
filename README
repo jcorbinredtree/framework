@@ -16,15 +16,6 @@ Example site initialization:
   % mkdir site && cd site
   % git init
   % mkdir -p SITE/local
-  % for dir in SITE/writable SITE/writable/{cache,log}; do
-      mkdir -p $dir
-      chgrp www-data $dir
-      chmod g+ws $dir
-    done
-  % echo 'cache/*' > SITE/writable/.gitignore
-  % echo 'log/*' >> SITE/writable/.gitignore
-  % git add SITE/writable/.gitignore
-  % git submodule add git://github.com/jcorbinredtree/framework.git SITE/framework
-  % cp SITE/framework/index.php .
-  % git add index.php
-  % git commit -m 'Initial commit'
+  % git remote add skeleton git://github.com/jcorbinredtree/framework.git -t site -m site
+  % git pull skeleton
+  % make framework-update
