@@ -16,6 +16,7 @@
 class LifeCycleManager
 {
     private $cyclers;
+    private $eventCallables;
 
     private static $singleton = null;
     public static function instance()
@@ -29,6 +30,36 @@ class LifeCycleManager
     private function __construct()
     {
         $this->cyclers = array();
+        $this->eventCallables = array();
+    }
+
+    public function &registerEvent($event, &$callable)
+    {
+        if (! is_callable($callable)) {
+            throw new InvalidArgumentException('not callable');
+        }
+        if (! array_key_exists($event, $this->eventCallables)) {
+            $this->eventCallables[$event] = array();
+        }
+        array_push($this->eventCallables[$event], $callable);
+        return $callable;
+    }
+
+    public function unregisterEvent($event, &$callable)
+    {
+        if (! is_callable($callable)) {
+            throw new InvalidArgumentException('not callable');
+        }
+        if (! array_key_exists($event, $this->eventCallables)) {
+            return;
+        }
+        $new = array();
+        foreach ($this->eventCallables[$event] as &$c) {
+            if ($c != $callable) {
+                array_push($new, $c);
+            }
+        }
+        $this->eventCallables[$event] = $new;
     }
 
     public function register(ILifeCycle &$cycler)
@@ -55,19 +86,34 @@ class LifeCycleManager
         $this->cyclers = $lcs;
     }
 
+    private function eventCalls($event)
+    {
+        $ca = array();
+
+        foreach ($this->cyclers as &$lco) {
+            array_push($ca, array($lco, $event));
+        }
+
+        if (array_key_exists($event, $this->eventCallables)) {
+            $ca = array_merge($ca, $this->eventCallables[$event]);
+        }
+
+        return $ca;
+    }
+
     private function dispatch($event)
     {
         $args = array_slice(func_get_args(), 1);
-        foreach ($this->cyclers as &$lco) {
-            call_user_func_array(array($lco, $event), $args);
+        foreach ($this->eventCalls($event) as $call) {
+            call_user_func_array($call, $args);
         }
     }
 
     private function delegate($event)
     {
         $args = array_slice(func_get_args(), 1);
-        foreach ($this->cyclers as &$lco) {
-            $r = call_user_func_array(array($lco, $event), $args);
+        foreach ($this->eventCalls($event) as $call) {
+            $r = call_user_func_array($call, $args);
             if ($r) {
                 return true;
             }
@@ -79,8 +125,8 @@ class LifeCycleManager
     private function delegateReturn($event)
     {
         $args = array_slice(func_get_args(), 1);
-        foreach ($this->cyclers as &$lco) {
-            $r = call_user_func_array(array($lco, $event), $args);
+        foreach ($this->eventCalls($event) as $call) {
+            $r = call_user_func_array($call, $args);
             if ($r !== null) {
                 return $r;
             }
@@ -93,8 +139,8 @@ class LifeCycleManager
     {
         $ret = array();
         $args = array_slice(func_get_args(), 1);
-        foreach ($this->cyclers as &$lco) {
-            $r = call_user_func_array(array($lco, $event), $args);
+        foreach ($this->eventCalls($event) as $call) {
+            $r = call_user_func_array($call, $args);
             if (! is_array($r)) {
                 throw new RuntimeException(
                     "LifeCycleManager->collect($event): ".
