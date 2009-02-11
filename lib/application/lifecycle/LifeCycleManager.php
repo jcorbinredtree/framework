@@ -15,48 +15,60 @@
 
 class LifeCycleManager
 {
-    private static $lifeCyclers = array();
+    private $cyclers;
 
-    private function __construct() { }
-
-    public static function add(ILifeCycle &$item)
+    private static $singleton = null;
+    public static function instance()
     {
-        array_push(LifeCycleManager::$lifeCyclers, $item);
+        if (! isset(self::$singleton)) {
+            self::$singleton = new self();
+        }
+        return self::$singleton;
     }
 
-    public static function remove(ILifeCycle &$item)
+    private function __construct()
     {
-        $lcs = array();
+        $this->cyclers = array();
+    }
 
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            if ($item != $lco) {
+    public function register(ILifeCycle &$cycler)
+    {
+        if (! isset($cycler)) {
+            throw new InvalidArgumentException("null cycler");
+        }
+        array_push($this->cyclers, $cycler);
+    }
+
+    public function unregister(ILifeCycle &$cycler)
+    {
+        if (! isset($cycler)) {
+            throw new InvalidArgumentException("null cycler");
+        }
+
+        $lcs = array();
+        foreach ($this->cyclers as &$lco) {
+            if ($cycler != $lco) {
                 array_push($lcs, $lco);
             }
         }
 
-        LifeCycleManager::$lifeCyclers = $lcs;
+        $this->cyclers = $lcs;
     }
 
-    public static function onInitialize()
+    private function dispatch($event)
     {
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $lco->onInitialize();
+        $args = array_slice(func_get_args(), 1);
+        foreach ($this->cyclers as &$lco) {
+            call_user_func_array(array($lco, $event), $args);
         }
     }
 
-    public static function onException(Exception &$ex)
+    private function delegate($event)
     {
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $lco->onException($ex);
-        }
-
-        return false;
-    }
-
-    public static function onURLRewrite()
-    {
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            if ($lco->onURLRewrite()) {
+        $args = array_slice(func_get_args(), 1);
+        foreach ($this->cyclers as &$lco) {
+            $r = call_user_func_array(array($lco, $event), $args);
+            if ($r) {
                 return true;
             }
         }
@@ -64,22 +76,72 @@ class LifeCycleManager
         return false;
     }
 
-    public static function onRequestStart()
+    private function delegateReturn($event)
     {
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $lco->onRequestStart();
-        }
-    }
-
-    public static function onAction(ActionProvider &$provider, ActionDescription &$description)
-    {
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            if (null !== ($res = $lco->onAction($provider, $description))) {
-                return $res;
+        $args = array_slice(func_get_args(), 1);
+        foreach ($this->cyclers as &$lco) {
+            $r = call_user_func_array(array($lco, $event), $args);
+            if ($r !== null) {
+                return $r;
             }
         }
 
         return null;
+    }
+
+    private function collect($event)
+    {
+        $ret = array();
+        $args = array_slice(func_get_args(), 1);
+        foreach ($this->cyclers as &$lco) {
+            $r = call_user_func_array(array($lco, $event), $args);
+            if (! is_array($r)) {
+                throw new RuntimeException(
+                    "LifeCycleManager->collect($event): ".
+                    get_class($lco)." returned non-array"
+                );
+            }
+            $ret = array_merge($ret, $r);
+        }
+
+        return $ret;
+    }
+
+    public static function add(ILifeCycle &$item)
+    {
+        self::instance()->register($item);
+    }
+
+    public static function remove(ILifeCycle &$item)
+    {
+        self::instance()->unregister($item);
+    }
+
+    public static function onInitialize()
+    {
+        self::instance()->dispatch('onInitialize');
+    }
+
+    public static function onException(Exception &$ex)
+    {
+        self::instance()->dispatch('onException', $ex);
+
+        return false;
+    }
+
+    public static function onURLRewrite()
+    {
+        return self::instance()->delegate('onURLRewrite');
+    }
+
+    public static function onRequestStart()
+    {
+        self::instance()->dispatch('onRequestStart');
+    }
+
+    public static function onAction(ActionProvider &$provider, ActionDescription &$description)
+    {
+        return self::instance()->delegateReturn('onAction', $provider, $description);
     }
 
     /**
@@ -89,13 +151,7 @@ class LifeCycleManager
      */
     public static function onGetTopNavigation()
     {
-        $out = array();
-
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $out = array_merge($out, $lco->onGetTopNavigation());
-        }
-
-        return $out;
+        return self::instance()->collect('onGetTopNavigation');
     }
 
     /**
@@ -105,13 +161,7 @@ class LifeCycleManager
      */
     public static function onGetRightNavigation()
     {
-        $out = array();
-
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $out = array_merge($out, $lco->onGetRightNavigation());
-        }
-
-        return $out;
+        return self::instance()->collect('onGetRightNavigation');
     }
 
     /**
@@ -121,13 +171,7 @@ class LifeCycleManager
      */
     public static function onGetBottomNavigation()
     {
-        $out = array();
-
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $out = array_merge($out, $lco->onGetBottomNavigation());
-        }
-
-        return $out;
+        return self::instance()->collect('onGetBottomNavigation');
     }
 
     /**
@@ -137,13 +181,7 @@ class LifeCycleManager
      */
     public static function onGetLeftNavigation()
     {
-        $out = array();
-
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $out = array_merge($out, $lco->onGetLeftNavigation());
-        }
-
-        return $out;
+        return self::instance()->collect('onGetLeftNavigation');
     }
 
     /**
@@ -153,13 +191,7 @@ class LifeCycleManager
      */
     public static function onGetTopModules()
     {
-        $out = array();
-
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $out = array_merge($out, $lco->onGetTopModules());
-        }
-
-        return $out;
+        return self::instance()->collect('onGetTopModules');
     }
 
     /**
@@ -169,13 +201,7 @@ class LifeCycleManager
      */
     public static function onGetRightModules()
     {
-        $out = array();
-
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $out = array_merge($out, $lco->onGetRightModules());
-        }
-
-        return $out;
+        return self::instance()->collect('onGetRightModules');
     }
 
     /**
@@ -185,13 +211,7 @@ class LifeCycleManager
      */
     public static function onGetBottomModules()
     {
-        $out = array();
-
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $out = array_merge($out, $lco->onGetBottomModules());
-        }
-
-        return $out;
+        return self::instance()->collect('onGetBottomModules');
     }
 
     /**
@@ -201,27 +221,17 @@ class LifeCycleManager
      */
     public static function onGetLeftModules()
     {
-        $out = array();
-
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $out = array_merge($out, $lco->onGetLeftModules());
-        }
-
-        return $out;
+        return self::instance()->collect('onGetLeftModules');
     }
 
     public static function onPreRender(LayoutDescription &$layout)
     {
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $lco->onPreRender($layout);
-        }
+        return self::instance()->dispatch('onPreRender', $layout);
     }
 
     public static function onPostRender()
     {
-        foreach (LifeCycleManager::$lifeCyclers as &$lco) {
-            $lco->onPostRender();
-        }
+        return self::instance()->dispatch('onPostRender');
     }
 }
 
