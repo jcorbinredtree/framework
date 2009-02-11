@@ -15,7 +15,6 @@ Basic site layout:
 Example site initialization:
   % mkdir site && cd site
   % git init
-  % mkdir -p SITE/local
   % git remote add skeleton git://github.com/jcorbinredtree/framework.git -t site -m site
   % git pull skeleton
   % make framework-update
