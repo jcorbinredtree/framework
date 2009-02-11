@@ -1,0 +1,3 @@
+[submodule "SITE/framework"]
+	path = SITE/framework
+	url = git://github.com/jcorbinredtree/framework.git
