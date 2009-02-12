@@ -216,14 +216,6 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             return false;
         }
 
-        if ($database->count() != 1) {
-            $this->errorLog(
-                "update($table.$key = $this->id)",
-                'no rows updated, likely no such key'
-            );
-            return false;
-        }
-
         return true;
     }
 
