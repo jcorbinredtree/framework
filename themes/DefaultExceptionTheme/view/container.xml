@@ -14,10 +14,10 @@
                     <t:notices />
 
 					<div id = "main">
-                        <h1>@{=get_class(${this.layout.content})}: ${=this.layout.content.getMessage()}</h1>
+                        <h1>@{=get_class(${this.exception})}: ${=this.exception.getMessage()}</h1>
 						<ul>
-                            <li>${=this.layout.content.getFile()} (${=this.layout.content.getLine()})</li>      
-							<c:forEach list = "${this.layout.content.getTrace()}" var = "frame">
+                            <li>${=this.exception.getFile()} (${=this.exception.getLine()})</li>
+							<c:forEach list = "${this.exception.getTrace()}" var = "frame">
                                 <c:if test = "@{array_key_exists('file', ${frame})}">
                                     <li>${=frame['file']} (${=frame['line']})</li>
                                 </c:if>

@@ -46,10 +46,10 @@ abstract class Theme extends BufferedObject
     /**
      * Displays the application
      *
-     * @param LayoutDescription $layout a populated LayoutDescription
+     * @param WebPage $page the page being displayed
      * @return void
      */
-    abstract public function onDisplay(LayoutDescription &$layout);
+    abstract public function onDisplay(WebPage &$page);
 
     /**
      * Gets image based on the theme
@@ -81,6 +81,16 @@ abstract class Theme extends BufferedObject
 
         $us = new ReflectionClass($this->getClass());
         return $this->path = dirname($us->getFileName());
+    }
+
+    public function createPageTemplate(WebPage &$page)
+    {
+        $template = new Template();
+        $template->assign('page', $page);
+        if (is_a($page, 'LayoutDescription')) {
+            $template->assign('layout', $page);
+        }
+        return $template;
     }
 
     /**

@@ -14,9 +14,13 @@
  */
 
 class DefaultExceptionTheme extends Theme {
-    public function onDisplay(LayoutDescription &$layout) {
-        $template = new Template();
-        $template->assign('layout', $layout);
+    public function onDisplay(WebPage &$page) {
+        $template = $this->createPageTemplate($page);
+        if (is_a($page, 'LayoutDescription') && is_a($page->content, 'Exception')) {
+            $template->assign('exception', $page->content);
+        } else {
+            $template->assign('exception', $page->getData('exception'));
+        }
         $this->write($template->fetch('view/container.xml'));
     }
 }

@@ -190,12 +190,12 @@ abstract class LifeCycleAdapter implements ILifeCycle
 
     /**
      * Invoked before anything is written to the browser, but after everything has
-     * been collected in the LayoutDescription object
+     * been collected in the WebPage object
      *
-     * @param LayoutDescription $layout
+     * @param WebPage $page
      * @return void
      */
-    public function onPreRender(LayoutDescription &$layout)
+    public function onPreRender(WebPage &$page)
     {
         global $config;
 

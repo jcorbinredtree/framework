@@ -14,22 +14,30 @@
  */
 
 class DefaultTheme extends Theme {
-    public function onDisplay(LayoutDescription &$layout) {
+    public function onDisplay(WebPage &$page) {
         global $current;
 
-        $template = new Template();
-        $template->assign('layout', $layout);
+        $template = $this->createPageTemplate($page);
 
-        if ($layout->isHomePage) {
-            $template->assign('template', 'homelayout.xml');
-            $template->assign('css', 'homelayout.css');
-        }
-        else {
-            $template->assign('template', 'innerlayout.xml');
-            $template->assign('css', 'innerlayout.css');
-        }
+        // TODO revamp this, process the inner template here rather than telling
+        // the container what template to process
 
-        $this->write($template->fetch('view/layouts/container.xml'));
+        if (is_a($page, 'LayoutDescription')) {
+            if ($page->isHomePage) {
+                $template->assign('template', 'homelayout.xml');
+                $template->assign('css', 'homelayout.css');
+            }
+            else {
+                $template->assign('template', 'innerlayout.xml');
+                $template->assign('css', 'innerlayout.css');
+            }
+
+            $this->write($template->fetch('view/layouts/container.xml'));
+        } else {
+            throw new RuntimeException(
+                'Proper page processing unimplemented as yet'
+            );
+        }
     }
 }
 

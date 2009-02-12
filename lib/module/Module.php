@@ -83,10 +83,10 @@ abstract class Module extends BufferedObject implements ICacheable
     /**
      * Displays the current module
      *
-     * @param LayoutDescription $layout a populated LayoutDescription
+     * @param WebPage $page the page being displayed
      * @return void
      */
-    abstract public function onDisplay($position);
+    abstract public function onDisplay($page);
 
     /**
      * Returns an instance of the specified module, and performs basic initializations on it.

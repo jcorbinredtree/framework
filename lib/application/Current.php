@@ -80,6 +80,9 @@ class Current
     /**
      * Holds a reference to the current LayoutDescription
      *
+     * DEPRECATED
+     * TODO: migrate anything using this to using WebPage::getCurrent
+     *
      * @var LayoutDescription
      */
     public $layout = null;
