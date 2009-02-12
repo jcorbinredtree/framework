@@ -13,9 +13,9 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
-class SecurityException extends Exception
-{
 
+class SecurityException extends RuntimeException
+{
 }
 
 ?>
