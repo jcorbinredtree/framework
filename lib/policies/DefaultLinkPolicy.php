@@ -87,15 +87,15 @@ class DefaultLinkPolicy implements ILinkPolicy
             $a = $c->getAction($action);
 
             if (!$c) {
-                throw new IllegalArgumentException("unknown component $component or action $action");
+                throw new InvalidArgumentException("unknown component $component or action $action");
             }
 
             if (!$a) {
-                throw new IllegalArgumentException("unknown action $component.$action");
+                throw new InvalidArgumentException("unknown action $component.$action");
             }
 
             if (!($a instanceof ActionDescription)) {
-                throw new IllegalArgumentException("bad action $component.$action");
+                throw new InvalidArgumentException("bad action $component.$action");
             }
 
             if ($a->requiresSSL) {

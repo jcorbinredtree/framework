@@ -116,14 +116,14 @@ class QueryBuilder
             }
         }
         elseif ($this->fields) {
-            throw new IllegalArgumentException('field specification is incompatible with non-select queries');
+            throw new InvalidArgumentException('field specification is incompatible with non-select queries');
         }
         elseif ($this->pager) {
-            throw new IllegalArgumentException('pager is not compatible with non-select queries');
+            throw new InvalidArgumentException('pager is not compatible with non-select queries');
         }
 
         if ($this->pager && $this->limit) {
-            throw new IllegalArgumentException('pager is mutually exclusive with limit');
+            throw new InvalidArgumentException('pager is mutually exclusive with limit');
         }
 
         $meat = "FROM `$table` ";

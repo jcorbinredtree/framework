@@ -172,7 +172,7 @@ class Params
                     $p = $m[2];
 
                     if (!is_object($array[$o]) || !property_exists($array[$o], $p)) {
-                        throw new IllegalArgumentException("bad param for key $key");
+                        throw new InvalidArgumentException("bad param for key $key");
                     }
 
                     $value = $array[$o]->$p;

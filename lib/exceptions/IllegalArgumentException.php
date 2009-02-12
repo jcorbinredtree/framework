@@ -13,11 +13,15 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
 
-class IllegalArgumentException extends Exception
+/**
+ * DEPRECATED
+ */
+
+class IllegalArgumentException extends InvalidArgumentException
 {
     public function __construct($m)
     {
-        parent::__construct($m);
+        parent::__construct("DEPRECATED: Use standard InvalidArgumentException instead of IllegalArgumentException\n$m");
     }
 }
 

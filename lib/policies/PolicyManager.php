@@ -66,34 +66,34 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
         switch ($policy) {
             case 'link':
                 if (!($handler instanceof ILinkPolicy)) {
-                    throw new IllegalArgumentException("handler for $policy does not adhere to ILinkPolicy");
+                    throw new InvalidArgumentException("handler for $policy does not adhere to ILinkPolicy");
                 }
 
                 $this->linkPolicy = $handler;
                 break;
             case 'location':
                 if (!($handler instanceof ILocationPolicy)) {
-                    throw new IllegalArgumentException("handler for $policy does not adhere to ILocationPolicy");
+                    throw new InvalidArgumentException("handler for $policy does not adhere to ILocationPolicy");
                 }
 
                 $this->locationPolicy = $handler;
                 break;
             case 'security':
                 if (!($handler instanceof ISecurityPolicy )) {
-                    throw new IllegalArgumentException("handler for $policy does not adhere to ISecurityPolicy");
+                    throw new InvalidArgumentException("handler for $policy does not adhere to ISecurityPolicy");
                 }
 
                 $this->securityPolicy = $handler;
                 break;
             case 'theme':
                 if (!($handler instanceof IThemePolicy )) {
-                    throw new IllegalArgumentException("handler for $policy does not adhere to IThemePolicy");
+                    throw new InvalidArgumentException("handler for $policy does not adhere to IThemePolicy");
                 }
 
                 $this->themePolicy = $handler;
                 break;
             default:
-                throw new IllegalArgumentException("unknown policy $policy");
+                throw new InvalidArgumentException("unknown policy $policy");
         }
     }
 
