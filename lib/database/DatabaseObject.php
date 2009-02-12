@@ -297,7 +297,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         $class = get_class($this);
 
-        $config->error("$clasS::$What failed: $why");
+        $config->error("$class::$what failed: $why");
     }
 }
 
