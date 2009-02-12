@@ -44,34 +44,30 @@ class Template extends PHPSTLTemplate
      */
     public function __construct()
     {
+        global $current;
+
         $this->compiler = 'FrameworkCompiler';
 
         $policy = PolicyManager::getInstance();
         Compiler::setCompileDirectory($policy->getTemplatesDir() . '/');
         Compiler::setCompilerClass('FrameworkCompiler');
+
+        $this->addPath($current->path);
     }
 
     /**
-     * Override the base fetch to do some processing
+     * Override the base fetchTemplate to set the current application path when the template is processed
      *
-     * @param string $template the path to the template
+     * @param string $template full path to a file that exists
      * @return string the template output
      */
-    public function fetch($template)
+    public function fetchTemplate($template)
     {
-        global $current;
+        $oldAppPath = Application::setPath(dirname($template));
 
-        $fullPath = ($template[0] == '/') ? $template : "$current->path/$template";
-        $fullPath = preg_replace('|[/](?:[^/]+)[/](?:[.]{2})[/]|', '/', $fullPath);
+        $results = parent::fetchTemplate($template);
 
-		// how shitty mr bates
-		$fullPath = preg_replace('|[/]{2,}|', '/', $fullPath);
-        $fullPath = preg_replace('|^(.*)C[:][/]|', 'C:/', $fullPath);
-
-        $path = preg_replace("|[/](?:[^/]+?)$|", '', $fullPath);
-        $path = Application::setPath($path);
-        $results = parent::fetch($fullPath);
-        Application::setPath($path);
+        Application::setPath($oldAppPath);
 
         return $results;
     }
