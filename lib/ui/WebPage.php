@@ -212,6 +212,8 @@ class WebPage
             } elseif (is_object($item)) {
                 if (is_a($item, 'BufferedObject')) {
                     return $item->getBuffer();
+                } elseif (is_a($item, 'PHPSTLTemplate')) {
+                    return $item->render();
                 } elseif (method_exists($item, '__tostring')) {
                     return (string) $item;
                 } else {
