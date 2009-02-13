@@ -44,7 +44,7 @@ class Config
      * A version string is of the form Major.minor.micro
      *   3.0.0 or 3.1.99
      */
-    static public $FrameworkVersion = "3.0.0";
+    static public $FrameworkVersion = "3.0.75";
     static private $fwVersion = null;
 
     private $targetVersion = 3.00074;
