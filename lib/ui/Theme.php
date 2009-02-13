@@ -85,12 +85,7 @@ abstract class Theme extends BufferedObject
 
     public function createPageTemplate(WebPage &$page)
     {
-        $template = new Template();
-        $template->assign('page', $page);
-        if (is_a($page, 'LayoutDescription')) {
-            $template->assign('layout', $page);
-        }
-        return $template;
+        return new PageTemplate($page);
     }
 
     /**

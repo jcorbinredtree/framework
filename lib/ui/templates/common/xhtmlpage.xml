@@ -1,0 +1,15 @@
+<template
+  xmlns:c="class://CoreTag"
+  xmlns:t="class://ThemeTag">
+
+<c:doctype type="xhtml 1.0" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>FIXME - <c:out value="${page.title}" /></title>
+    <!-- FIXME links, scripts, yada -->
+  </head>
+  <body>
+    <t:pageBuffer area="content" />
+  </body>
+</html>
+</template>
