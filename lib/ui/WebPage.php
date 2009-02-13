@@ -186,6 +186,20 @@ class WebPage
     }
 
     /**
+     * Emptys the named buffer.
+     * Doesn't return anything, call getBuffer first if you want that
+     *
+     * @param name string
+     * @return void
+     */
+    public function clearBuffer($name)
+    {
+        if (array_key_exists($name, $this->buffers)) {
+            $this->buffers[$name] = array();
+        }
+    }
+
+    /**
      * Renders a buffered item
      *
      * @param mixed the item, can be any of:
