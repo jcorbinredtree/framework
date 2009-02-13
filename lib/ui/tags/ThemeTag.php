@@ -34,6 +34,19 @@
  */
 class ThemeTag extends Tag
 {
+    public function pageBuffer(DOMElement &$element)
+    {
+        $area = $this->requiredAttr($element, 'area', false);
+        $clear = $this->getBooleanAttr($element, 'clear', true);
+
+        $this->compiler->write("<?php // Page Buffer: $area\n");
+        $this->compiler->write("  print \$page->getBuffer('$area');\n");
+        if ($clear) {
+            $this->compiler->write("  \$page->clearBuffer('$area');\n");
+        }
+        $this->compiler->write("?>");
+    }
+
     public function allHead(DOMElement &$element)
     {
         $this->title($element);
