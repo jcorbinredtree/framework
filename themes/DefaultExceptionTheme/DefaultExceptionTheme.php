@@ -13,15 +13,15 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
 
-class DefaultExceptionTheme extends Theme {
-    public function onDisplay(WebPage &$page) {
-        $template = $this->createPageTemplate($page);
-        if (is_a($page, 'LayoutDescription') && is_a($page->content, 'Exception')) {
-            $template->assign('exception', $page->content);
-        } else {
-            $template->assign('exception', $page->getData('exception'));
-        }
-        $this->write($template->fetch('view/container.xml'));
+class DefaultExceptionTheme extends Theme
+{
+    public function onRender()
+    {
+        $this->page->title = 'Unhandled Exception';
+
+        $disp = new Template('common/displayException.xml');
+        $disp->assign('exception', $this->page->getData('exception'));
+        $this->page->addToBuffer('content', $disp);
     }
 }
 

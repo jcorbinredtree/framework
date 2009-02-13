@@ -1,0 +1,23 @@
+<template
+  xmlns:c="class://CoreTag"
+  xmlns:t="class://ThemeTag"
+  xmlns:f="class://FrameworkTag">
+
+<t:warnings />
+
+<t:notices />
+
+<div id="main">
+  <h1>@{=get_class(${this.exception})}: ${=this.exception.getMessage()}</h1>
+  <ul>
+    <li>${=this.exception.getFile()} (${=this.exception.getLine()})</li>
+    <c:forEach list="${this.exception.getTrace()}" var="frame">
+      <c:if test="@{array_key_exists('file', ${frame})}">
+        <li>${=frame['file']} (${=frame['line']})</li>
+      </c:if>
+    </c:forEach>
+  </ul>
+</div>
+
+</template>
+<!-- vim:set ts=2 sw=2 expandtab: -->
