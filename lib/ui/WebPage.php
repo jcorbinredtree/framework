@@ -200,6 +200,37 @@ class WebPage
     }
 
     /**
+     * Calls processBuffer on each defined buffer
+     *
+     * @return void
+     */
+    public function processBuffers()
+    {
+        foreach (array_keys($this->buffers) as $name) {
+            $this->processBuffer($name);
+        }
+    }
+
+    /**
+     * Processes the named buffer
+     *
+     * This turns each item in the buffer into its string representation and
+     * throws away the old non-string data. The buffer still remains as an array
+     * of items, but each item will now be just a string.
+     *
+     * @param name string the buffer
+     *
+     * @return void
+     */
+    public function processBuffer($name)
+    {
+        if (! array_key_exists($name, $this->buffers)) {
+            throw new InvalidArgumentException('Invaild buffer name');
+        }
+        $this->buffers[$name] = $this->getBuffer($name, true);
+    }
+
+    /**
      * Renders a buffered item
      *
      * @param mixed the item, can be any of:
