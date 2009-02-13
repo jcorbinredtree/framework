@@ -1,28 +1,31 @@
-<template xmlns:c = "class://CoreTag" xmlns:t = "class://ThemeTag" xmlns:f = "class://FrameworkTag">
-    <c:doctype type="xhtml 1.1" />
-    <html>
-            <head>
-                    <link href = "${=config.absUri}/themes/DefaultTheme/view/css/container.css" type = "text/css" rel = "stylesheet" />
-                    <t:head />
-            </head>
-            <body>
-                    <t:warnings />
-                    <t:notices />
-                    <div id = "main-container">
-                      <div id = "left">
-                          <div id= "nav">
-                              <ul>
-                                  <c:forEach list = "${this.layout.getLeftNavigation()}" var = "item">
-                                      <li><a href = "${=item.href}">${=item.label}</a></li>
-                                  </c:forEach>
-                              </ul>
-                          </div>
-                      </div>
+<template
+  xmlns:c="class://CoreTag"
+  xmlns:t="class://ThemeTag"
+  xmlns:f="class://FrameworkTag">
 
-                      <div id = "center">
-                        ${=this.layout.content}
-                      </div>                                        
-                   </div>
-            </body>
-    </html>
+<!-- TODO: ${=config.absUri}/themes/DefaultTheme/view/css/container.css -->
+<!-- TODO xhtmlpage needs to absorb these -->
+<t:warnings />
+<t:notices />
+
+<div id="main-container">
+  <div id="left">
+    <!-- TODO implement navigation
+    <div id= "nav">
+      <ul>
+        <c:forEach list="${page.getLeftNavigation()}" var="item">
+          <li><a href="${=item.href}">${=item.label}</a></li>
+        </c:forEach>
+      </ul>
+    </div>
+    -->
+    <t:pageBuffer area="left" />
+  </div>
+
+  <div id="center">
+    <t:pageBuffer area="content" />
+  </div>
+</div>
+
 </template>
+<!-- vim:set ts=2 sw=2 expandtab: -->

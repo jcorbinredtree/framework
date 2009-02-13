@@ -13,31 +13,26 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
 
-class DefaultTheme extends Theme {
-    public function onDisplay(WebPage &$page) {
-        global $current;
+class DefaultTheme extends Theme
+{
+    public function onRender()
+    {
+        /* TODO need to implement this agani
+         * if (is_a($page, 'LayoutDescription')) {
+         *     if ($page->isHomePage) {
+         *         $page->setData('layout', 'homelayout');
+         *     }
+         * }
+         */
 
-        $template = $this->createPageTemplate($page);
-
-        // TODO revamp this, process the inner template here rather than telling
-        // the container what template to process
-
-        if (is_a($page, 'LayoutDescription')) {
-            if ($page->isHomePage) {
-                $template->assign('template', 'homelayout.xml');
-                $template->assign('css', 'homelayout.css');
-            }
-            else {
-                $template->assign('template', 'innerlayout.xml');
-                $template->assign('css', 'innerlayout.css');
-            }
-
-            $this->write($template->fetch('view/layouts/container.xml'));
-        } else {
-            throw new RuntimeException(
-                'Proper page processing unimplemented as yet'
-            );
-        }
+        /* TODO implement better template wrapping
+         * The idea is that the layout template pulls what's in the page
+         * buffers and generates a wall of text that gets passed into the page
+         * template itself
+         */
+        $template = new Template("view/layouts/container.xml");
+        $content = $template->render();
+        $this->page->addToBuffer('content', $content);
     }
 }
 
