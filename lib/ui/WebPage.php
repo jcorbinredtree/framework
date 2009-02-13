@@ -159,12 +159,12 @@ class WebPage
             );
         }
 
-        $this->renderingBuffer = $name;
-        $oldPage = self::setCurrent($this);
-
         if (! array_key_exists($name, $this->buffers)) {
             return null;
         }
+
+        $this->renderingBuffer = $name;
+        $oldPage = self::setCurrent($this);
 
         if ($asArray) {
             $ret = array();
