@@ -88,6 +88,13 @@ abstract class Theme extends BufferedObject
         return new PageTemplate($page);
     }
 
+    public function renderPage(WebPage &$page)
+    {
+        $template = $this->createPageTemplate($page);
+        $template->assign('theme', $this);
+        $this->write($template->render());
+    }
+
     /**
      * Returns an instance of the specified theme
      *
