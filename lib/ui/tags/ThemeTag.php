@@ -101,11 +101,11 @@ class ThemeTag extends Tag
         $containerId = $this->getUnquotedAttr($element, 'containerid', 'warnings-container');
         $warningClass = $this->getUnquotedAttr($element, 'warningclass', 'warning');
 
-        $this->compiler->write('<?php if (count(' . $layout . '->getWarnings())){ ?>');
-        $this->compiler->write('<div id = "' . $containerId . '">');
-        $this->compiler->write('<?php foreach(' . $layout . '->getWarnings() as $w){?>');
-        $this->compiler->write('<div class = "' . $warningClass . '"><?php echo $w; ?></div>');
-        $this->compiler->write('<?php } ?></div><?php } ?>');
+        $this->compiler->write("<?php\nif (count(".$layout."->getWarnings())) {\n  ?>");
+        $this->compiler->write('<div id="'.$containerId.'">');
+        $this->compiler->write("<?php\n  foreach (".$layout."->getWarnings() as \$w) {\n    ?>");
+        $this->compiler->write('<div class="'.$warningClass.'"><?php echo $w ?></div>');
+        $this->compiler->write("<?php\n  } ?></div><?php\n}\n?>");
     }
 
     public function notices(DOMElement &$element)
@@ -114,11 +114,11 @@ class ThemeTag extends Tag
         $containerId = $this->getUnquotedAttr($element, 'containerid', 'notices-container');
         $noticeClass = $this->getUnquotedAttr($element, 'noticeclass', 'notice');
 
-        $this->compiler->write('<?php if (count(' . $layout . '->getNotices())){ ?>');
-        $this->compiler->write('<div id = "' . $containerId . '">');
-        $this->compiler->write('<?php foreach(' . $layout . '->getNotices() as $n){?>');
-        $this->compiler->write('<div class = "' . $noticeClass . '"><?php echo $n ?></div>');
-        $this->compiler->write('<?php } ?></div><?php } ?>');
+        $this->compiler->write("<?php\nif (count(".$layout."->getNotices())) {\n  ?>");
+        $this->compiler->write('<div id="'.$containerId.'">');
+        $this->compiler->write("<?php\n  foreach (".$layout."->getNotices() as \$w) {\n    ?>");
+        $this->compiler->write('<div class="'.$noticeClass.'"><?php echo $w ?></div>');
+        $this->compiler->write("<?php\n  } ?></div><?php\n}\n?>");
     }
 
     public function breadcrumbs(DOMElement &$element)
