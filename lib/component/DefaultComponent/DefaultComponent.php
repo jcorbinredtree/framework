@@ -40,9 +40,12 @@ class DefaultComponent extends Component
 
     public function onHome($stage)
     {
-        $template = new Template();
+        $page = WebPage::getCurrent();
+        $page->title = 'Home Page';
+
+        $template = new Template('view/home.xml');
         $template->assign('where', 'home');
-        $this->write($template->fetch('view/home.xml'));
+        $this->write($template->render());
     }
 }
 
