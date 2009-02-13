@@ -30,64 +30,8 @@
  *
  * @package      UI
  */
-class LayoutDescription
+class LayoutDescription extends WebPage
 {
-    /**
-     * Holds the left modules
-     *
-     * @var array
-     */
-    private $leftModules = array();
-
-    /**
-     * Holds the top modules
-     *
-     * @var array
-     */
-    private $topModules = array();
-
-    /**
-     * Holds the right modules
-     *
-     * @var array
-     */
-    private $rightModules = array();
-
-    /**
-     * Holds the bottom modules
-     *
-     * @var array
-     */
-    private $bottomModules = array();
-
-    /**
-     * Holds the left navigation
-     *
-     * @var array
-     */
-    private $leftNavigation = array();
-
-    /**
-     * Holds the top navigation
-     *
-     * @var array
-     */
-    private $topNavigation = array();
-
-    /**
-     * Holds the right navigation
-     *
-     * @var array
-     */
-    private $rightNavigation = array();
-
-    /**
-     * Holds the bottom navigation
-     *
-     * @var array
-     */
-    private $bottomNavigation = array();
-
     /**
      * Meta keywords
      *
@@ -108,13 +52,6 @@ class LayoutDescription
      * @var string
      */
     public $head;
-
-    /**
-     * The title for the page
-     *
-     * @var string
-     */
-    public $title;
 
     /**
      * The scripts used for this page
@@ -187,30 +124,6 @@ class LayoutDescription
     public $searchWord;
 
     /**
-     * Gets the current set of warnings
-     *
-     * @return array
-     */
-    public function getWarnings()
-    {
-        global $current;
-
-        return $current->getWarnings();
-    }
-
-    /**
-     * Gets the current set of notices
-     *
-     * @return array
-     */
-    public function getNotices()
-    {
-        global $current;
-
-        return $current->getNotices();
-    }
-
-    /**
      * Adds a top module
      *
      * @param Module $module
@@ -218,7 +131,7 @@ class LayoutDescription
      */
     public function addTopModule(Module &$module)
     {
-        array_push($this->topModules, $module);
+        $this->addToBuffer('top', $module);
     }
 
     /**
@@ -228,7 +141,11 @@ class LayoutDescription
      */
     public function getTopModules()
     {
-        return array_merge($this->topModules, LifeCycleManager::onGetTopModules());
+        $r = $this->getBuffer('top', true);
+        if (! isset($r)) {
+            $r = array();
+        }
+        return array_merge($r, LifeCycleManager::onGetTopModules());
     }
 
     /**
@@ -239,7 +156,7 @@ class LayoutDescription
      */
     public function addLeftModule(Module &$module)
     {
-        array_push($this->leftModules, $module);
+        $this->addToBuffer('left', $module);
     }
 
     /**
@@ -249,7 +166,11 @@ class LayoutDescription
      */
     public function getLeftModules()
     {
-       return array_merge($this->leftModules, LifeCycleManager::onGetLeftModules());
+        $r = $this->getBuffer('left', true);
+        if (! isset($r)) {
+            $r = array();
+        }
+        return array_merge($r, LifeCycleManager::onGetLeftModules());
     }
 
     /**
@@ -260,7 +181,7 @@ class LayoutDescription
      */
     public function addRightModule(Module &$module)
     {
-        array_push($this->rightModules, $module);
+        $this->addToBuffer('right', $module);
     }
 
     /**
@@ -270,7 +191,11 @@ class LayoutDescription
      */
     public function getRightModules()
     {
-        return array_merge($this->rightModules, LifeCycleManager::onGetRightModules());
+        $r = $this->getBuffer('right', true);
+        if (! isset($r)) {
+            $r = array();
+        }
+        return array_merge($r, LifeCycleManager::onGetRightModules());
     }
 
     /**
@@ -281,7 +206,7 @@ class LayoutDescription
      */
     public function addBottomModule(Module &$module)
     {
-        array_push($this->bottomModules, $module);
+        $this->addToBuffer('bottom', $module);
     }
 
     /**
@@ -291,7 +216,11 @@ class LayoutDescription
      */
     public function getBottomModules()
     {
-       return array_merge($this->bottomModules, LifeCycleManager::onGetBottomModules());
+        $r = $this->getBuffer('bottom', true);
+        if (! isset($r)) {
+            $r = array();
+        }
+        return array_merge($r, LifeCycleManager::onGetBottomModules());
     }
 
     /**
@@ -302,7 +231,7 @@ class LayoutDescription
      */
     public function addTopNavigation(NavigatorItem &$navigation)
     {
-        array_push($this->topNavigation, $navigation);
+        $this->addData('topNavigation', $navigation);
     }
 
     /**
@@ -312,7 +241,11 @@ class LayoutDescription
      */
     public function getTopNavigation()
     {
-        return array_merge($this->topNavigation, LifeCycleManager::onGetTopNavigation());
+        $r = $this->getBuffer('topNavigation', true);
+        if (! isset($r)) {
+            $r = array();
+        }
+        return array_merge($r, LifeCycleManager::onGetTopNavigation());
     }
 
     /**
@@ -323,7 +256,7 @@ class LayoutDescription
      */
     public function addLeftNavigation(NavigatorItem &$navigation)
     {
-        array_push($this->leftNavigation, $navigation);
+        $this->addData('leftNavigation', $navigation);
     }
 
     /**
@@ -333,7 +266,11 @@ class LayoutDescription
      */
     public function getLeftNavigation()
     {
-       return array_merge($this->leftNavigation, LifeCycleManager::onGetLeftNavigation());
+        $r = $this->getBuffer('leftNavigation', true);
+        if (! isset($r)) {
+            $r = array();
+        }
+       return array_merge($r, LifeCycleManager::onGetLeftNavigation());
     }
 
     /**
@@ -344,7 +281,7 @@ class LayoutDescription
      */
     public function addRightNavigation(NavigatorItem &$navigation)
     {
-        array_push($this->rightNavigation, $navigation);
+        $this->addData('rightNavigation', $navigation);
     }
 
     /**
@@ -354,7 +291,11 @@ class LayoutDescription
      */
     public function getRightNavigation()
     {
-        return array_merge($this->rightNavigation, LifeCycleManager::onGetRightNavigation());
+        $r = $this->getBuffer('rightNavigation', true);
+        if (! isset($r)) {
+            $r = array();
+        }
+        return array_merge($r, LifeCycleManager::onGetRightNavigation());
     }
 
     /**
@@ -365,7 +306,7 @@ class LayoutDescription
      */
     public function addBottomNavigation(NavigatorItem &$navigation)
     {
-        array_push($this->bottomNavigation, $navigation);
+        $this->addData('bottomNavigation', $navigation);
     }
 
     /**
@@ -375,7 +316,11 @@ class LayoutDescription
      */
     public function getBottomNavigation()
     {
-       return array_merge($this->bottomNavigation, LifeCycleManager::onGetBottomNavigation());
+        $r = $this->getBuffer('bottomNavigation', true);
+        if (! isset($r)) {
+            $r = array();
+        }
+        return array_merge($r, LifeCycleManager::onGetBottomNavigation());
     }
 }
 ?>

@@ -97,7 +97,7 @@ class ThemeTag extends Tag
 
     public function warnings(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
         $containerId = $this->getUnquotedAttr($element, 'containerid', 'warnings-container');
         $warningClass = $this->getUnquotedAttr($element, 'warningclass', 'warning');
 
@@ -110,7 +110,7 @@ class ThemeTag extends Tag
 
     public function notices(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
         $containerId = $this->getUnquotedAttr($element, 'containerid', 'notices-container');
         $noticeClass = $this->getUnquotedAttr($element, 'noticeclass', 'notice');
 
