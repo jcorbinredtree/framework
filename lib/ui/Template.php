@@ -39,10 +39,12 @@ class Template extends PHPSTLTemplate
     /**
      * Constructor
      *
+     * @param template string
+     *
      * @access public
      * @return Template new instance
      */
-    public function __construct()
+    public function __construct($template=null)
     {
         global $current;
 
@@ -53,6 +55,8 @@ class Template extends PHPSTLTemplate
         Compiler::setCompilerClass('FrameworkCompiler');
 
         $this->addPath($current->path);
+
+        parent::__construct($template);
     }
 
     /**
