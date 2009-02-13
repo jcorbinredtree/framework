@@ -46,6 +46,9 @@ class Template extends PHPSTLTemplate
      */
     public function __construct($template=null)
     {
+        // lib/ui/templates
+        $this->addPath(dirname(__FILE__).'/templates');
+
         global $current;
 
         $this->compiler = 'FrameworkCompiler';
