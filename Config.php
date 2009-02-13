@@ -39,6 +39,97 @@ require_once 'Log.php';
 class Config
 {
     /**
+     * Framework version handling
+     *
+     * A version string is of the form Major.minor.micro
+     *   3.0.0 or 3.1.99
+     */
+    static public $FrameworkVersion = "3.0.0";
+    static private $fwVersion = null;
+
+    private $targetVersion = 3.00074;
+
+    static public function makeVersionFromString($string)
+    {
+        $matches = array();
+        if (preg_match('/(\d+)\.(\d+)(?:\.(\d+))?/', $string, $matches)) {
+            $matches = array_slice($matches, 1);
+            $major = (int) $matches[0];
+            $minor = (int) $matches[1];
+            if (count($matches) > 2) {
+                $micro = (int) $matches[2];
+            } else {
+                $micro = null;
+            }
+            return self::makeVersion($major, $minor, $micro);
+        } else {
+            throw new InvalidArgumentException("Invalid version $major");
+        }
+    }
+
+    static public function makeVersion($major, $minor, $micro=null)
+    {
+        $ver = $major + $minor/100;
+        if (isset($micro)) {
+            $ver += $micro/100000;
+        }
+
+        // A float like a.bbccc such as 3.00090 or 3.01005
+        return $ver;
+    }
+
+    /**
+     * This is the version of the framework that the site is targeted against.
+     *
+     * This defaults to "3.0" since that's when versioning was introduced.
+     *
+     * If the target version doesn't contain a micro version, it will default to 74.
+     *
+     * This is due to the versioning convention such that:
+     *   The development version of "3.2.0" will be versioned like "3.1.80"
+     *   or so with a micro version over 75.
+     *
+     * The end result of this is that a site that says it targets "3.0" is
+     * effectively saying "I'm okay with 3.0.0-3.0.74", which can be
+     * restated "all stable 3.0.x releases".
+     */
+    public function setTargetVersion($version)
+    {
+        $this->targetVersion = self::makeVersionFromString($version);
+    }
+
+    /**
+     * Tests whether the site's targeted framework version is past a given
+     * version
+     *
+     * @param major int
+     * @param minor int
+     * @return boolean
+     */
+    public function targetVersionOver($major, $minor, $micro)
+    {
+        $ver = self::makeVersion($major, $minor, $micro);
+        return $this->targetVersion >= $ver;
+    }
+
+    /**
+     * Tests whether the framework version is over a given version
+     *
+     * @param major int
+     * @param minor int
+     * @param micro int optional
+     * @return boolean
+     */
+    public function frameworkVersionOver($major, $minor, $micro=null)
+    {
+        if (! isset(self::$fwVersion)) {
+            self::$fwVersion = self::makeVersionFromString(self::$FrameworkVersion);
+        }
+        $ver = self::makeVersion($major, $minor, $micro);
+        return self::$fwVersion >= $ver;
+    }
+
+    /**
      * This is the database connection information, in a MDB2 DSN format
      *
      * @var string

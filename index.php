@@ -27,6 +27,9 @@
 
 function onConfig(Config &$config)
 {
+    // This site was developed against this version of the framework
+    $config->setTargetVersion("3.0");
+
     $config->setDebugMode(true);
     $config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
     $config->setDatabaseTestInfo('mysql://name:pass@localhost/dbname_test');
