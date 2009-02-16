@@ -73,13 +73,24 @@ catch (Exception $ex) {
         );
         foreach ($l as $title => $e) {
             print "<p><h1>$title:</h1>\n";
-            print $e->getMessage() . "<br />\n";
-            print "Trace:<ol>\n";
-            print "  <li>".htmlentities($e->getFile()).':'.$e->getLine()."</li>\n";
+            print $e->getMessage()." at ".htmlentities($e->getFile().':'.$e->getLine())."<br />\n";
+            $i = 0;
+            print "Trace:<table cellpadding=\"0\" cellspacing=\"1\" border=\"0\">\n";
             foreach ($e->getTrace() as $frame) {
-            print "  <li>".htmlentities($frame['file']).':'.$frame['line']."</li>\n";
+                $i++;
+                $what = '';
+                if (array_key_exists('class', $frame) && array_key_exists('type', $frame)) {
+                    $what .= $frame['class'].$frame['type'];
+                }
+                print "<tr><td>$i</td><td>".htmlentities($what.$frame['function'])."</td><td>";
+                if (array_key_exists('file', $frame) && array_key_exists('line', $frame)) {
+                    print htmlentities($frame['file']).':'.$frame['line'];
+                } else {
+                    print "-- Unknown --";
+                }
+                print "</td></tr>\n";
             }
-            print "</ol></p>\n";
+            print "</table></p>\n";
         }
     }
 }
