@@ -37,6 +37,12 @@ class FrameworkCompiler extends Compiler
      */
     public function __construct()
     {
+        // Turn off template compiler caching in debug mode
+        global $config;
+        if ($config->isDebugMode()) {
+            $this->noCache = true;
+        }
+
         // Cache template compilation in a site specific place
         $policy = PolicyManager::getInstance();
         $this->setCacheDirectory($policy->getTemplatesDir());
