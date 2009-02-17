@@ -44,7 +44,7 @@ class Template extends PHPSTLTemplate
      * @access public
      * @return Template new instance
      */
-    public function __construct($template=null)
+    public function __construct($template)
     {
         // lib/ui/templates
         $this->addPath(dirname(__FILE__).'/templates');
@@ -67,20 +67,22 @@ class Template extends PHPSTLTemplate
     }
 
     /**
-     * Override the base fetchTemplate to set the current application path when the template is processed
-     *
-     * @param string $template full path to a file that exists
-     * @return string the template output
+     * Sets the application path when this template is rendered.
      */
-    public function fetchTemplate($template)
+    private $__oldAppPath=null;
+    protected function renderSetup($args)
     {
-        $oldAppPath = Application::setPath(dirname($template));
+        parent::renderSetup($args);
+        $this->__oldAppPath = Application::setPath(dirname($this->getFile()));
+    }
 
-        $results = parent::fetchTemplate($template);
-
-        Application::setPath($oldAppPath);
-
-        return $results;
+    /**
+     * Restores the application path after template is rendered.
+     */
+    protected function renderCleanup()
+    {
+        parent::renderCleanup();
+        Application::setPath($this->__oldAppPath);
     }
 
     /**
@@ -140,19 +142,6 @@ class Template extends PHPSTLTemplate
     public function getThemeIcon($key)
     {
         return WebPage::getCurrent()->getTheme()->getIcon($key);
-    }
-
-    /**
-     * Sets arguments of name/value pairs to the template
-     *
-     * @param array arguments the arguments to set on the template
-     * @return void
-     */
-    public function setArguments($arguments)
-    {
-        foreach ($arguments as $name => $value) {
-            $this->assign($name, $value);
-        }
     }
 }
 

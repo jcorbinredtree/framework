@@ -62,14 +62,14 @@ class PageTemplate extends Template
     }
 
     /**
-     * render override that causes the page to process its buffers before we
-     * call the actual page template. This gives page items one last chance to
-     * add resources to the page before it's sent.
+     * Process all page buffers right before the page template is rendered, this
+     * finalizes all page content at essentially the last possible point on the
+     * way out.
      */
-    public function render()
+    protected function renderSetup($args)
     {
+        parent::renderSetup($args);
         $this->page->processBUffers();
-        return parent::render();
     }
 
     /**
