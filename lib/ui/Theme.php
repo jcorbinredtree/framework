@@ -39,7 +39,8 @@ abstract class Theme extends BufferedObject
      *
      * @return string the name of the theme class
      */
-    public function getClass() {
+    public function getClass()
+    {
         return get_class($this);
     }
 

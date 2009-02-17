@@ -243,9 +243,10 @@ class Main
                 $config->debug("restoring saved request: " . print_r($request, true));
             }
 
-            if (($request->component)
-                && ($obj = call_user_func(array($request->component, 'load'), $request->component)))
-            {
+            if (
+                $request->component &&
+                ($obj = call_user_func(array($request->component, 'load'), $request->component))
+            ) {
                 $_GET = $request->get;
                 $_POST = $request->post;
                 $_REQUEST = $request->request;
@@ -266,10 +267,8 @@ class Main
     {
         global $config, $current;
 
-        /*
-         * set language from A.) Cookies, B.) _lang_id request, C.) default
-         */
-        {
+        { // set language from A.) Cookies, B.) _lang_id request, C.) default
+            // TODO honor language in page
             $langId = (int) Params::cookie(AppConstants::LANGUAGE_COOKIE, 0);
 
             if (Params::request(AppConstants::LANGUAGE_KEY)) {
@@ -279,8 +278,7 @@ class Main
 
             if ($langId) {
                 I18N::set($langId);
-            }
-            else {
+            } else {
                 I18N::set('EN');
             }
         }

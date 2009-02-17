@@ -59,7 +59,6 @@ class Application
      */
     private function __construct()
     {
-
     }
 
     /**
