@@ -42,7 +42,7 @@ class WebPage
      *
      * @return WebPage
      */
-    public static function &getCurrent()
+    public static function getCurrent()
     {
         if (! isset(self::$TheCurrentPage)) {
             self::$TheCurrentPage = new self();
@@ -57,7 +57,7 @@ class WebPage
      *
      * @return WebPage the old current page
      */
-    public static function setCurrent(WebPage &$webpage)
+    public static function setCurrent(WebPage $webpage)
     {
         $old = self::$TheCurrentPage;
         self::$TheCurrentPage = $webpage;
