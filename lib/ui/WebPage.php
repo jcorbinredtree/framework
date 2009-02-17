@@ -503,6 +503,25 @@ class WebPage
 
         return $current->getNotices();
     }
+
+    /**
+     * Gets the page title
+     *
+     * If the current theme defines a 'formatPageTitle' method, then it is
+     * called with the page title as argument, and its return value passed on;
+     * otherwise the $title property is simply returned.
+     *
+     * @return string
+     */
+    public function formatTitle()
+    {
+        $theme = $this->getTheme();
+        if (method_exists($theme, 'formatPageTitle')) {
+            return $theme->formatPageTitle($this->title);
+        } else {
+            return $this->title;
+        }
+    }
 }
 
 ?>

@@ -34,6 +34,15 @@ class DefaultTheme extends Theme
         $content = $template->render();
         $this->page->addToBuffer('content', $content);
     }
+
+    public function formatPageTitle($title)
+    {
+        if ($title) {
+            return "Site - $title";
+        } else {
+            return "Site";
+        }
+    }
 }
 
 ?>

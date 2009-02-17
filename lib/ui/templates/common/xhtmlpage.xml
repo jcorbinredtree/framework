@@ -5,7 +5,7 @@
 <c:doctype type="xhtml 1.0" />
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>FIXME - <c:out value="${page.title}" /></title>
+    <title><c:out value="${page.formatTitle()}" /></title>
     <!-- FIXME links, scripts, yada -->
   </head>
   <body>
