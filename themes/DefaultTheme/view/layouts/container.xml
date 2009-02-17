@@ -4,9 +4,6 @@
   xmlns:f="class://FrameworkTag">
 
 <!-- TODO: ${=config.absUri}/themes/DefaultTheme/view/css/container.css -->
-<!-- TODO xhtmlpage needs to absorb these -->
-<t:warnings />
-<t:notices />
 
 <div id="main-container">
   <div id="left">
@@ -23,6 +20,8 @@
   </div>
 
   <div id="center">
+    <t:warnings />
+    <t:notices />
     <t:pageBuffer area="content" />
   </div>
 </div>

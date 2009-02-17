@@ -10,6 +10,14 @@
   </head>
   <body>
     <t:pageBuffer area="content" />
+
+    <!--
+      Output warnings and errors, this only generates output if no inner
+      template already did this, or if there's been errors generated since
+      then.
+    -->
+    <t:warnings />
+    <t:notices />
   </body>
 </html>
 </template>

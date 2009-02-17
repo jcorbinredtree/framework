@@ -59,6 +59,7 @@ class ThemeTag extends Tag
         $this->compiler->write('<div class="'.$warningClass.'"><?php echo $w ?></div>');
         $this->compiler->write('<?php } ?>');
         $this->compiler->write('</div>');
+        $this->compiler->write('<?php '.$whence.'->clearWarnings(); ?>');
         $this->compiler->write('<?php } ?>');
     }
 
@@ -74,6 +75,7 @@ class ThemeTag extends Tag
         $this->compiler->write('<div class="'.$noticeClass.'"><?php echo $w ?></div>');
         $this->compiler->write('<?php } ?>');
         $this->compiler->write('</div>');
+        $this->compiler->write('<?php '.$whence.'->clearNotices(); ?>');
         $this->compiler->write('<?php } ?>');
     }
 
