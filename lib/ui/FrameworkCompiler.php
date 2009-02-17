@@ -33,13 +33,22 @@
 class FrameworkCompiler extends Compiler
 {
     /**
-     * Constructor; writes global variables to be available to templates
-     *
-     * @param string $file
+     * Constructor
      */
-    public function __construct($file='')
+    public function __construct()
     {
-        parent::__construct($file);
+        // Cache template compilation in a site specific place
+        $policy = PolicyManager::getInstance();
+        $this->setCacheDirectory($policy->getTemplatesDir());
+
+        parent::__construct(Compiler::TYPE_BUILTIN);
+    }
+
+    /**
+     * Framework Template preamble
+     */
+    protected function writeTemplateHeader()
+    {
         $this->write('<?php global $current,$config; ?>');
         $this->write("<?php if (isset(\$this->page)) {\n");
         $this->write("  \$page = \$this->page;\n");

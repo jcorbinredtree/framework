@@ -50,16 +50,20 @@ class Template extends PHPSTLTemplate
         $this->addPath(dirname(__FILE__).'/templates');
 
         global $current;
-
-        $this->compiler = 'FrameworkCompiler';
-
-        $policy = PolicyManager::getInstance();
-        Compiler::setCompileDirectory($policy->getTemplatesDir() . '/');
-        Compiler::setCompilerClass('FrameworkCompiler');
-
         $this->addPath($current->path);
 
         parent::__construct($template);
+    }
+
+    // TODO: until php-stl implements a sane provider delegation mechanism that
+    // allows us to decouple the template and compiler
+    private static $TheCompiler = null;
+    protected function setupCompiler()
+    {
+        if (! isset(self::$TheCompiler)) {
+            self::$TheCompiler = new FrameworkCompiler();
+        }
+        return self::$TheCompiler;
     }
 
     /**
