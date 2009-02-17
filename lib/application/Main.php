@@ -310,7 +310,10 @@ class Main
             return;
         }
 
-        $layout = new LayoutDescription();
+        if (! $config->targetVersionOver(3, 0, 76)) {
+            WebPage::setCurrent(new LayoutDescription());
+        }
+        $page = WebPage::getCurrent();
 
         /*
          * +====================+
@@ -347,25 +350,8 @@ class Main
                 break;
         }
 
-        /*
-         * populate the LayoutDescription
-         */
-        {
-            $vars = get_object_vars($current->component);
-            foreach ($vars as $prop => $val) {
-                if (property_exists($layout, $prop)) {
-                    $layout->$prop = $val;
-                }
-            }
 
-            $layout->isPopup = Params::request(AppConstants::POPUP_KEY, false);
-            $layout->component = $current->component;
-            $layout->isHomePage = ($current->component->getClass() == $config->getDefaultComponent())
-                                  && ($current->action->id == $config->getDefaultAction());
-        }
-
-        //print_r($layout);exit(0);
-        $current->layout =& $layout;
+        $page->addToBuffer('content', $current->component);
 
         LifeCycleManager::onPreRender($current->layout);
         {
