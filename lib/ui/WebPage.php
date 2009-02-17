@@ -314,6 +314,17 @@ class WebPage
     }
 
     /**
+     * Tests whether the named data item exists
+     *
+     * @param name string
+     * @return boolean true if a call to getData($name) would return non-null
+     */
+    public function hasData($name)
+    {
+        return array_key_exists($name, $this->data);
+    }
+
+    /**
      * Returns the named data item
      *
      * @param name string
