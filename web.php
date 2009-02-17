@@ -52,13 +52,12 @@ catch (Exception $ex) {
         // stuff all output in case the broken catcher is broken
         ob_start();
 
-        $policy = PolicyManager::getInstance();
-        $theme = $policy->getExceptionTheme();
-        $layout = new LayoutDescription();
-        $layout->content = $ex;
-        $theme->onDisplay($layout);
+        // The old page failed, create a new one
+        $page = new WebPage();
+        $page->setData('exception', $ex);
+        $page->setData('oldPage', WebPage::setCurrent($page));
 
-        print $theme->getBuffer();
+        $page->getTheme()->render();
 
         // it managed to do its thing, so let it through
         ob_end_flush();

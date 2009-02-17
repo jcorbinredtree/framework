@@ -276,6 +276,37 @@ class WebPage
     }
 
     /**
+     * Holds the current theme object
+     *
+     * @var Theme
+     */
+    private $theme;
+
+    /**
+     * Returns the theme that should render the current page
+     *
+     * @return Theme
+     */
+    public function getTheme()
+    {
+        if (! isset($this->theme)) {
+            $policy = PolicyManager::getInstance();
+            if ($this->hasData('exception')) {
+                $theme = $policy->getExceptionTheme();
+            } else {
+                $theme = $policy->getTheme();
+            }
+            if (! $theme) {
+                throw new RuntimeException(
+                    'A theme could not be resonably resolved'
+                );
+            }
+            $this->theme = $theme;
+        }
+        return $this->theme;
+    }
+
+    /**
      * Sets a data item
      *
      * This implements a singular data item, see addData if the item should

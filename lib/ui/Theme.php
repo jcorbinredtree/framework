@@ -35,6 +35,39 @@ abstract class Theme extends BufferedObject
     private $path = null;
 
     /**
+     * The page that this theme styles
+     *
+     * @var WebPage
+     */
+    protected $page;
+
+    /**
+     * The template used to implement the final page rendering, such as
+     * xhtmlpage.xml
+     *
+     * @var PageTemplate
+     */
+    protected $pageTemplate;
+
+    /**
+     * Creats a theme object for a page
+     *
+     * @param page WebPage optional, defaults to WebPage::getCurrent
+     */
+    public function __construct($page=null)
+    {
+        if (! isset($page)) {
+            $page = WebPage::getCurrent();
+        } elseif (! is_a($page, 'WebPage')) {
+            throw InvalidArgumentException('Not a WebPage');
+        }
+        $this->page = $page;
+
+        $this->pageTemplate = new PageTemplate($this->page);
+        $this->pageTemplate->assign('theme', $this);
+    }
+
+    /**
      * Gets the name of the current class
      *
      * @return string the name of the theme class
@@ -45,12 +78,53 @@ abstract class Theme extends BufferedObject
     }
 
     /**
-     * Displays the application
+     * Renders the theme
+     *
+     * This calls onRender, processes the page template, and then flushes
+     * output
+     *
+     * @return void
+     */
+    public function render()
+    {
+        // set the current path to the theme location & display
+        $oldPath = Application::setPath($this->getPath());
+
+        LifeCycleManager::onPreRender($this->page);
+
+        if (method_exists($this, 'onDisplay')) {
+            global $config;
+            // Deprecated pre 3.0.76 interface
+            if ($config->isDebugMode()) {
+                $cls = get_class($this);
+                $config->deprecatedComplain(
+                    $cls.'->onDisplay', $cls.'->onRender'
+                );
+            }
+            $this->onDisplay($this->page);
+        }
+
+        $this->onRender();
+
+        $this->write($this->pageTemplate->render());
+        $this->flush();
+
+        LifeCycleManager::onPostRender();
+
+        Application::setPath($oldPath);
+    }
+
+    /**
+     * Called by render to do final page layout processing
+     *
+     * Does nothing in the abstract, you likely want to override this
      *
      * @param WebPage $page the page being displayed
      * @return void
      */
-    abstract public function onDisplay(WebPage &$page);
+    protected function onRender()
+    {
+    }
 
     /**
      * Gets image based on the theme
@@ -82,18 +156,6 @@ abstract class Theme extends BufferedObject
 
         $us = new ReflectionClass($this->getClass());
         return $this->path = dirname($us->getFileName());
-    }
-
-    public function createPageTemplate(WebPage &$page)
-    {
-        return new PageTemplate($page);
-    }
-
-    public function renderPage(WebPage &$page)
-    {
-        $template = $this->createPageTemplate($page);
-        $template->assign('theme', $this);
-        $this->write($template->render());
     }
 
     /**

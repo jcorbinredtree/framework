@@ -125,9 +125,7 @@ class Template extends PHPSTLTemplate
      */
     public function getThemeImage($key)
     {
-        global $current;
-
-        return $current->theme->getImage($key);
+        return WebPage::getCurrent()->getTheme()->getImage($key);
     }
 
     /**
@@ -141,9 +139,7 @@ class Template extends PHPSTLTemplate
      */
     public function getThemeIcon($key)
     {
-        global $current;
-
-        return $current->theme->getIcon($key);
+        return WebPage::getCurrent()->getTheme()->getIcon($key);
     }
 
     /**

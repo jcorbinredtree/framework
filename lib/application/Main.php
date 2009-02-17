@@ -282,14 +282,6 @@ class Main
                 I18N::set('EN');
             }
         }
-
-        $policy = PolicyManager::getInstance();
-        $current->theme = $policy->getTheme();
-        if (!$current->theme) {
-            $message = 'A theme could not be resonably resolved';
-            $config->error($message);
-            throw new Exception($message);
-        }
     }
 
     /**
@@ -353,18 +345,7 @@ class Main
 
         $page->addToBuffer('content', $current->component);
 
-        LifeCycleManager::onPreRender($current->layout);
-        {
-            $layout->content = $current->component->getBuffer();
-
-            /*
-             * set the current path to the theme location & display
-             */
-            Application::setPath($current->theme->getPath());
-            $current->theme->onDisplay($layout);
-            $current->theme->flush();
-        }
-        LifeCycleManager::onPostRender();
+        $page->getTheme()->render();
     }
 }
 
