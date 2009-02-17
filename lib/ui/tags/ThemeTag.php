@@ -47,8 +47,13 @@ class ThemeTag extends Tag
         $this->compiler->write("?>");
     }
 
+    /**
+     * All following methods are DERPECATED since 3.0.76
+     */
     public function allHead(DOMElement &$element)
     {
+        global $config;
+        $config->deprecatedComplain('ThemeTag:allHead', '(port theme)');
         $this->title($element);
         $this->keywords($element);
         $this->description($element);
@@ -59,7 +64,7 @@ class ThemeTag extends Tag
 
     public function title(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
         $default = $this->getAttr($element, 'default', '');
 
         $this->compiler->write('<title><?php echo (' . $layout . '->title ? ' . $layout . '->title : ' . $default . '); ?></title>');
@@ -67,14 +72,14 @@ class ThemeTag extends Tag
 
     public function head(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
 
         $this->compiler->write('<?php echo ' . $layout . '->head; ?>');
     }
 
     public function keywords(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
 
         $this->compiler->write('<?php if(' . $layout . '->keywords){?>');
         $this->compiler->write('<meta name = "keywords" content = "<?php echo ' . $layout . '->keywords; ?>" />');
@@ -83,7 +88,7 @@ class ThemeTag extends Tag
 
     public function description(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
 
         $this->compiler->write('<?php if(' . $layout . '->description){?>');
         $this->compiler->write('<meta name = "description" content = "<?php echo ' . $layout . '->description; ?>" />');
@@ -92,7 +97,7 @@ class ThemeTag extends Tag
 
     public function scripts(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
 
         $this->compiler->write('<?php foreach(' . $layout . '->scripts as $script){?>');
         $this->compiler->write('<script src = "<?php echo $script; ?>" type = "text/javascript"></script>');
@@ -101,7 +106,7 @@ class ThemeTag extends Tag
 
     public function stylesheets(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
 
         $this->compiler->write('<?php foreach(' . $layout . '->stylesheets as $ss){?>');
         $this->compiler->write('<link href = "<?php echo $ss; ?>" type = "text/css" rel = "stylesheet" />');
@@ -136,7 +141,7 @@ class ThemeTag extends Tag
 
     public function breadcrumbs(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
         $containerId = $this->getUnquotedAttr($element, 'containerid', 'breadcrumb-container');
         $breadcrumbClass = $this->getUnquotedAttr($element, 'breadcrumbclass', 'breadcrumb');
 
@@ -152,7 +157,7 @@ class ThemeTag extends Tag
 
     public function content(DOMElement &$element)
     {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$this->layout');
+        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
 
         $this->compiler->write('<?php echo ' . $layout . '->content; ?>');
     }
