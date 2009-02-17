@@ -481,30 +481,6 @@ class WebPage
     }
 
     /**
-     * Gets the current set of warnings
-     *
-     * @return array
-     */
-    public function getWarnings()
-    {
-        global $current;
-
-        return $current->getWarnings();
-    }
-
-    /**
-     * Gets the current set of notices
-     *
-     * @return array
-     */
-    public function getNotices()
-    {
-        global $current;
-
-        return $current->getNotices();
-    }
-
-    /**
      * Gets the page title
      *
      * If the current theme defines a 'formatPageTitle' method, then it is

@@ -47,6 +47,36 @@ class ThemeTag extends Tag
         $this->compiler->write("?>");
     }
 
+    public function warnings(DOMElement &$element)
+    {
+        $whence = $this->getUnquotedAttr($element, 'layout', '$current');
+        $containerId = $this->getUnquotedAttr($element, 'containerid', 'warnings-container');
+        $warningClass = $this->getUnquotedAttr($element, 'warningclass', 'warning');
+
+        $this->compiler->write('<?php if (count('.$whence.'->getWarnings())) { ?>');
+        $this->compiler->write('<div id="'.$containerId.'">');
+        $this->compiler->write('<?php foreach ('.$whence.'->getWarnings() as $w) { ?>');
+        $this->compiler->write('<div class="'.$warningClass.'"><?php echo $w ?></div>');
+        $this->compiler->write('<?php } ?>');
+        $this->compiler->write('</div>');
+        $this->compiler->write('<?php } ?>');
+    }
+
+    public function notices(DOMElement &$element)
+    {
+        $whence = $this->getUnquotedAttr($element, 'layout', '$current');
+        $containerId = $this->getUnquotedAttr($element, 'containerid', 'notices-container');
+        $noticeClass = $this->getUnquotedAttr($element, 'noticeclass', 'notice');
+
+        $this->compiler->write('<?php if (count('.$whence.'->getNotices())) { ?>');
+        $this->compiler->write('<div id="'.$containerId.'">');
+        $this->compiler->write('<?php foreach ('.$whence.'->getNotices() as $w) { ?>');
+        $this->compiler->write('<div class="'.$noticeClass.'"><?php echo $w ?></div>');
+        $this->compiler->write('<?php } ?>');
+        $this->compiler->write('</div>');
+        $this->compiler->write('<?php } ?>');
+    }
+
     /**
      * All following methods are DERPECATED since 3.0.76
      */
@@ -111,32 +141,6 @@ class ThemeTag extends Tag
         $this->compiler->write('<?php foreach(' . $layout . '->stylesheets as $ss){?>');
         $this->compiler->write('<link href = "<?php echo $ss; ?>" type = "text/css" rel = "stylesheet" />');
         $this->compiler->write('<?php } ?>');
-    }
-
-    public function warnings(DOMElement &$element)
-    {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
-        $containerId = $this->getUnquotedAttr($element, 'containerid', 'warnings-container');
-        $warningClass = $this->getUnquotedAttr($element, 'warningclass', 'warning');
-
-        $this->compiler->write("<?php\nif (count(".$layout."->getWarnings())) {\n  ?>");
-        $this->compiler->write('<div id="'.$containerId.'">');
-        $this->compiler->write("<?php\n  foreach (".$layout."->getWarnings() as \$w) {\n    ?>");
-        $this->compiler->write('<div class="'.$warningClass.'"><?php echo $w ?></div>');
-        $this->compiler->write("<?php\n  } ?></div><?php\n}\n?>");
-    }
-
-    public function notices(DOMElement &$element)
-    {
-        $layout = $this->getUnquotedAttr($element, 'layout', '$page');
-        $containerId = $this->getUnquotedAttr($element, 'containerid', 'notices-container');
-        $noticeClass = $this->getUnquotedAttr($element, 'noticeclass', 'notice');
-
-        $this->compiler->write("<?php\nif (count(".$layout."->getNotices())) {\n  ?>");
-        $this->compiler->write('<div id="'.$containerId.'">');
-        $this->compiler->write("<?php\n  foreach (".$layout."->getNotices() as \$w) {\n    ?>");
-        $this->compiler->write('<div class="'.$noticeClass.'"><?php echo $w ?></div>');
-        $this->compiler->write("<?php\n  } ?></div><?php\n}\n?>");
     }
 
     public function breadcrumbs(DOMElement &$element)
