@@ -55,7 +55,10 @@ class FrameworkCompiler extends Compiler
      */
     protected function writeTemplateHeader()
     {
-        $this->write('<?php global $current,$config; ?>');
+        parent::writeTemplateHeader(array(
+            'Framework Version' => Config::$FrameworkVersion
+        ));
+        $this->write("<?php global \$current, \$config; ?>\n");
         $this->write("<?php if (isset(\$this->page)) {\n");
         $this->write("  \$page = \$this->page;\n");
         $this->write("} else {\n");
