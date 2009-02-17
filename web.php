@@ -49,7 +49,7 @@ catch (Exception $ex) {
 
         @ob_end_clean();
 
-        # stuff all output in case the broken catcher is broken
+        // stuff all output in case the broken catcher is broken
         ob_start();
 
         $policy = PolicyManager::getInstance();
@@ -60,13 +60,13 @@ catch (Exception $ex) {
 
         print $theme->getBuffer();
 
-        # it managed to do its thing, so let it through
+        // it managed to do its thing, so let it through
         ob_end_flush();
     } catch (Exception $rex) {
-        # Throw away any output that the failed exception handling created
+        // Throw away any output that the failed exception handling created
         @ob_end_clean();
 
-        # Hopelessly broken policy/theme/whatever, we'll just do it ourselves
+        // Hopelessly broken policy/theme/whatever, we'll just do it ourselves
         $l = array(
             'Broken exception handler' => $rex,
             'Original exception' => $ex
