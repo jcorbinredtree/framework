@@ -170,7 +170,7 @@ class WebPage
             $ret = array();
             foreach ($this->buffers[$name] as &$item) {
                 array_push($ret,
-                    $this->renderBufferedItem($item), array($name)
+                    $this->renderBufferedItem($item)
                 );
             }
         } else {
