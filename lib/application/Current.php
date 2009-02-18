@@ -124,15 +124,6 @@ class Current
     private $warnings = array();
 
     /**
-     * Holds the current warning messages to print to
-     * the user, in an associtive format
-     *
-     * @access private
-     * @var array
-     */
-    private $keyedWarnings = array();
-
-    /**
      * Holds the current notice messages to print to
      * the user
      *
@@ -210,21 +201,11 @@ class Current
      * browser.
      *
      * @param string $warning the warning
-     * @param string $key adds this warning to the keyed warnings
      * @return void
      */
-    public function addWarning($warning, $key='')
+    public function addWarning($warning)
     {
-        if ($key) {
-            if (!array_key_exists($key, $this->keyedWarnings)) {
-                $this->keyedWarnings[$key] = array();
-            }
-
-            array_push($this->keyedWarnings[$key], $warning);
-        }
-        else {
-            array_push($this->warnings, $warning);
-        }
+        array_push($this->warnings, $warning);
     }
 
     /**
@@ -236,17 +217,6 @@ class Current
     public function getWarnings()
     {
         return $this->warnings;
-    }
-
-    /**
-     * Get the keyed warnings
-     *
-     * @access public
-     * @return array keyed warnings
-     */
-    public function getKeyedWarnings()
-    {
-        return $this->keyedWarnings;
     }
 
     /**
