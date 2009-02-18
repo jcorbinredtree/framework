@@ -62,6 +62,25 @@ abstract class Module extends BufferedObject implements ICacheable
     const POSITION_BOTTOM = 4;
 
     /**
+     * Returns the path to this module
+     *
+     * The base class presumes that the file that defines a module class is
+     * in the toplevel module directory, example:
+     *   File: /somewhere/SITE/local/modules/SomeCog/SomeCog.php
+     *     class SomeCog extends Module { ... }
+     *   Then:
+     *     $c = new SomeCog();
+     *     echo $c->getPath(); // prints /somewhere/SITE/local/modules/SomeCog
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        $us = new ReflectionClass(get_class($this));
+        return dirname($us->getFileName());
+    }
+
+    /**
      * Called when the module is first loaded
      *
      * @return void
@@ -100,8 +119,8 @@ abstract class Module extends BufferedObject implements ICacheable
             include_once $path;
         }
 
-        $oldPath = CurrentPath::set("$config->absPath/modules/$module");
         $obj = new $module();
+        $oldPath = CurrentPath::set($obj->getPath());
         $obj->onInitialize();
         CurrentPath::set($oldPath);
 

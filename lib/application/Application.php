@@ -385,9 +385,7 @@ class Application
      */
     static public function performModule(Module &$module, $position=Module::POSITION_LEFT)
     {
-        global $config;
-
-        $oldPath = CurrentPath::set("$config->fwAbsPath/modules/" . get_class($module));
+        $oldPath = CurrentPath::set($module->getPath());
 
         if (!($data = Cacher::useCache($module))) {
             $module->onDisplay($position);
