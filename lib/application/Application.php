@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once(dirname(__FILE__).'/CurrentPath.php');
+
 /**
  * Implements PHP's autoload function in order to
  * load required classed.
