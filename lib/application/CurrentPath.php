@@ -115,9 +115,9 @@ class CurrentPath
             if (substr($url, 0, strlen($base)) == $base) {
                 $url = explode('/', substr($url, strlen($base)));
 
-                if ($url[0] == 'SITE') {
+                if (count($url) >= 1 && $url[0] == 'SITE') {
                     $url = array_slice($url, 2);
-                } elseif ($url[0] == '' && $url[1] == 'SITE') {
+                } elseif (count($url) >= 2 && $url[0] == '' && $url[1] == 'SITE') {
                     $url = array_slice($url, 3);
                 }
 
