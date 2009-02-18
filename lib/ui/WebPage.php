@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once(dirname(__FILE__).'/WebPageAsset.php');
+
 /**
  * Describes the current webpage being built for output
  *
@@ -94,6 +96,13 @@ class WebPage
     private $data;
 
     /**
+     * List of WebPageAssets
+     *
+     * @see addAsset,e getAssets
+     */
+    private $assets;
+
+    /**
      * Constructor
      *
      * Creates a new WebPage.
@@ -107,6 +116,7 @@ class WebPage
     {
         $this->buffers = array();
         $this->data = array();
+        $this->assets = array();
         $this->meta = new WebPageMeta();
     }
 
@@ -393,33 +403,7 @@ class WebPage
      */
     public function addScript($url, $type='text/javascript')
     {
-        // TODO coming soon, script manager interface
-        if ($this->hasScript($url)) {
-            return;
-        }
-        $this->addData('script', array($url, $type));
-    }
-
-    /**
-     * Tests if theu page has the given script included
-     *
-     * @param url string
-     * @param type string
-     *
-     * @return boolean
-     */
-    public function hasScript($url)
-    {
-        // TODO coming soon, script manager interface
-        $s = $this->getData('script');
-        if (isset($s)) {
-            foreach ($s as $u) {
-                if ($url == $u) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        $this->addAsset(new WebPageScript($url, $type));
     }
 
     /**
@@ -434,50 +418,87 @@ class WebPage
      */
     public function addLink($href, $type, $rel, $title=null)
     {
-        // TODO coming soon, a link manager
-        $this->addData('link', array($href, $type, $rel, $title));
+        $this->addAsset(new WebPageLinkedResource($href, $type, $rel, $title));
     }
 
     /**
-     * Returns an array of linked resources in the page
+     * Returns a list of assets in this page filtered by class
      *
-     * @param rel string or null (optional)
-     * @param type string or null (optional)
+     * You likely wanted to call getAssets
      *
-     * @return array if both paramters are null, returns all links, otherwise
-     * filters as one would expect.
+     * @param class string
+     * @return array
      */
-    public function getLinks($rel=null, $type=null)
+    public function getAssetsByClass($class)
     {
-        // TODO coming soon, a link manager
-        $links = $this->getData('link');
-        if (! isset($links)) {
-            return array();
-        }
-
-        if (isset($rel)) {
-            $new = array();
-            foreach ($links as &$link) {
-                if ($link[2] == $rel) {
-                    array_push($new, $link);
-                }
+        $r = array();
+        foreach ($this->assets as $asset) {
+            if (is_a($asset, $class)) {
+                array_push($r, $asset);
             }
-            unset($link);
-            $links = $new;
         }
+        return $r;
+    }
 
-        if (isset($type)) {
-            $new = array();
-            foreach ($links as &$link) {
-                if ($link[1] == $type) {
-                    array_push($new, $link);
-                }
+    /**
+     * Returns a list of WebPageAsset objects, optionally filtered by asset type
+     *
+     * @param type string optional, one of:
+     *   script     - returns script assets
+     *   stylesheet - returns stylesheet assets
+     *   link       - returns link assets
+     *   linkonly   - returns link assets that aren't stylesheets
+     *   alternate  - returns alternate link assets
+     * @return array
+     */
+    public function getAssets($type=null)
+    {
+        switch ($type) {
+        case 'script':
+            return $this->getAssetsByClass('WebPageScript');
+        case 'stylesheet':
+            return $this->getAssetsByClass('WebPageStylesheet');
+        case 'link':
+            return $this->getAssetsByClass('WebPageLinkedResource');
+        case 'alternate':
+            return $this->getAssetsByClass('WebPageAlternateLink');
+        case 'linkonly':
+            return array_diff(
+                $this->getAssetsByClass('WebPageLinkedResource'),
+                $this->getAssetsByClass('WebPageStylesheet')
+            );
+        default:
+            return $this->assets;
+        }
+    }
+
+    /**
+     * Adds an asset to the page if not already added
+     *
+     * @param asset WebPageAsset
+     * @return void
+     */
+    public function addAsset(WebPageAsset $asset)
+    {
+        if (! $this->hasAsset($asset)) {
+            array_push($this->assets, $asset);
+        }
+    }
+
+    /**
+     * Tests whether an asset is in this page
+     *
+     * @param asset WebPageAsset
+     * @return boolean
+     */
+    public function hasAsset(WebPageAsset $asset)
+    {
+        foreach ($this->assets as $a) {
+            if ($a->compare($asset)) {
+                return true;
             }
-            unset($link);
-            $links = $new;
         }
-
-        return $links;
+        return false;
     }
 
     /**
