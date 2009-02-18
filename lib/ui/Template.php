@@ -100,20 +100,11 @@ class Template extends PHPSTLTemplate
     {
         global $current;
 
-        if (!$action) {
-            $action = $current->action;
-        }
-
         if (!$component) {
             $component = $current->component;
         }
 
-        if (!$stage) {
-            $stage = $current->stage;
-        }
-
-        return call_user_func_array(array($current->component, 'getActionURI'),
-                                    array($component, $action, $args, $stage));
+        return $component->getActionURI($action, $args, $stage);
     }
 
     /**

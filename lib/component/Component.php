@@ -63,15 +63,44 @@ abstract class Component extends ActionProvider
         return Component::$instances[$c];
     }
 
+    public $stage;
+    public $action;
+
     /**
      * contructor; generic initializations
      * do your initializations onInitialize()
      */
-    final public function __construct()
+    final public function __construct($actionId=null)
     {
+        global $config;
+
         $this->title = get_class($this);
         $this->onInitialize();
         $this->onRegisterActions();
+
+        if (! isset($actionId)) {
+            $actionId = Params::request(AppConstants::ACTION_KEY, null);
+        }
+        if (! isset($actionId)) {
+            if (get_class($this) == $config->getDefaultComponent()) {
+                $actionId = $config->getDefaultAction();
+            } else {
+                throw new RuntimeException("need an action");
+            }
+        }
+
+        $this->action = $this->getAction($actionId);
+        if (! $this->action) {
+            throw new RuntimeException("Unknown action $actionId");
+        }
+
+        $this->stage = Params::request(AppConstants::STAGE_KEY, Stage::VIEW);
+
+        if ((Params::server('HTTPS') != 'on') && $this->action->requiresSSL) {
+            Application::forward(
+                $current->getCurrentRequest(array('-secure'=>true))
+            );
+        }
     }
 
     public function onInitialize()
@@ -100,23 +129,28 @@ abstract class Component extends ActionProvider
      * @see ILinkPolicy::getActionURI
      * @access public
      * @param string a component class name
-     * @param int $action the action id you want to link to
+     * @param int $action the action id you want to link to, defaults to the current action
      * @param array $options an associative array of parameters to pass to the action. You may set
      * -textalize to true if you are using the text directly (ie not in an href). This
      * option will be removed from the final link, but does not do encoding transformations
      * such as & => &amp;.
      *
      * -popup indicates a popup window
-     *
      * -secure indicates a secure link
      *
      * @param int $stage the stage you want to link to, default Stage::VIEW
      * @return string text to use in an href upon success; null upon failure
      */
-    public static function getActionURI($component, $action, $options=array(), $stage=Stage::VIEW)
+    public function getActionURI($action=null, $options=array(), $stage=Stage::VIEW)
     {
+        if (! isset($action)) {
+            $action = $this->action->id;
+        }
+        if (! isset($stage)) {
+            $stage = $this->stage;
+        }
         $policy = PolicyManager::getInstance();
-        return $policy->getActionURI($component, $action, $options, $stage);
+        return $policy->getActionURI(get_class($this), $action, $options, $stage);
     }
 
     /**
@@ -209,7 +243,7 @@ abstract class Component extends ActionProvider
         }
 
         return new NavigatorItem(
-            Component::getActionURI(get_class($this), $crumb),
+            $this->getActionURI($crumb),
             $crumb
         );
     }

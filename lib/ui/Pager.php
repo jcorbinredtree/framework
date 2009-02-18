@@ -278,10 +278,13 @@ class Pager extends SessionObject
 
         $args['start'] = $start;
 
-        $component = $this->component ? $this->component : get_class($current->component);
-        $action    = $this->action    ? $this->action    : $current->action->id;
-
-        return call_user_func_array(array($component, 'getActionURI'), array($component, $action, $args, Stage::VIEW));
+        if (isset($this->component)) {
+            return PolicyManager::getInstance()->getActionURI(
+                $this->component, $this->action, $args, Stage::VIEW
+            );
+        } else {
+            return $current->component->getActionURI(null, $args, Stage::VIEW);
+        }
      }
 
     /**

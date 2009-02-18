@@ -44,13 +44,6 @@ class Current
     public $user = null;
 
     /**
-     * Holds the current stage
-     *
-     * @var int
-     */
-    public $stage = Stage::VIEW;
-
-    /**
      * Holds the current component. This is not
      * entirely accurate, as it actually holds the
      * component REQUESTED, which may not actually
@@ -61,14 +54,6 @@ class Current
      * @var Component
      */
     public $component = null;
-
-    /**
-     * Holds the current action
-     *
-     * @access public
-     * @var ActionDescription
-     */
-    public $action = null;
 
     /**
      * Holds the current path. The current path is set to

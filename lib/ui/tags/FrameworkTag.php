@@ -169,10 +169,12 @@ class FrameworkTag extends Tag
         $method = $this->getUnquotedAttr($element, 'method', 'post');
         $stage = $this->getUnquotedAttr($element, 'stage', Stage::VALIDATE);
 
-        $form = '<form action = "<?php echo ' . $class . '::getActionURI(get_class($current->component),$current->action->id,';
-        $form .= "array('-secure'=>" . '$current->isSecureRequest()), ' . $stage . '); ?>" method = "' . $method . '"';
-        $form .= $this->optionalAttributes($element, array('name', 'id', 'enctype'));
-        $form .= '>';
+        $form =
+            '<form action="<?php echo $current->component->getActionURI('.
+            'null, array(\'-secure\'=>$current->isSecureRequest()), '.$stage.
+            '); ?>" method="'.$method.'"'.
+            $this->optionalAttributes($element, array('name', 'id', 'enctype')).
+            '>';
 
         $this->compiler->write($form);
         $this->process($element);

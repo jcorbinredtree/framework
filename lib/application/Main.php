@@ -111,27 +111,9 @@ class Main
                               ? Params::request(AppConstants::COMPONENT_KEY)
                               : $config->getDefaultComponent());
         $current->component = Component::getInstance($componentClass);
-        if (!$current->component) {
-            $config->error("Unknown component $componentClass");
-            throw new Exception("Unknown component $componentClass");
+        if (! $current->component) {
+            throw new RuntimeException("Unknown component $componentClass");
         }
-
-        $actionId = (Params::request(AppConstants::ACTION_KEY, null)
-                               ? Params::request(AppConstants::ACTION_KEY, null)
-                               : $config->getDefaultAction());
-        $current->action = $current->component->getAction($actionId);
-        if (!$current->action) {
-            $message = "Unknown action $actionId";
-            $config->error($message);
-            throw new Exception($message);
-        }
-
-        if ((Params::server('HTTPS') != 'on') && $current->action->requiresSSL) {
-            $uri = $current->getCurrentRequest(array('-secure'=>true));
-            Application::forward($uri);
-        }
-
-        $current->stage = Params::request(AppConstants::STAGE_KEY, Stage::VIEW);
     }
 
     /**
@@ -206,7 +188,7 @@ class Main
         $denied = false;
 
         /* current action denied */
-        if (!$current->component->allows($current->action)) {
+        if (!$current->component->allows($current->component->action)) {
             $config->info('permission denied by component access rules, loading Application::login');
             $denied = true;
         }
@@ -241,18 +223,11 @@ class Main
                 $config->debug("restoring saved request: " . print_r($request, true));
             }
 
-            if (
-                $request->component &&
-                ($obj = call_user_func(array($request->component, 'load'), $request->component))
-            ) {
-                $_GET = $request->get;
-                $_POST = $request->post;
-                $_REQUEST = $request->request;
+            $_GET = $request->get;
+            $_POST = $request->post;
+            $_REQUEST = $request->request;
 
-                $current->component = $obj;
-                $current->action = $current->component->getAction($request->action);
-                $current->stage = $request->stage;
-            }
+            $current->component = $request->component;
         }
     }
 
@@ -313,19 +288,19 @@ class Main
          * |    Return False?   |--------------------------^ YES
          * +====================+
          */
-        switch ($current->stage) {
+        switch ($current->component->stage) {
             default:
             case Stage::VIEW:
-                Application::performAction($current->component, $current->action, $current->stage);
+                Application::performAction($current->component, $current->component->action, $current->component->stage);
                 break;
             case Stage::VALIDATE:
-                if (!Application::call($current->component, $current->action, Stage::VALIDATE)) {
-                    Application::performAction($current->component, $current->action, Stage::VIEW);
+                if (!Application::call($current->component, $current->component->action, Stage::VALIDATE)) {
+                    Application::performAction($current->component, $current->component->action, Stage::VIEW);
                     break;
                 }
             case Stage::PERFORM:
-                if (!Application::call($current->component, $current->action, Stage::PERFORM)) {
-                    Application::performAction($current->component, $current->action, Stage::VIEW);
+                if (!Application::call($current->component, $current->component->action, Stage::PERFORM)) {
+                    Application::performAction($current->component, $current->component->action, Stage::VIEW);
                 }
 
                 break;

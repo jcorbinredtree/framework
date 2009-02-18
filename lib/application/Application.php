@@ -212,12 +212,10 @@ class Application
         global $current, $config;
 
         $obj = new stdClass();
-        $obj->stage = $current->stage;
-        $obj->action = ($current->action ? $current->action->id : null);
-        $obj->component = ($current->component ? get_class($current->component) : null);
         $obj->get = $_GET;
         $obj->post = $_POST;
         $obj->request = $_REQUEST;
+        $obj->component = $current->component;
 
         $config->info("saving request");
 
