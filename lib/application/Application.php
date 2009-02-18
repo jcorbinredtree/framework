@@ -387,7 +387,7 @@ class Application
     {
         global $config;
 
-        Application::setPath("$config->fwAbsPath/modules/" . get_class($module));
+        $oldPath = CurrentPath::set("$config->fwAbsPath/modules/" . get_class($module));
 
         if (!($data = Cacher::useCache($module))) {
             $module->onDisplay($position);
@@ -397,6 +397,7 @@ class Application
             $module = unserialize($data);
         }
 
+        CurrentPath::set($oldPath);
         return true;
     }
 

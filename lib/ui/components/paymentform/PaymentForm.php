@@ -62,10 +62,10 @@ class PaymentForm extends SessionObject
 
     public function draw()
     {
-        $path = Application::setPath(dirname(__FILE__));
+        $oldPath = CurrentPath::set(dirname(__FILE__));
         $template = new Template('view/view.xml');
         print $template->render(array('payment' => $this));
-        Application::setPath($path);
+        CurrentPath::set($oldPath);
     }
 
     public function validate()

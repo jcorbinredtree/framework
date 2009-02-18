@@ -73,10 +73,6 @@ Main::loadUser();
 Main::setLanguageAndTheme();
 
 // set appropriate path
-{
-    $bt = debug_backtrace();
-    $bt = $bt[count($bt) - 1];
-    Application::setPath(dirname($bt['file']));
-}
+CurrentPath::set(dirname(__FILE__));
 
 ?>

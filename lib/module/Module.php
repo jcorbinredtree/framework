@@ -100,10 +100,10 @@ abstract class Module extends BufferedObject implements ICacheable
             include_once $path;
         }
 
-        $path = Application::setPath("$config->absPath/modules/$module");
+        $oldPath = CurrentPath::set("$config->absPath/modules/$module");
         $obj = new $module();
         $obj->onInitialize();
-        Application::setPath($path);
+        CurrentPath::set($oldPath);
 
         return $obj;
     }

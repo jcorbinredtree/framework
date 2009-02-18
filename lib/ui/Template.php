@@ -73,7 +73,7 @@ class Template extends PHPSTLTemplate
     protected function renderSetup($args)
     {
         parent::renderSetup($args);
-        $this->__oldAppPath = Application::setPath(dirname($this->getFile()));
+        $this->__oldAppPath = CurrentPath::set(dirname($this->getFile()));
     }
 
     /**
@@ -82,7 +82,7 @@ class Template extends PHPSTLTemplate
     protected function renderCleanup()
     {
         parent::renderCleanup();
-        Application::setPath($this->__oldAppPath);
+        CurrentPath::set($this->__oldAppPath);
     }
 
     /**
