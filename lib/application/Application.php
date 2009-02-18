@@ -399,28 +399,16 @@ class Application
     }
 
     /**
-     * Sets the current->path. A relative or absolute path
-     * may be used.
-     *
-     * @static
-     * @access public
-     * @param string $path the value current->path should be set to
-     * @return string the old value of current->path
+     * DEPRECATED
+     * @see CurrentPath::set
      */
     public static function setPath($path)
     {
-        global $current;
-
-        $oldPath = $current->path;
-
-        if (preg_match('|^(?:[A-Z][:])?/|', $path)) {
-            $current->path = $path;
-        }
-        else {
-            $current->path .= ((preg_match('|/$|', $current->path)) ? '' : '/') . $path;
-        }
-
-        return $oldPath;
+        global $config;
+        $config->deprecatedComplain(
+            'Application::setPapth', 'CurrentPath::set'
+        );
+        return CurrentPath::set($path);
     }
 
     private static function requireMinimum()
