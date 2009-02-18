@@ -584,7 +584,11 @@ class Config
     {
         $this->cli = ('cli' === php_sapi_name());
         if ( $this->cli ) {
-          $_SERVER = array( 'SERVER_NAME' => 'cli', 'SERVER_PORT' => 80, 'PHP_SELF' => '/' );
+            $_SERVER = array(
+                'SERVER_NAME' => 'cli',
+                'SERVER_PORT' => 80,
+                'PHP_SELF' => '/'
+            );
         }
 
         $this->fwAbsPath = dirname(__FILE__);
