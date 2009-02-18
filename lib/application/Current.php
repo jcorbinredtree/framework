@@ -70,16 +70,6 @@ class Current
     public $component = null;
 
     /**
-     * Holds a reference to the current LayoutDescription
-     *
-     * DEPRECATED
-     * TODO: migrate anything using this to using WebPage::getCurrent
-     *
-     * @var LayoutDescription
-     */
-    public $layout = null;
-
-    /**
      * Holds the current action
      *
      * @access public
