@@ -106,8 +106,6 @@ class Main
     {
         global $current, $config;
 
-        $current->id = Params::request('id', 0);
-
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
         $componentClass = (Params::request(AppConstants::COMPONENT_KEY)
                               ? Params::request(AppConstants::COMPONENT_KEY)

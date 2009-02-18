@@ -36,13 +36,6 @@
 class Current
 {
     /**
-     * Holds the current id
-     *
-     * @var int
-     */
-    public $id = 0;
-
-    /**
      * Holds the current user, if available
      *
      * @access public
