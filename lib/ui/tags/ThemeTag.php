@@ -32,7 +32,7 @@
  * @package      UI
  * @category     Tags
  */
-class ThemeTag extends Tag
+class ThemeTag extends UiTag
 {
     public function __construct(Compiler &$compiler)
     {
