@@ -96,8 +96,23 @@ class UiTag extends Tag
                     break;
                 case 'stylesheet':
                     $href = $this->requiredAttr($n, 'href');
+                    $alt = $this->getBooleanAttr($n, 'alternate');
+                    $title = $this->getAttr($n, 'title');
+                    $media = $this->getAttr($n, 'media');
+
+                    $args = array($href);
+                    array_push($args, $alt ? 'true' : 'false');
+                    if (isset($title)) {
+                        array_push($args, $title);
+                    } elseif (isset($media)) {
+                        array_push($args, 'null');
+                    }
+                    if (isset($media)) {
+                        array_push($args, $media);
+                    }
                     $this->compiler->write(
-                        '<?php $page->addAsset(new WebPageStylesheet('.$href.')); ?>'
+                        '<?php $page->addAsset(new WebPageStylesheet('.
+                        implode(', ', $args).')); ?>'
                     );
                     break;
                 case 'link':
