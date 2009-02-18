@@ -30,11 +30,11 @@
  *
  * @package      UI
  */
-class LayoutDescription extends WebPage
+class LayoutDescription extends HTMLPage
 {
     /**
      * Meta keywords
-     * DEPRECATED, there's no way to sanely make this work properly with WebPage
+     * DEPRECATED, there's no way to sanely make this work properly with HTMLPage
      *
      * @var string
      */
@@ -42,7 +42,7 @@ class LayoutDescription extends WebPage
 
     /**
      * The meta description
-     * DEPRECATED, there's no way to sanely make this work properly with WebPage
+     * DEPRECATED, there's no way to sanely make this work properly with HTMLPage
      *
      * @var string
      */
@@ -50,7 +50,7 @@ class LayoutDescription extends WebPage
 
     /**
      * Additional meta head
-     * DEPRECATED, there's no way to sanely make this work properly with WebPage
+     * DEPRECATED, there's no way to sanely make this work properly with HTMLPage
      *
      * @var string
      */
@@ -58,7 +58,7 @@ class LayoutDescription extends WebPage
 
     /**
      * The scripts used for this page
-     * DEPRECATED, there's no way to sanely make this work properly with WebPage
+     * DEPRECATED, there's no way to sanely make this work properly with HTMLPage
      *
      * @var array
      */
@@ -66,7 +66,7 @@ class LayoutDescription extends WebPage
 
     /**
      * The stylesheets to include
-     * DEPRECATED, there's no way to sanely make this work properly with WebPage
+     * DEPRECATED, there's no way to sanely make this work properly with HTMLPage
      *
      * @var array
      */
@@ -74,7 +74,7 @@ class LayoutDescription extends WebPage
 
     /**
      * Breadcrumbs used for this page
-     * DEPRECATED, there's no way to sanely make this work properly with WebPage
+     * DEPRECATED, there's no way to sanely make this work properly with HTMLPage
      *
      * @var array
      */

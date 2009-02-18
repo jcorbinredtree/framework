@@ -37,7 +37,7 @@ abstract class Theme extends BufferedObject
     /**
      * The page that this theme styles
      *
-     * @var WebPage
+     * @var HTMLPage
      */
     protected $page;
 
@@ -52,14 +52,14 @@ abstract class Theme extends BufferedObject
     /**
      * Creats a theme object for a page
      *
-     * @param page WebPage optional, defaults to SitePage::getCurrent
+     * @param page HTMLPage optional, defaults to SitePage::getCurrent
      */
     public function __construct($page=null)
     {
         if (! isset($page)) {
             $page = SitePage::getCurrent();
-        } elseif (! is_a($page, 'WebPage')) {
-            throw new InvalidArgumentException('Not a WebPage');
+        } elseif (! is_a($page, 'HTMLPage')) {
+            throw new InvalidArgumentException('Not a HTMLPage');
         }
         $this->page = $page;
 
@@ -107,7 +107,7 @@ abstract class Theme extends BufferedObject
      *
      * Does nothing in the abstract, you likely want to override this
      *
-     * @param WebPage $page the page being displayed
+     * @param HTMLPage $page the page being displayed
      * @return void
      */
     protected function onRender()

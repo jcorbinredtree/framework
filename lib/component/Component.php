@@ -249,37 +249,29 @@ abstract class Component extends ActionProvider
     }
 
     /**
-     * DEPRECATED, use WebPage->addAsset(...)
+     * DEPRECATED, use HTMLPage->addAsset(...)
      */
     public function addScript($req)
     {
         global $config;
         $config->deprecatedComplain(
             'Component->addScript(...)',
-            'WebPage->addAsset(new WebPageScript(...))'
+            'HTMLPage->addAsset(new HTMLPageScript(...))'
         );
-        $page = SitePage::getCurrent();
-        if (! is_a($page, 'WebPage')) {
-            throw new RuntimeException('not a WebPage');
-        }
-        $page->addAsset(new WebPageScript($req));
+        SitePage::getCurrent()->addAsset(new HTMLPageScript($req));
     }
 
     /**
-     * DEPRECATED, use WebPage->addAsset(...)
+     * DEPRECATED, use HTMLPage->addAsset(...)
      */
     public function addStylesheet($req)
     {
         global $config;
         $config->deprecatedComplain(
             'Component->addScript(...)',
-            'WebPage->addAsset(new WebPageStylesheet(...))'
+            'HTMLPage->addAsset(new HTMLPageStylesheet(...))'
         );
-        $page = SitePage::getCurrent();
-        if (! is_a($page, 'WebPage')) {
-            throw new RuntimeException('not a WebPage');
-        }
-        $page->addAsset(new WebPageStylesheet($req));
+        SitePage::getCurrent()->addAsset(new HTMLPageStylesheet($req));
     }
 }
 

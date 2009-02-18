@@ -269,7 +269,7 @@ class Main
         if (! $config->targetVersionOver(3, 0, 76)) {
             SitePage::setCurrent(new LayoutDescription());
         } else {
-            SitePage::setCurrent(new WebPage());
+            SitePage::setCurrent(new HTMLPage());
         }
         $page = SitePage::getCurrent();
 

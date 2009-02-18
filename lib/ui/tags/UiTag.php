@@ -124,22 +124,22 @@ class UiTag extends Tag
      *   <alternate href="some.rss" type="application/rss+xml" title="RSS Feed" />
      *
      * Full gory attribute details:
-     *   script: a WebPageScript asset
+     *   script: a HTMLPageScript asset
      *     href string required
      *     type string optional default 'text/javascript'
      *
-     *   stylesheet: a WebPageStylesheet asset
+     *   stylesheet: a HTMLPageStylesheet asset
      *     href      string  required
      *     alternate boolean optional default false
      *     title     string  optional default null
      *     media     string  optional default null
      *
-     *   alternate: a WebPageAlternateLink asset
+     *   alternate: a HTMLPageAlternateLink asset
      *     href  string required
      *     type  string required
      *     title string optional default null
      *
-     *   link: a WebPageLinkedResource asset
+     *   link: a HTMLPageLinkedResource asset
      *     href  string required
      *     rel   string required
      *     type  string required
@@ -151,7 +151,7 @@ class UiTag extends Tag
     public function addAssets(DOMElement &$element)
     {
         $this->compiler->write(
-            "<?php if (! is_a(\$page, 'WebPage')) {\n".
+            "<?php if (! is_a(\$page, 'HTMLPage')) {\n".
             "  throw new RuntimeException('Can only add html assets to an html page');\n".
             '} ?>'
         );
@@ -162,7 +162,7 @@ class UiTag extends Tag
                     $href = $this->requiredAttr($n, 'href');
                     $type = $this->getAttr($n, 'type');
                     $this->compiler->write(
-                        '<?php $page->addAsset(new WebPageScript('.
+                        '<?php $page->addAsset(new HTMLPageScript('.
                         $href.
                         (isset($type) ? ", $type" : '').
                         ')); ?>'
@@ -185,7 +185,7 @@ class UiTag extends Tag
                         array_push($args, $media);
                     }
                     $this->compiler->write(
-                        '<?php $page->addAsset(new WebPageStylesheet('.
+                        '<?php $page->addAsset(new HTMLPageStylesheet('.
                         implode(', ', $args).')); ?>'
                     );
                     break;
@@ -195,7 +195,7 @@ class UiTag extends Tag
                     $type = $this->requiredAttr($n, 'type');
                     $title = $this->getAttr($n, 'title');
                     $this->compiler->write(
-                        '<?php $page->addAsset(new WebPageLinkedResource('.
+                        '<?php $page->addAsset(new HTMLPageLinkedResource('.
                         implode(', ', array(
                             $href, $type, $rel
                         )).
@@ -208,7 +208,7 @@ class UiTag extends Tag
                     $type = $this->requiredAttr($n, 'type');
                     $title = $this->getAttr($n, 'title');
                     $this->compiler->write(
-                        '<?php $page->addAsset(new WebPageAlternateLink('.
+                        '<?php $page->addAsset(new HTMLPageAlternateLink('.
                         implode(', ', array($href, $type
                         )).
                         (isset($title) ? ", $title" : '').

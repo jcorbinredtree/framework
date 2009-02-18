@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPageAsset definition
+ * HTMLPageAsset definition
  *
  * PHP version 5
  *
@@ -26,19 +26,19 @@
  */
 
 /**
- * A WebPage asset such as a script, stylesheet, etc
+ * A HTMLPage asset such as a script, stylesheet, etc
  *
  * @package UI
  */
 
-abstract class WebPageAsset
+abstract class HTMLPageAsset
 {
     abstract public function __tostring();
 
     abstract public function compare($other);
 }
 
-class WebPageScript extends WebPageAsset
+class HTMLPageScript extends HTMLPageAsset
 {
     public $href;
     public $type;
@@ -51,7 +51,7 @@ class WebPageScript extends WebPageAsset
 
     public function compare($other)
     {
-        if (! isset($other) || ! is_a($other, 'WebPageScript')) {
+        if (! isset($other) || ! is_a($other, 'HTMLPageScript')) {
             return false;
         }
 
@@ -71,7 +71,7 @@ class WebPageScript extends WebPageAsset
     }
 }
 
-class WebPageLinkedResource extends WebPageAsset
+class HTMLPageLinkedResource extends HTMLPageAsset
 {
     public $href;
     public $type;
@@ -88,7 +88,7 @@ class WebPageLinkedResource extends WebPageAsset
 
     public function compare($other)
     {
-        if (! isset($other) || ! is_a($other, 'WebPageLinkedResource')) {
+        if (! isset($other) || ! is_a($other, 'HTMLPageLinkedResource')) {
             return false;
         }
 
@@ -112,7 +112,7 @@ class WebPageLinkedResource extends WebPageAsset
     }
 }
 
-class WebPageStylesheet extends WebPageLinkedResource
+class HTMLPageStylesheet extends HTMLPageLinkedResource
 {
     public $media;
 
@@ -139,7 +139,7 @@ class WebPageStylesheet extends WebPageLinkedResource
     }
 }
 
-class WebPageAlternateLink extends WebPageLinkedResource
+class HTMLPageAlternateLink extends HTMLPageLinkedResource
 {
     public function __construct($href, $type, $title=null)
     {

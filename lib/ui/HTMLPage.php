@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPage definition
+ * HTMLPage definition
  *
  * PHP version 5
  *
@@ -25,14 +25,14 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once(dirname(__FILE__).'/WebPageAsset.php');
+require_once(dirname(__FILE__).'/HTMLPageAsset.php');
 
 /**
- * WebPages are themed SitePages
+ * HTMLPages are themed SitePages
  *
  * @package Ui
  */
-class WebPage extends SitePage
+class HTMLPage extends SitePage
 {
     /**
      * The title for the page
@@ -44,12 +44,12 @@ class WebPage extends SitePage
     /**
      * Page meta data
      *
-     * @var WebPageMeta
+     * @var HTMLPageMeta
      */
     public $meta;
 
     /**
-     * List of WebPageAssets
+     * List of HTMLPageAssets
      *
      * @see addAsset, getAssets
      */
@@ -65,7 +65,7 @@ class WebPage extends SitePage
     /**
      * Constructor
      *
-     * Creates a new WebPage.
+     * Creates a new HTMLPage.
      *
      * While this is publically accessible for flexibility, this should be
      * sparingly used; you likely meant to call the static method Current.
@@ -76,7 +76,7 @@ class WebPage extends SitePage
     {
         parent::__construct('text/html');
         $this->assets = array();
-        $this->meta = new WebPageMeta();
+        $this->meta = new HTMLPageMeta();
     }
 
     /**
@@ -123,7 +123,7 @@ class WebPage extends SitePage
     }
 
     /**
-     * Returns a list of WebPageAsset objects, optionally filtered by asset type
+     * Returns a list of HTMLPageAsset objects, optionally filtered by asset type
      *
      * @param type string optional, one of:
      *   script     - returns script assets
@@ -137,17 +137,17 @@ class WebPage extends SitePage
     {
         switch ($type) {
         case 'script':
-            return $this->getAssetsByClass('WebPageScript');
+            return $this->getAssetsByClass('HTMLPageScript');
         case 'stylesheet':
-            return $this->getAssetsByClass('WebPageStylesheet');
+            return $this->getAssetsByClass('HTMLPageStylesheet');
         case 'link':
-            return $this->getAssetsByClass('WebPageLinkedResource');
+            return $this->getAssetsByClass('HTMLPageLinkedResource');
         case 'alternate':
-            return $this->getAssetsByClass('WebPageAlternateLink');
+            return $this->getAssetsByClass('HTMLPageAlternateLink');
         case 'linkonly':
             return array_diff(
-                $this->getAssetsByClass('WebPageLinkedResource'),
-                $this->getAssetsByClass('WebPageStylesheet')
+                $this->getAssetsByClass('HTMLPageLinkedResource'),
+                $this->getAssetsByClass('HTMLPageStylesheet')
             );
         default:
             return $this->assets;
@@ -157,10 +157,10 @@ class WebPage extends SitePage
     /**
      * Adds an asset to the page if not already added
      *
-     * @param asset WebPageAsset
+     * @param asset HTMLPageAsset
      * @return void
      */
-    public function addAsset(WebPageAsset $asset)
+    public function addAsset(HTMLPageAsset $asset)
     {
         if (! $this->hasAsset($asset)) {
             array_push($this->assets, $asset);
@@ -170,10 +170,10 @@ class WebPage extends SitePage
     /**
      * Tests whether an asset is in this page
      *
-     * @param asset WebPageAsset
+     * @param asset HTMLPageAsset
      * @return boolean
      */
-    public function hasAsset(WebPageAsset $asset)
+    public function hasAsset(HTMLPageAsset $asset)
     {
         foreach ($this->assets as $a) {
             if ($a->compare($asset)) {

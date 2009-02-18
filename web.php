@@ -53,7 +53,7 @@ catch (Exception $ex) {
         ob_start();
 
         // The old page failed, create a new one
-        $page = new WebPage();
+        $page = new HTMLPage();
         $page->setData('exception', $ex);
         $page->setData('oldPage', SitePage::setCurrent($page));
 
