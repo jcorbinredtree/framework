@@ -46,9 +46,7 @@ Main::startSession();
 
 $current = new Current();
 
-/*
- * This function should be defined in the site's index.php
- */
+// This function should be defined in the site's index.php
 if (function_exists('onConfig')) {
     onConfig($config);
 }
@@ -69,16 +67,12 @@ $database->log = $database->time = $config->isDebugMode();
 
 $config->initalize();
 
-/*
- * Load a user if there is one to load
- */
+// Load a user if there is one to load
 Main::loadUser();
 
 Main::setLanguageAndTheme();
 
-/*
- * set appropriate path
- */
+// set appropriate path
 {
     $bt = debug_backtrace();
     $bt = $bt[count($bt) - 1];

@@ -205,7 +205,8 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
         return PolicyManager::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->locationPolicy = new DefaultLocationPolicy();
         $this->linkPolicy = new DefaultLinkPolicy();
         $this->securityPolicy = new DefaultSecurityPolicy();

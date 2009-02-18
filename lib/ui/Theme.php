@@ -89,12 +89,11 @@ abstract class Theme extends BufferedObject
     {
         // set the current path to the theme location & display
         $oldPath = Application::setPath($this->getPath());
-
         LifeCycleManager::onPreRender($this->page);
 
         if (method_exists($this, 'onDisplay')) {
-            global $config;
             // Deprecated pre 3.0.76 interface
+            global $config;
             if ($config->isDebugMode()) {
                 $cls = get_class($this);
                 $config->deprecatedComplain(
@@ -110,7 +109,6 @@ abstract class Theme extends BufferedObject
         $this->flush();
 
         LifeCycleManager::onPostRender();
-
         Application::setPath($oldPath);
     }
 
@@ -150,12 +148,11 @@ abstract class Theme extends BufferedObject
 
     public function getPath()
     {
-        if ($this->path) {
-            return $this->path;
+        if (! $this->path) {
+            $us = new ReflectionClass($this->getClass());
+            $this->path = dirname($us->getFileName());
         }
-
-        $us = new ReflectionClass($this->getClass());
-        return $this->path = dirname($us->getFileName());
+        return $this->path;
     }
 
     /**
@@ -170,7 +167,6 @@ abstract class Theme extends BufferedObject
     {
         $us = new $theme();
         Application::setPath($us->getPath());
-
         return $us;
     }
 }

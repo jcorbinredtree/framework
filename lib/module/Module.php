@@ -68,7 +68,6 @@ abstract class Module extends BufferedObject implements ICacheable
      */
     public function onInitialize()
     {
-
     }
 
     /**
@@ -76,7 +75,8 @@ abstract class Module extends BufferedObject implements ICacheable
      *
      * @return string the name of the component class
      */
-    public function getClass() {
+    public function getClass()
+    {
         return get_class($this);
     }
 
@@ -111,10 +111,8 @@ abstract class Module extends BufferedObject implements ICacheable
         }
 
         $path = Application::setPath("$config->absPath/modules/$module");
-
         $obj = new $module();
         $obj->onInitialize();
-
         Application::setPath($path);
 
         return $obj;

@@ -72,10 +72,7 @@ class CurrentPath
         if (isset($path)) {
             if (is_string($path) || is_a($path, 'StupidPath')) {
                 $path = new self($path);
-                $path = new self($path);
-            }
-
-            if (! is_a($path, 'CurrentPath')) {
+            } elseif (! is_a($path, 'CurrentPath')) {
                 throw new InvalidArgumentException('Invalid path');
             }
         }

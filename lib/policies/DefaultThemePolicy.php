@@ -53,10 +53,13 @@ class DefaultThemePolicy implements IThemePolicy
         }
 
         if ($themeId) {
-            return Theme::load($themeId);
+            // How exactly is that "int" mapping supposed to work...
+            throw new RuntimeException(
+                'Paramaterized theme selection unimplemented'
+            );
+        } else {
+            return Theme::load($config->getDefaultTheme());
         }
-
-        return Theme::load($config->getDefaultTheme());
     }
 
     /**

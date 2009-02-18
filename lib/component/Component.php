@@ -33,11 +33,11 @@
  */
 abstract class Component extends ActionProvider
 {
-   /**
-    * Stores the breadcrumbs for the page
-    *
-    * @var array
-    */
+    /**
+     * Stores the breadcrumbs for the page
+     *
+     * @var array
+     */
     public $breadCrumbs = array();
 
     /**
@@ -109,15 +109,19 @@ abstract class Component extends ActionProvider
      * contructor; generic initializations
      * do your initializations onInitialize()
      */
-    final public function __construct() {
+    final public function __construct()
+    {
         $this->title = $this->getClass();
         $this->onInitialize();
         $this->onRegisterActions();
     }
 
-    public function onInitialize() {}
+    public function onInitialize()
+    {
+    }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getClass();
     }
 
@@ -190,16 +194,14 @@ abstract class Component extends ActionProvider
      */
     public function perform(ActionDescription &$action, $stage)
     {
-        global $config;
+        $oldPath = CurrentPath::set($this->getPath());
 
-        $class = $this->getClass();
-        $path = Application::setPath($this->getPath());
-
-        $handler = (is_string($action->handler) ? array($this, $action->handler) : $action->handler);
+        $handler = is_string($action->handler)
+            ? array($this, $action->handler)
+            : $action->handler;
         $returnValue = call_user_func($handler, $stage);
 
-        Application::setPath($path);
-
+        CurrentPath::set($oldPath);
         return $returnValue;
     }
 
