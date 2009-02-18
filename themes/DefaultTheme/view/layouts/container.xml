@@ -1,28 +1,32 @@
 <template
-  xmlns:c="class://CoreTag"
-  xmlns:t="class://ThemeTag"
-  xmlns:f="class://FrameworkTag">
+  xmlns:core="class://CoreTag"
+  xmlns:ui="class://UiTag">
 
-<!-- TODO: ${=config.absUri}/themes/DefaultTheme/view/css/container.css -->
+<ui:addAssets>
+  <stylesheet href="${current.path.url.up()}.'/css/container.css'" />
+  <link rel="alternate" type="application/rss+xml" href="some.rss" title="RSS Feed" />
+  <alternate href="another.atom" type="application/atom+xml" title="Atom Feed" />
+  <script href="some.js" />
+</ui:addAssets>
 
 <div id="main-container">
   <div id="left">
     <!-- TODO implement navigation
     <div id= "nav">
       <ul>
-        <c:forEach list="${page.getLeftNavigation()}" var="item">
+        <core:forEach list="${page.getLeftNavigation()}" var="item">
           <li><a href="${=item.href}">${=item.label}</a></li>
-        </c:forEach>
+        </core:forEach>
       </ul>
     </div>
     -->
-    <t:pageBuffer area="left" />
+    <ui:pageBuffer area="left" />
   </div>
 
   <div id="center">
-    <t:warnings />
-    <t:notices />
-    <t:pageBuffer area="content" />
+    <ui:pageBuffer area="content" />
+    <ui:warnings />
+    <ui:notices />
   </div>
 </div>
 
