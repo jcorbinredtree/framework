@@ -38,7 +38,9 @@ class ThemeTag extends UiTag
     {
         parent::__construct($compiler);
         global $config;
-        $config->deprecatedComplain('ThemeTag', 'UiTag');
+        $config->deprecatedComplain('ThemeTag', 'UiTag',
+            $compiler->currentFile(), $compiler->currentFilePosition()
+        );
     }
 
     /**
