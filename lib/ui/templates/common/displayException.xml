@@ -1,22 +1,20 @@
 <template
-  xmlns:c="class://CoreTag"
-  xmlns:t="class://ThemeTag"
-  xmlns:f="class://FrameworkTag">
-
-<t:warnings />
-
-<t:notices />
+  xmlns:core="class://CoreTag"
+  xmlns:ui="class://UiTag">
 
 <div id="main">
   <h1>@{=get_class(${this.exception})}: ${=this.exception.getMessage()}</h1>
   <ul>
     <li>${=this.exception.getFile()} (${=this.exception.getLine()})</li>
-    <c:forEach list="${this.exception.getTrace()}" var="frame">
-      <c:if test="@{array_key_exists('file', ${frame})}">
+    <core:forEach list="${this.exception.getTrace()}" var="frame">
+      <core:if test="@{array_key_exists('file', ${frame})}">
         <li>${=frame['file']} (${=frame['line']})</li>
-      </c:if>
-    </c:forEach>
+      </core:if>
+    </core:forEach>
   </ul>
+
+  <ui:warnings />
+  <ui:notices />
 </div>
 
 </template>
