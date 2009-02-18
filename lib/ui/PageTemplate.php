@@ -42,16 +42,16 @@ class PageTemplate extends Template
      *
      * Creates a new page template
      *
-     * @param page WebPage (optional) if given, the page that we're creating
-     * a template for. If not given, WebPage::getCurrent() is used.
+     * @param page SitePage (optional) if given, the page that we're creating
+     * a template for. If not given, SitePage::getCurrent() is used.
      */
-    public function __construct(WebPage &$page=null, $template='common/xhtmlpage.xml')
+    public function __construct(SitePage &$page=null, $template='common/xhtmlpage.xml')
     {
         // TODO page type (needs added yet) selects template
         parent::__construct($template);
 
         if (! isset($page)) {
-            $page = WebPage::getCurrent();
+            $page = SitePage::getCurrent();
         }
         $this->assign('page', $page);
 
@@ -75,7 +75,7 @@ class PageTemplate extends Template
     /**
      * Obviously this method makes no sense for a PageTemplate
      */
-    public function renderToPage($area, WebPage &$page=null)
+    public function renderToPage($area, SitePage &$page=null)
     {
         throw new RuntimeException("Won't render a page template to a page");
     }

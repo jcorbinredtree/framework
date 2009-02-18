@@ -55,7 +55,7 @@ catch (Exception $ex) {
         // The old page failed, create a new one
         $page = new WebPage();
         $page->setData('exception', $ex);
-        $page->setData('oldPage', WebPage::setCurrent($page));
+        $page->setData('oldPage', SitePage::setCurrent($page));
 
         $page->getTheme()->render();
 

@@ -41,7 +41,7 @@ class UiTag extends Tag
      *   name  string  required the name of the page buffer
      *   clear boolean optional default true, clear the buffer afterwords
      *
-     * @see WebPage::getBUffer, WebPage::clearBuffer
+     * @see SitePage::getBUffer, SitePage::clearBuffer
      *
      * @param DOMElement element the tag such as <ui:pageBuffer />
      * @return void
@@ -150,6 +150,11 @@ class UiTag extends Tag
      */
     public function addAssets(DOMElement &$element)
     {
+        $this->compiler->write(
+            "<?php if (! is_a(\$page, 'WebPage')) {\n".
+            "  throw new RuntimeException('Can only add html assets to an html page');\n".
+            '} ?>'
+        );
         foreach ($element->childNodes as $n) {
             if ($n->nodeType == XML_ELEMENT_NODE) {
                 switch ($n->tagName) {

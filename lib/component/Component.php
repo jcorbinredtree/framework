@@ -258,7 +258,11 @@ abstract class Component extends ActionProvider
             'Component->addScript(...)',
             'WebPage->addAsset(new WebPageScript(...))'
         );
-        WebPage::getCurrent()->addAsset(new WebPageScript($req));
+        $page = SitePage::getCurrent();
+        if (! is_a($page, 'WebPage')) {
+            throw new RuntimeException('not a WebPage');
+        }
+        $page->addAsset(new WebPageScript($req));
     }
 
     /**
@@ -271,7 +275,11 @@ abstract class Component extends ActionProvider
             'Component->addScript(...)',
             'WebPage->addAsset(new WebPageStylesheet(...))'
         );
-        WebPage::getCurrent()->addAsset(new WebPageStylesheet($req));
+        $page = SitePage::getCurrent();
+        if (! is_a($page, 'WebPage')) {
+            throw new RuntimeException('not a WebPage');
+        }
+        $page->addAsset(new WebPageStylesheet($req));
     }
 }
 

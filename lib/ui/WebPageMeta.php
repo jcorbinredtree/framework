@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPageMeta definition
+ * HTMLPageMeta definition
  *
  * PHP version 5
  *
@@ -25,7 +25,7 @@
  * @link         http://framework.redtreesystems.com
  */
 
-class WebPageMeta
+class HTMLPageMeta
 {
     private $data = array();
 

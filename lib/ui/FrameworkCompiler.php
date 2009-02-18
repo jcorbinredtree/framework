@@ -62,7 +62,7 @@ class FrameworkCompiler extends Compiler
         $this->write("<?php if (isset(\$this->page)) {\n");
         $this->write("  \$page = \$this->page;\n");
         $this->write("} else {\n");
-        $this->write("  \$page = WebPage::getCurrent();\n");
+        $this->write("  \$page = SitePage::getCurrent();\n");
         $this->write('} ?>');
     }
 

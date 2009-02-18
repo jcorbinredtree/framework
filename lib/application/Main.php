@@ -267,9 +267,11 @@ class Main
         global $config, $current;
 
         if (! $config->targetVersionOver(3, 0, 76)) {
-            WebPage::setCurrent(new LayoutDescription());
+            SitePage::setCurrent(new LayoutDescription());
+        } else {
+            SitePage::setCurrent(new WebPage());
         }
-        $page = WebPage::getCurrent();
+        $page = SitePage::getCurrent();
 
         /*
          * +====================+

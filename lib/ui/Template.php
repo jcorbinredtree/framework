@@ -108,31 +108,35 @@ class Template extends PHPSTLTemplate
     }
 
     /**
-     * Gets an image from the current theme
-     *
-     * @see Theme->getImage
-     * @since 1.1
-     * @access public
-     * @param string $key the key of the image you wish to get
-     * @return string the source of the image
+     * DEPRECATED
      */
     public function getThemeImage($key)
     {
-        return WebPage::getCurrent()->getTheme()->getImage($key);
+        $config->deprecatedComplain(
+            'Template->getThemeImage',
+            '$page->theme->getImage'
+        );
+        $page = SitePage::getCurrent();
+        if (! is_a($page, 'WebPage')) {
+            throw new RuntimeException('Only html pages are themed');
+        }
+        return $page->getTheme()->getImage($key);
     }
 
     /**
-     * Gets an image from the current theme
-     *
-     * @see Theme->getIcon
-     * @since 1.1
-     * @access public
-     * @param string $key the key of the image you wish to get
-     * @return string the source of the image
+     * DEPRECATED
      */
     public function getThemeIcon($key)
     {
-        return WebPage::getCurrent()->getTheme()->getIcon($key);
+        $config->deprecatedComplain(
+            'Template->getThemeIcon',
+            '$page->theme->getIcon'
+        );
+        $page = SitePage::getCurrent();
+        if (! is_a($page, 'WebPage')) {
+            throw new RuntimeException('Only html pages are themed');
+        }
+        return $page->getTheme()->getIcon($key);
     }
 }
 

@@ -270,7 +270,7 @@ class LifeCycleManager
         return self::instance()->collect('onGetLeftModules');
     }
 
-    public static function onPreRender(WebPage &$page)
+    public static function onPreRender(SitePage &$page)
     {
         return self::instance()->dispatch('onPreRender', $page);
     }
