@@ -790,15 +790,21 @@ class Config
      *
      * @return void
      */
-    public function deprecatedComplain($old, $new=null)
+    public function deprecatedComplain($old, $new=null, $from=null, $at=null)
     {
         if (! $this->debug) {
             return;
         }
 
-        $trace = debug_backtrace();
-        $from = $trace[2]['class'].$trace[2]['type'].$trace[2]['function'];
-        $at = $trace[1]['file'].':'.$trace[1]['line'];
+        if (! isset($from) || ! isset($at)) {
+            $trace = debug_backtrace();
+            if (! isset($from)) {
+                $from = $trace[2]['class'].$trace[2]['type'].$trace[2]['function'];
+            }
+            if (! isset($at)) {
+                $at = $trace[1]['file'].':'.$trace[1]['line'];
+            }
+        }
 
         $mess = "Call to deprecated $old from $from at $at";
         if (isset($new)) {
