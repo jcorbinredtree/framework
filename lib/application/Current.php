@@ -98,12 +98,12 @@ class Current
     /**
      * Holds the current path. The current path is set to
      * the last operating component, module, or theme's directory.
-     * It is safe to set this value via Application::setPath.
      *
      * @access public
-     * @var string
+     * @var CurrentPath
+     * @see CurrentPath::set
      */
-    public $path = "";
+    public $path = null;
 
     /**
      * Determine whether or not the request is secure
