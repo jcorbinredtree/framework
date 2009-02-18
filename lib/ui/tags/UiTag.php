@@ -78,6 +78,62 @@ class UiTag extends Tag
         $this->compiler->write('<?php '.$whence.'->clearNotices(); ?>');
         $this->compiler->write('<?php } ?>');
     }
+
+    public function addAssets(DOMElement &$element)
+    {
+        foreach ($element->childNodes as $n) {
+            if ($n->nodeType == XML_ELEMENT_NODE) {
+                switch ($n->tagName) {
+                case 'script':
+                    $href = $this->requiredAttr($n, 'href');
+                    $type = $this->getAttr($n, 'type');
+                    $this->compiler->write(
+                        '<?php $page->addAsset(new WebPageScript('.
+                        $href.
+                        (isset($type) ? ", $type" : '').
+                        ')); ?>'
+                    );
+                    break;
+                case 'stylesheet':
+                    $href = $this->requiredAttr($n, 'href');
+                    $this->compiler->write(
+                        '<?php $page->addAsset(new WebPageStylesheet('.$href.')); ?>'
+                    );
+                    break;
+                case 'link':
+                    $href = $this->requiredAttr($n, 'href');
+                    $rel = $this->requiredAttr($n, 'rel');
+                    $type = $this->requiredAttr($n, 'type');
+                    $title = $this->getAttr($n, 'title');
+                    $this->compiler->write(
+                        '<?php $page->addAsset(new WebPageLinkedResource('.
+                        implode(', ', array(
+                            $href, $type, $rel
+                        )).
+                        (isset($title) ? ", $title" : '').
+                        ')); ?>'
+                    );
+                    break;
+                case 'alternate':
+                    $href = $this->requiredAttr($n, 'href');
+                    $type = $this->requiredAttr($n, 'type');
+                    $title = $this->getAttr($n, 'title');
+                    $this->compiler->write(
+                        '<?php $page->addAsset(new WebPageAlternateLink('.
+                        implode(', ', array($href, $type
+                        )).
+                        (isset($title) ? ", $title" : '').
+                        ')); ?>'
+                    );
+                    break;
+                default:
+                    throw new RuntimeException(
+                        'Unknown asset element '.$n->tagName
+                    );
+                }
+            }
+        }
+    }
 }
 
 ?>
