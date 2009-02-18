@@ -69,13 +69,15 @@ class CurrentPath
      */
     public static function set($path)
     {
-        if (is_string($path) || is_a($path, 'StupidPath')) {
-            $path = new self($path);
-            $path = new self($path);
-        }
+        if (isset($path)) {
+            if (is_string($path) || is_a($path, 'StupidPath')) {
+                $path = new self($path);
+                $path = new self($path);
+            }
 
-        if (! is_a($path, 'CurrentPath')) {
-            throw new InvalidArgumentException('Invalid path');
+            if (! is_a($path, 'CurrentPath')) {
+                throw new InvalidArgumentException('Invalid path');
+            }
         }
 
         global $current;
