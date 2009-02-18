@@ -805,7 +805,12 @@ class Config
             $mess .= ", use $new instead";
         }
 
-        trigger_error($mess);
+        global $current;
+        if (isset($current)) {
+            $current->addNotice($mess);
+        } else {
+            trigger_error($mess);
+        }
     }
 }
 
