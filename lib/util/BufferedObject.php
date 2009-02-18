@@ -154,12 +154,10 @@ abstract class BufferedObject
      * expressed as name/value pairs
      * @return void
      */
-    public function viewTemplate($name, $arguments=array())
+    public function viewTemplate($name, $arguments=null)
     {
-        $template = new Template();
-        $template->setArguments($arguments);
-
-        $this->write($template->fetch($name));
+        $template = new Template($name);
+        $this->write($template->render($arguments));
     }
 }
 
