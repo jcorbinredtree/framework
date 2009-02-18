@@ -162,6 +162,19 @@ abstract class Component extends ActionProvider
         return $policy->getActionURI($component, $action, $options, $stage);
     }
 
+    /**
+     * Returns the path to this component
+     *
+     * The base class presumes that the file that defines a component class is
+     * in the toplevel component directory, example:
+     *   File: /somewhere/SITE/local/components/SomeCog/SomeCog.php
+     *     class SomeCog extends Component { ... }
+     *   Then:
+     *     $c = new SomeCog();
+     *     echo $c->getPath(); // prints /somewhere/SITE/local/components/SomeCog
+     *
+     * @return string
+     */
     public function getPath()
     {
         $us = new ReflectionClass(get_class($this));
