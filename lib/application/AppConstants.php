@@ -58,13 +58,6 @@ class AppConstants
     const STAGE_KEY = '_s';
 
     /**
-     * The key used for setting no html
-     *
-     * @var string
-     */
-    const NO_HTML_KEY = '_nh';
-
-    /**
      * The key used for determining secure requests
      *
      * @var string

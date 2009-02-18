@@ -130,9 +130,6 @@ class DefaultLinkPolicy implements ILinkPolicy
                     case '-popup':
                         $kw = AppConstants::POPUP_KEY;
                         break;
-                    case '-no-html':
-                        $kw = AppConstants::NO_HTML_KEY;
-                        break;
                     case '-secure':
                         $kw = AppConstants::SECURE_KEY;
                         break;

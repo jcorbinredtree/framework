@@ -293,15 +293,6 @@ class Main
     {
         global $config, $current;
 
-        if (Params::request(AppConstants::NO_HTML_KEY)) {
-            Application::performAction($current->component, $current->action, $current->stage);
-
-            $config->debug('output: ' . $current->component->getBuffer());
-
-            $current->component->flush();
-            return;
-        }
-
         if (! $config->targetVersionOver(3, 0, 76)) {
             WebPage::setCurrent(new LayoutDescription());
         }
