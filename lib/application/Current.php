@@ -58,14 +58,6 @@ class Current
     public $stage = Stage::VIEW;
 
     /**
-     * Holds the current theme
-     *
-     * @access public
-     * @var Theme
-     */
-    public $theme = null;
-
-    /**
      * Holds the current component. This is not
      * entirely accurate, as it actually holds the
      * component REQUESTED, which may not actually
