@@ -1,23 +1,26 @@
 <template
-  xmlns:c="class://CoreTag"
-  xmlns:t="class://ThemeTag">
+  xmlns:core="class://CoreTag"
+  xmlns:ui="class://UiTag">
 
-<c:doctype type="xhtml 1.0" />
+<core:doctype type="xhtml 1.0" />
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title><c:out value="${page.formatTitle()}" /></title>
-    <!-- FIXME links, scripts, yada -->
+    <title><core:out value="${page.formatTitle()}" /></title>
+    <core:forEach list="${page.getAssets()}" var="asset">
+      <core:out escapeXml="false" value="${asset}" />
+    </core:forEach>
+    <!-- FIXME meta -->
   </head>
   <body>
-    <t:pageBuffer area="content" />
+    <ui:pageBuffer area="content" />
 
     <!--
       Output warnings and errors, this only generates output if no inner
       template already did this, or if there's been errors generated since
       then.
     -->
-    <t:warnings />
-    <t:notices />
+    <ui:warnings />
+    <ui:notices />
   </body>
 </html>
 </template>
