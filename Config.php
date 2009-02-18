@@ -594,7 +594,7 @@ class Config
         $this->fwAbsPath = dirname(__FILE__);
 
         /* (kinda hacky) */
-        $this->absPath = preg_replace('|[/]SITE[/]framework$|', '', $this->fwAbsPath);
+        $this->absPath = dirname(dirname($this->fwAbsPath));
         $this->absUriPath = dirname($_SERVER['PHP_SELF']);
 
         $this->log =& Log::singleton('null');
