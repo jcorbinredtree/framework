@@ -257,49 +257,29 @@ abstract class Component extends ActionProvider
     }
 
     /**
-     * Adds a script to the page requirements
-     *
-     * @param string $req the location of the script
-     * @return void
+     * DEPRECATED, use WebPage->addAsset(...)
      */
     public function addScript($req)
     {
-        if (in_array($req, $this->stylesheets)) {
-            return;
-        }
-
-        if (is_array($req)) {
-            foreach ($req as $r) {
-                array_push($this->scripts, $r);
-            }
-
-            return;
-        }
-
-        array_push($this->scripts, $req);
+        global $config;
+        $config->deprecatedComplain(
+            'Component->addScript(...)',
+            'WebPage->addAsset(new WebPageScript(...))'
+        );
+        WebPage::getCurrent()->addAsset(new WebPageScript($req));
     }
 
     /**
-     * Adds a stylesheet to the page requirements
-     *
-     * @param string $req the location of the stylesheet
-     * @return void
+     * DEPRECATED, use WebPage->addAsset(...)
      */
     public function addStylesheet($req)
     {
-        if (in_array($req, $this->stylesheets)) {
-            return;
-        }
-
-        if (is_array($req)) {
-            foreach ($req as $r) {
-                array_push($this->stylesheets, $r);
-            }
-
-            return;
-        }
-
-        array_push($this->stylesheets, $req);
+        global $config;
+        $config->deprecatedComplain(
+            'Component->addScript(...)',
+            'WebPage->addAsset(new WebPageStylesheet(...))'
+        );
+        WebPage::getCurrent()->addAsset(new WebPageStylesheet($req));
     }
 }
 
