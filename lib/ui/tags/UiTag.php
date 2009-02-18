@@ -34,6 +34,18 @@
  */
 class UiTag extends Tag
 {
+    /**
+     * Outputs the contents of a named page buffer
+     *
+     * Attributes:
+     *   name  string  required the name of the page buffer
+     *   clear boolean optional default true, clear the buffer afterwords
+     *
+     * @see WebPage::getBUffer, WebPage::clearBuffer
+     *
+     * @param DOMElement element the tag such as <ui:pageBuffer />
+     * @return void
+     */
     public function pageBuffer(DOMElement &$element)
     {
         $area = $this->requiredAttr($element, 'area', false);
@@ -47,6 +59,20 @@ class UiTag extends Tag
         $this->compiler->write("?>");
     }
 
+    /**
+     * Outputs the list of current warnings if any, then clears the list of
+     * current warnings.
+     *
+     * Attributes:
+     *   class string optional, defaults to 'warnings-container'
+     *
+     * Outputs something like:
+     *   <ul class="$class"><li>...</li></ul>
+     *
+     *
+     * @param DOMElement element the tag such as <ui:pageBuffer />
+     * @return void
+     */
     public function warnings(DOMElement &$element)
     {
         $contClass = $this->getUnquotedAttr($element, 'class', 'warnings-container');
@@ -61,6 +87,19 @@ class UiTag extends Tag
         $this->compiler->write('<?php } ?>');
     }
 
+    /**
+     * Outputs the list of current notices if any, then clears the list of
+     * current notices.
+     *
+     * Attributes:
+     *   class string optional, defaults to 'notices-container'
+     *
+     * Outputs something like:
+     *   <ul class="$class"><li>...</li></ul>
+     *
+     * @param DOMElement element the tag such as <ui:pageBuffer />
+     * @return void
+     */
     public function notices(DOMElement &$element)
     {
         $contClass = $this->getUnquotedAttr($element, 'class', 'notices-container');
@@ -75,6 +114,40 @@ class UiTag extends Tag
         $this->compiler->write('<?php } ?>');
     }
 
+    /**
+     * Adds assets to the page
+     *
+     * Expects child elements like:
+     *   <script href="some.js" />
+     *   <stylesheet href="some.css" />
+     *   <link href="some/resource" rel="something" type="some/mime" />
+     *   <alternate href="some.rss" type="application/rss+xml" title="RSS Feed" />
+     *
+     * Full gory attribute details:
+     *   script: a WebPageScript asset
+     *     href string required
+     *     type string optional default 'text/javascript'
+     *
+     *   stylesheet: a WebPageStylesheet asset
+     *     href      string  required
+     *     alternate boolean optional default false
+     *     title     string  optional default null
+     *     media     string  optional default null
+     *
+     *   alternate: a WebPageAlternateLink asset
+     *     href  string required
+     *     type  string required
+     *     title string optional default null
+     *
+     *   link: a WebPageLinkedResource asset
+     *     href  string required
+     *     rel   string required
+     *     type  string required
+     *     title string optional default null
+     *
+     * @param DOMElement element the tag such as <ui:pageBuffer />
+     * @return void
+     */
     public function addAssets(DOMElement &$element)
     {
         foreach ($element->childNodes as $n) {
