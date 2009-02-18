@@ -62,6 +62,16 @@ abstract class Module extends BufferedObject implements ICacheable
     const POSITION_BOTTOM = 4;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $oldPath = CurrentPath::set($this->getPath());
+        $this->onInitialize();
+        CurrentPath::set($oldPath);
+    }
+
+    /**
      * Returns the path to this module
      *
      * The base class presumes that the file that defines a module class is
@@ -119,12 +129,7 @@ abstract class Module extends BufferedObject implements ICacheable
             include_once $path;
         }
 
-        $obj = new $module();
-        $oldPath = CurrentPath::set($obj->getPath());
-        $obj->onInitialize();
-        CurrentPath::set($oldPath);
-
-        return $obj;
+        return new $module();
     }
 
     /**
