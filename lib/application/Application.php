@@ -406,7 +406,7 @@ class Application
     {
         global $config;
         $config->deprecatedComplain(
-            'Application::setPapth', 'CurrentPath::set'
+            'Application::setPath', 'CurrentPath::set'
         );
         return CurrentPath::set($path);
     }
@@ -459,6 +459,7 @@ class Application
         $config->initalize();
 
         // This function should be defined in the site's index.php
+        // TODO this should be a life cycle event
         if (function_exists('onConfig')) {
             onConfig($config);
         }
