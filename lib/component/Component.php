@@ -137,23 +137,6 @@ abstract class Component extends ActionProvider
     }
 
     /**
-     * Returns an instance of the specified component
-     *
-     * @static
-     * @access public
-     * @param string $component a component class name
-     * @return Component an instance of the specified theme
-     */
-    static public function load($component)
-    {
-        $c = Component::getInstance($component);
-
-        Application::setPath($c->getPath());
-
-        return $c;
-    }
-
-    /**
      * Returns text in href form suitable for linking to other actions within the framework.
      *
      * @see ILinkPolicy::getActionURI

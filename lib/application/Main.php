@@ -112,7 +112,7 @@ class Main
         $componentClass = (Params::request(AppConstants::COMPONENT_KEY)
                               ? Params::request(AppConstants::COMPONENT_KEY)
                               : $config->getDefaultComponent());
-        $current->component = Component::load($componentClass);
+        $current->component = Component::getInstance($componentClass);
         if (!$current->component) {
             $config->error("Unknown component $componentClass");
             throw new Exception("Unknown component $componentClass");
