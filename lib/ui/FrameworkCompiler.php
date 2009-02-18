@@ -64,6 +64,20 @@ class FrameworkCompiler extends Compiler
         $this->write("} else {\n");
         $this->write("  \$page = SitePage::getCurrent();\n");
         $this->write('} ?>');
+
+        $doc = $this->dom->documentElement;
+        if ($doc->hasAttribute('type')) {
+            $type = $doc->getAttribute('type');
+        } else {
+            $type = 'text/html';
+        }
+        $this->write('<?php $this->type = "'.$type.'"; ?>');
+        $this->write(
+            "<?php if (! \$page->compatibleType(\$this->type)) {\n".
+            "  throw new RuntimeException(\$this->type.' incompatible ".
+            "with a '.\$page->getType().' page');\n".
+            '} ?>'
+        );
     }
 
     /**
