@@ -75,7 +75,7 @@ class CurrentPath
         }
 
         if (! is_a($path, 'CurrentPath')) {
-            throw InvalidArgumentException('Invalid path');
+            throw new InvalidArgumentException('Invalid path');
         }
 
         global $current;

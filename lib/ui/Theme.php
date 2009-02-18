@@ -59,7 +59,7 @@ abstract class Theme extends BufferedObject
         if (! isset($page)) {
             $page = WebPage::getCurrent();
         } elseif (! is_a($page, 'WebPage')) {
-            throw InvalidArgumentException('Not a WebPage');
+            throw new InvalidArgumentException('Not a WebPage');
         }
         $this->page = $page;
 
