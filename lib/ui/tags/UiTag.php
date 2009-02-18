@@ -49,33 +49,29 @@ class UiTag extends Tag
 
     public function warnings(DOMElement &$element)
     {
-        $whence = $this->getUnquotedAttr($element, 'layout', '$current');
-        $containerId = $this->getUnquotedAttr($element, 'containerid', 'warnings-container');
-        $warningClass = $this->getUnquotedAttr($element, 'warningclass', 'warning');
+        $contClass = $this->getUnquotedAttr($element, 'class', 'warnings-container');
 
-        $this->compiler->write('<?php if (count('.$whence.'->getWarnings())) { ?>');
-        $this->compiler->write('<div id="'.$containerId.'">');
-        $this->compiler->write('<?php foreach ('.$whence.'->getWarnings() as $w) { ?>');
-        $this->compiler->write('<div class="'.$warningClass.'"><?php echo $w ?></div>');
+        $this->compiler->write('<?php if (count($current->getWarnings())) { ?>');
+        $this->compiler->write('<ul class="'.$contClass.'">');
+        $this->compiler->write('<?php foreach ($current->getWarnings() as $w) { ?>');
+        $this->compiler->write('<li><?php echo $w ?></li>');
         $this->compiler->write('<?php } ?>');
-        $this->compiler->write('</div>');
-        $this->compiler->write('<?php '.$whence.'->clearWarnings(); ?>');
+        $this->compiler->write('</ul>');
+        $this->compiler->write('<?php $current->clearWarnings(); ?>');
         $this->compiler->write('<?php } ?>');
     }
 
     public function notices(DOMElement &$element)
     {
-        $whence = $this->getUnquotedAttr($element, 'layout', '$current');
-        $containerId = $this->getUnquotedAttr($element, 'containerid', 'notices-container');
-        $noticeClass = $this->getUnquotedAttr($element, 'noticeclass', 'notice');
+        $contClass = $this->getUnquotedAttr($element, 'class', 'notices-container');
 
-        $this->compiler->write('<?php if (count('.$whence.'->getNotices())) { ?>');
-        $this->compiler->write('<div id="'.$containerId.'">');
-        $this->compiler->write('<?php foreach ('.$whence.'->getNotices() as $w) { ?>');
-        $this->compiler->write('<div class="'.$noticeClass.'"><?php echo $w ?></div>');
+        $this->compiler->write('<?php if (count($current->getNotices())) { ?>');
+        $this->compiler->write('<ul class="'.$contClass.'">');
+        $this->compiler->write('<?php foreach ($current->getNotices() as $w) { ?>');
+        $this->compiler->write('<li><?php echo $w ?></li>');
         $this->compiler->write('<?php } ?>');
-        $this->compiler->write('</div>');
-        $this->compiler->write('<?php '.$whence.'->clearNotices(); ?>');
+        $this->compiler->write('</ul>');
+        $this->compiler->write('<?php $current->clearNotices(); ?>');
         $this->compiler->write('<?php } ?>');
     }
 
