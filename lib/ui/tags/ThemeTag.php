@@ -34,49 +34,11 @@
  */
 class ThemeTag extends Tag
 {
-    public function pageBuffer(DOMElement &$element)
+    public function __construct(Compiler &$compiler)
     {
-        $area = $this->requiredAttr($element, 'area', false);
-        $clear = $this->getBooleanAttr($element, 'clear', true);
-
-        $this->compiler->write("<?php // Page Buffer: $area\n");
-        $this->compiler->write("  print \$page->getBuffer('$area');\n");
-        if ($clear) {
-            $this->compiler->write("  \$page->clearBuffer('$area');\n");
-        }
-        $this->compiler->write("?>");
-    }
-
-    public function warnings(DOMElement &$element)
-    {
-        $whence = $this->getUnquotedAttr($element, 'layout', '$current');
-        $containerId = $this->getUnquotedAttr($element, 'containerid', 'warnings-container');
-        $warningClass = $this->getUnquotedAttr($element, 'warningclass', 'warning');
-
-        $this->compiler->write('<?php if (count('.$whence.'->getWarnings())) { ?>');
-        $this->compiler->write('<div id="'.$containerId.'">');
-        $this->compiler->write('<?php foreach ('.$whence.'->getWarnings() as $w) { ?>');
-        $this->compiler->write('<div class="'.$warningClass.'"><?php echo $w ?></div>');
-        $this->compiler->write('<?php } ?>');
-        $this->compiler->write('</div>');
-        $this->compiler->write('<?php '.$whence.'->clearWarnings(); ?>');
-        $this->compiler->write('<?php } ?>');
-    }
-
-    public function notices(DOMElement &$element)
-    {
-        $whence = $this->getUnquotedAttr($element, 'layout', '$current');
-        $containerId = $this->getUnquotedAttr($element, 'containerid', 'notices-container');
-        $noticeClass = $this->getUnquotedAttr($element, 'noticeclass', 'notice');
-
-        $this->compiler->write('<?php if (count('.$whence.'->getNotices())) { ?>');
-        $this->compiler->write('<div id="'.$containerId.'">');
-        $this->compiler->write('<?php foreach ('.$whence.'->getNotices() as $w) { ?>');
-        $this->compiler->write('<div class="'.$noticeClass.'"><?php echo $w ?></div>');
-        $this->compiler->write('<?php } ?>');
-        $this->compiler->write('</div>');
-        $this->compiler->write('<?php '.$whence.'->clearNotices(); ?>');
-        $this->compiler->write('<?php } ?>');
+        parent::__construct($compiler);
+        global $config;
+        $config->deprecatedComplain('ThemeTag', 'UiTag');
     }
 
     /**
