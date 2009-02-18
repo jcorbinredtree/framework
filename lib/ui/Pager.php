@@ -278,7 +278,7 @@ class Pager extends SessionObject
 
         $args['start'] = $start;
 
-        $component = $this->component ? $this->component : $current->component->getClass();
+        $component = $this->component ? $this->component : get_class($current->component);
         $action    = $this->action    ? $this->action    : $current->action->id;
 
         return call_user_func_array(array($component, 'getActionURI'), array($component, $action, $args, Stage::VIEW));

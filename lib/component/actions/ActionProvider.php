@@ -121,7 +121,7 @@ abstract class ActionProvider extends BufferedObject
          */
         if (is_bool($action->isAccessible)) {
             if (!$action->isAccessible) {
-                $msg = "Permission denied to $action->handler on component " . $this->getClass();
+                $msg = "Permission denied to $action->handler on component ".get_class($this);
 
                 $config->warn("denied by user rule: $msg");
 
@@ -139,7 +139,7 @@ abstract class ActionProvider extends BufferedObject
              * and a user does not exist, or can not $method
              */
             if ((!$current->user) || (!$this->canUser($action))) {
-                $msg = "Permission denied to $action->handler on component " . $this->getClass();
+                $msg = "Permission denied to $action->handler on component ".get_class($this);
 
                 $config->warn($msg);
 
@@ -164,16 +164,6 @@ abstract class ActionProvider extends BufferedObject
         }
 
         return true;
-    }
-
-    /**
-     * Gets the name of the current class
-     *
-     * @return string the name of the component class
-     */
-    public function getClass()
-    {
-        return get_class($this);
     }
 
     /**

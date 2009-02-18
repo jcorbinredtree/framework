@@ -71,16 +71,6 @@ abstract class Module extends BufferedObject implements ICacheable
     }
 
     /**
-     * Gets the name of the current class
-     *
-     * @return string the name of the component class
-     */
-    public function getClass()
-    {
-        return get_class($this);
-    }
-
-    /**
      * Displays the current module
      *
      * @param WebPage $page the page being displayed

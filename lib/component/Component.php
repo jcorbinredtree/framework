@@ -111,7 +111,7 @@ abstract class Component extends ActionProvider
      */
     final public function __construct()
     {
-        $this->title = $this->getClass();
+        $this->title = get_class($this);
         $this->onInitialize();
         $this->onRegisterActions();
     }
@@ -122,7 +122,7 @@ abstract class Component extends ActionProvider
 
     public function __toString()
     {
-        return $this->getClass();
+        return get_class($this);
     }
 
     /**
@@ -181,7 +181,7 @@ abstract class Component extends ActionProvider
 
     public function getPath()
     {
-        $us = new ReflectionClass($this->getClass());
+        $us = new ReflectionClass(get_class($this));
         return dirname($us->getFileName());
     }
 
@@ -255,7 +255,10 @@ abstract class Component extends ActionProvider
             return $crumb;
         }
 
-        return new NavigatorItem(Component::getActionURI($this->getClass(), $crumb), $crumb);
+        return new NavigatorItem(
+            Component::getActionURI(get_class($this), $crumb),
+            $crumb
+        );
     }
 
     /**

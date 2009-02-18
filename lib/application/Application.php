@@ -214,7 +214,7 @@ class Application
         $obj = new stdClass();
         $obj->stage = $current->stage;
         $obj->action = ($current->action ? $current->action->id : null);
-        $obj->component = ($current->component ? $current->component->getClass() : null);
+        $obj->component = ($current->component ? get_class($current->component) : null);
         $obj->get = $_GET;
         $obj->post = $_POST;
         $obj->request = $_REQUEST;
@@ -387,7 +387,7 @@ class Application
     {
         global $config;
 
-        Application::setPath("$config->fwAbsPath/modules/" . $module->getClass());
+        Application::setPath("$config->fwAbsPath/modules/" . get_class($module));
 
         if (!($data = Cacher::useCache($module))) {
             $module->onDisplay($position);

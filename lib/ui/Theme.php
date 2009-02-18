@@ -68,16 +68,6 @@ abstract class Theme extends BufferedObject
     }
 
     /**
-     * Gets the name of the current class
-     *
-     * @return string the name of the theme class
-     */
-    public function getClass()
-    {
-        return get_class($this);
-    }
-
-    /**
      * Renders the theme
      *
      * This calls onRender, processes the page template, and then flushes
@@ -149,7 +139,7 @@ abstract class Theme extends BufferedObject
     public function getPath()
     {
         if (! $this->path) {
-            $us = new ReflectionClass($this->getClass());
+            $us = new ReflectionClass(get_class($this));
             $this->path = dirname($us->getFileName());
         }
         return $this->path;

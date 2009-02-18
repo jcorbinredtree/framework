@@ -202,7 +202,7 @@ class Current
         }
 
         $policy = PolicyManager::getInstance();
-        return $policy->getActionURI($this->component->getClass(), $this->action->id, $options, $this->stage);
+        return $policy->getActionURI(get_class($this->component), $this->action->id, $options, $this->stage);
     }
 
     /**

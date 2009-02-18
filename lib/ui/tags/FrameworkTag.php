@@ -165,11 +165,11 @@ class FrameworkTag extends Tag
     {
         global $current;
 
-        $class = $current->component->getClass();
+        $class = get_class($current->component);
         $method = $this->getUnquotedAttr($element, 'method', 'post');
         $stage = $this->getUnquotedAttr($element, 'stage', Stage::VALIDATE);
 
-        $form = '<form action = "<?php echo ' . $class . '::getActionURI($current->component->getClass(),$current->action->id,';
+        $form = '<form action = "<?php echo ' . $class . '::getActionURI(get_class($current->component),$current->action->id,';
         $form .= "array('-secure'=>" . '$current->isSecureRequest()), ' . $stage . '); ?>" method = "' . $method . '"';
         $form .= $this->optionalAttributes($element, array('name', 'id', 'enctype'));
         $form .= '>';
