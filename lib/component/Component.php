@@ -41,48 +41,6 @@ abstract class Component extends ActionProvider
     public $breadCrumbs = array();
 
     /**
-     * Holds required scripts
-     *
-     * @var array
-     */
-    public $scripts = array();
-
-    /**
-     * Holds required stylesheets
-     *
-     * @var array
-     */
-    public $stylesheets = array();
-
-    /**
-     * Holds required head
-     *
-     * @var string
-     */
-    public $head = '';
-
-    /**
-     * Holds the title of the current page;
-     *
-     * @var string
-     */
-    public $title = '';
-
-    /**
-     * Meta keywords
-     *
-     * @var string
-     */
-    public $keywords = '';
-
-    /**
-     * The meta description
-     *
-     * @var string
-     */
-    public $description = '';
-
-    /**
      * Component instances, hashed by name
      *
      * @var Component
