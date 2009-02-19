@@ -33,7 +33,7 @@ class LifeCycleManager
         $this->eventCallables = array();
     }
 
-    public function &registerEvent($event, &$callable)
+    public function &registerEvent($event, $callable)
     {
         if (! is_callable($callable)) {
             throw new InvalidArgumentException('not callable');
