@@ -40,13 +40,6 @@ interface IThemePolicy
      * @return Theme The theme to load
      */
     public function getTheme();
-
-    /**
-     * Called to get the exception theme
-     *
-     * @return Theme The theme to load
-     */
-    public function getExceptionTheme();
 }
 
 ?>
