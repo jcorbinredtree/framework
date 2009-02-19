@@ -42,14 +42,6 @@ abstract class Theme extends BufferedObject
     protected $page;
 
     /**
-     * The template used to implement the final page rendering, such as
-     * xhtmlpage.xml
-     *
-     * @var PageTemplate
-     */
-    protected $pageTemplate;
-
-    /**
      * Creats a theme object for a page
      *
      * @param page HTMLPage optional, defaults to SitePage::getCurrent
@@ -63,8 +55,6 @@ abstract class Theme extends BufferedObject
         }
         $this->page = $page;
 
-        $this->pageTemplate = new PageTemplate($this->page);
-        $this->pageTemplate->assign('theme', $this);
     }
 
     /**
