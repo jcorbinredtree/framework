@@ -34,7 +34,8 @@
  *
  * @package Site
  */
-abstract class SitePage
+
+abstract class SitePage extends CallbackManager
 {
     /**
      * Holds the current page
