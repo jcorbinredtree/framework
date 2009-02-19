@@ -114,22 +114,6 @@ interface ILifeCycle
      * @return array of NavigatorItem objects
      */
     public function onGetLeftModules();
-
-    /**
-     * Invoked before anything is written to the browser, but after everything has
-     * been collected in the WebPage object
-     *
-     * @param WebPage $page
-     * @return void
-     */
-    public function onPreRender(WebPage &$page);
-
-    /**
-     * Called after the contents have been written to the browser.
-     *
-     * @return void
-     */
-    public function onPostRender();
 }
 
 ?>
