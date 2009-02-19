@@ -30,6 +30,9 @@
  *
  * @package        Themes
  */
+// Old style themes used to do silly things like write content themselves, so
+// until we berak compatability with old themes entirely, we still need to
+// extend BufferedObject
 abstract class Theme extends BufferedObject
 {
     private $path = null;
@@ -55,53 +58,36 @@ abstract class Theme extends BufferedObject
         }
         $this->page = $page;
 
-    }
-
-    /**
-     * Renders the theme
-     *
-     * This calls onRender, processes the page template, and then flushes
-     * output
-     *
-     * @return void
-     */
-    public function render()
-    {
-        // set the current path to the theme location & display
-        $oldPath = CurrentPath::set($this->getPath());
-        LifeCycleManager::onPreRender($this->page);
-
         if (method_exists($this, 'onDisplay')) {
             // Deprecated pre 3.0.76 interface
             global $config;
             if ($config->isDebugMode()) {
                 $cls = get_class($this);
                 $config->deprecatedComplain(
-                    $cls.'->onDisplay', $cls.'->onRender'
+                    $cls.'->onDisplay', 'prerender page callback'
                 );
             }
-            $this->onDisplay($this->page);
+            $page->addCallback('prerender', array($this, 'onDisplayShim'));
         }
-
-        $this->onRender();
-
-        $this->write($this->pageTemplate->render());
-        $this->flush();
-
-        LifeCycleManager::onPostRender();
-        CurrentPath::set($oldPath);
+        if (method_exists($this, 'onRender')) {
+            $page->addCallback('prerender', array($this, 'onRender'));
+        }
     }
 
     /**
-     * Called by render to do final page layout processing
+     * Compatability shim that sets curret path for old onDisplay hooks
      *
-     * Does nothing in the abstract, you likely want to override this
-     *
-     * @param HTMLPage $page the page being displayed
-     * @return void
+     * Deprecated, keeps pre 3.0.76 themes working
      */
-    protected function onRender()
+    final private function onDisplayShim(SitePage $page)
     {
+        $oldPath = CurrentPath::set($this->getPath());
+
+        $this->onDisplay();
+        $page->addToBuffer('content', $this->getBuffer());
+        $this->clear();
+
+        CurrentPath::set($oldPath);
     }
 
     /**
