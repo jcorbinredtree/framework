@@ -2,6 +2,13 @@
   xmlns:core="class://CoreTag"
   xmlns:ui="class://UiTag">
 
+<core:doctype type="xhtml 1.0" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Unhandled Exception</title>
+  </head>
+  <body>
+
 <div id="main">
   <h1>@{=get_class(${this.exception})}: ${=this.exception.getMessage()}</h1>
   <ul>
@@ -17,5 +24,7 @@
   <ui:notices />
 </div>
 
+  </body>
+</html>
 </template>
 <!-- vim:set ts=2 sw=2 expandtab: -->
