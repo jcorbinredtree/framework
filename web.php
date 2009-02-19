@@ -53,11 +53,8 @@ catch (Exception $ex) {
         ob_start();
 
         // The old page failed, create a new one
-        $page = new HTMLPage();
-        $page->setData('exception', $ex);
-        $page->setData('oldPage', SitePage::setCurrent($page));
-
-        $page->getTheme()->render();
+        SitePage::setCurrent(new ExceptionPage($ex));
+        SitePage::renderCurrent();
 
         // it managed to do its thing, so let it through
         ob_end_flush();

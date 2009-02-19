@@ -311,7 +311,7 @@ class Main
 
         $page->addToBuffer('content', $current->component);
 
-        $page->getTheme()->render();
+        $page->render();
     }
 }
 
