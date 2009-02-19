@@ -45,12 +45,19 @@ abstract class SitePage extends CallbackManager
     /**
      * Returns the current page, throws a RuntimeException if there is none
      *
+     * @param nullok boolean default false, if true null will be returned
+     * instead of throwing an exception when no curret page is set
+     *
      * @return SitePage
      */
-    public static function getCurrent()
+    public static function getCurrent($nullok=false)
     {
         if (! isset(self::$TheCurrentPage)) {
-            throw new RuntimeException('no current page');
+            if ($nullok) {
+                return null;
+            } else {
+                throw new RuntimeException('no current page');
+            }
         }
         return self::$TheCurrentPage;
     }
