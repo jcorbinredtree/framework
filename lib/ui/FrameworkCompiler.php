@@ -30,7 +30,7 @@
  *
  * This class overrides the default php-stl Compiler to provide more functionality
  */
-class FrameworkCompiler extends Compiler
+class FrameworkCompiler extends PHPSTLCompiler
 {
     /**
      * Constructor
@@ -47,7 +47,7 @@ class FrameworkCompiler extends Compiler
         $policy = PolicyManager::getInstance();
         $this->setCacheDirectory($policy->getTemplatesDir());
 
-        parent::__construct(Compiler::TYPE_BUILTIN);
+        parent::__construct(PHPSTLCompiler::TYPE_BUILTIN);
     }
 
     /**
