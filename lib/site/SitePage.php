@@ -77,6 +77,17 @@ abstract class SitePage extends CallbackManager
     }
 
     /**
+     * Renders the current page
+     *
+     * @see render, getCurrent
+     * @return void
+     */
+    final static public function renderCurrent()
+    {
+        self::getCurrent()->render();
+    }
+
+    /**
      * The mime type of the page
      *
      * @var string
@@ -382,6 +393,27 @@ abstract class SitePage extends CallbackManager
             unset($this->data[$name]);
         }
     }
+
+    /**
+     * Renders this page
+     *
+     * dispatches two callbacks: prerender and postrender
+     */
+    final public function render()
+    {
+        $this->dispatchCallback('prerender', $this);
+        print $this->onRender();
+        $this->dispatchCallback('postrender', $this);
+    }
+
+    /**
+     * Generates page output
+     *
+     * Subclasses must define this to generate output
+     *
+     * @return string
+     */
+    abstract protected function onRender();
 }
 
 ?>
