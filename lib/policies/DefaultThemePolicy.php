@@ -38,10 +38,11 @@ class DefaultThemePolicy implements IThemePolicy
     /**
      * set theme from A.) Cookies, B.) _theme_id request, C.) default
      *
+     * @param page SitePage the page to theme
      * @return Theme The theme to load
      * @see IThemePolicy::getTheme()
      */
-    public function getTheme()
+    public function getTheme(SitePage $page=null)
     {
         global $config;
 
@@ -58,7 +59,7 @@ class DefaultThemePolicy implements IThemePolicy
                 'Paramaterized theme selection unimplemented'
             );
         } else {
-            return Theme::load($config->getDefaultTheme());
+            return Theme::load($config->getDefaultTheme(), $page);
         }
     }
 }

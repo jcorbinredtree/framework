@@ -88,7 +88,7 @@ class HTMLPage extends SitePage
     {
         if (! isset($this->theme)) {
             $policy = PolicyManager::getInstance();
-            $theme = $policy->getTheme();
+            $theme = $policy->getTheme($this);
             if (! $theme) {
                 throw new RuntimeException('no theme for '.get_class($this));
             }

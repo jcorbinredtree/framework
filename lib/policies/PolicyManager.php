@@ -172,13 +172,14 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
     }
 
     /**
+     * @param page SitePage
      * @see IThemePolicy::getTheme()
      *
      * @return Theme
      */
-    public function getTheme()
+    public function getTheme(SitePage $page=null)
     {
-        return $this->themePolicy->getTheme();
+        return $this->themePolicy->getTheme($page);
     }
 
     /**

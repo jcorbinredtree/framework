@@ -37,9 +37,10 @@ interface IThemePolicy
     /**
      * Called when it's time to load the theme. Return an instance of Theme.
      *
+     * @param page SitePage the page to theme
      * @return Theme The theme to load
      */
-    public function getTheme();
+    public function getTheme(SitePage $page=null);
 }
 
 ?>

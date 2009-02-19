@@ -151,11 +151,12 @@ abstract class Theme extends BufferedObject
      * @static
      * @access public
      * @param string $theme a theme class name
+     * @param SitePage $page
      * @return Theme an instance of the specified theme
      */
-    static public function load($theme)
+    static public function load($theme, SitePage $page=null)
     {
-        return new $theme();
+        return new $theme($page);
     }
 }
 
