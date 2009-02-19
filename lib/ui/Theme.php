@@ -58,6 +58,7 @@ abstract class Theme extends BufferedObject
         }
         $this->page = $page;
 
+        $page->addCallback('prerender', array($this, 'pushPath'));
         if (method_exists($this, 'onDisplay')) {
             // Deprecated pre 3.0.76 interface
             global $config;
@@ -72,6 +73,32 @@ abstract class Theme extends BufferedObject
         if (method_exists($this, 'onRender')) {
             $page->addCallback('prerender', array($this, 'onRender'));
         }
+        $page->addCallback('prerender', array($this, 'popPath'));
+    }
+
+    private $oldPath = null;
+    private $pushed = false;
+    /**
+     * Sets CurrentPath to our path, saves the old one for later restoration.
+     */
+    public function pushPath()
+    {
+        if ($this->pushed) {
+            return;
+        }
+        $this->oldPath = CurrentPath::set($this->getPath());
+        $this->pushed = true;
+    }
+
+    /**
+     * Converse of pushPath
+     */
+    public function popPath()
+    {
+        if ($this->pushed) {
+            CurrentPath::set($this->oldPath);
+            $this->pushed = false;
+        }
     }
 
     /**
@@ -81,13 +108,9 @@ abstract class Theme extends BufferedObject
      */
     final private function onDisplayShim(SitePage $page)
     {
-        $oldPath = CurrentPath::set($this->getPath());
-
         $this->onDisplay();
         $page->addToBuffer('content', $this->getBuffer());
         $this->clear();
-
-        CurrentPath::set($oldPath);
     }
 
     /**
