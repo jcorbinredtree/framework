@@ -77,6 +77,13 @@ class HTMLPage extends SitePage
         parent::__construct('text/html');
         $this->assets = array();
         $this->meta = new HTMLPageMeta();
+
+        $policy = PolicyManager::getInstance();
+        $theme = $policy->getTheme($this);
+        if (! $theme) {
+            throw new RuntimeException('no theme for '.get_class($this));
+        }
+        $this->theme = $theme;
     }
 
     /**
@@ -86,14 +93,6 @@ class HTMLPage extends SitePage
      */
     public function getTheme()
     {
-        if (! isset($this->theme)) {
-            $policy = PolicyManager::getInstance();
-            $theme = $policy->getTheme($this);
-            if (! $theme) {
-                throw new RuntimeException('no theme for '.get_class($this));
-            }
-            $this->theme = $theme;
-        }
         return $this->theme;
     }
 
