@@ -60,6 +60,26 @@ class UiTag extends Tag
     }
 
     /**
+     * Gets a page data item
+     *
+     * @param var string required
+     * @param name string required
+     * @param default mixed optional
+     */
+    public function pageData(DOMElement &$element)
+    {
+        $var = $this->requiredAttr($element, 'var', false);
+        $name = $this->requiredAttr($element, 'name');
+        $default = $this->getAttr($element, 'default');
+        $this->compiler->write("<?php \$$var = \$page->getData($name); ?>");
+        if (isset($default)) {
+            $this->compiler->write(
+                "<?php if (!isset(\$$var)) \$$var = $default; ?>"
+            );
+        }
+    }
+
+    /**
      * Outputs the list of current warnings if any, then clears the list of
      * current warnings.
      *
