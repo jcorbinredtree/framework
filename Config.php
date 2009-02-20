@@ -158,6 +158,36 @@ class Config
      */
     private $sessionExpireTime = 0;
 
+    private $templateOptions = array(
+        // Extra places to look for templates, entries relative to absPath
+        // 'include_path' => "path,path,..." -or- array('path','path',...)
+
+        // Where templates are cached, default is determined by the policy
+        //   which defaults to SITE/writable/cache/templates
+        // 'diskcache_directory' => '...'
+    );
+
+    public function addTemplateOptions($o)
+    {
+        assert(is_array($o));
+        if (
+            array_key_exists('include_path', $o) &&
+            array_key_exists('include_path', $this->templateOptions)
+        ) {
+            $this->templateOptions['include_path'] = array_merge(
+                $this->templateOptions['include_path'],
+                $o['include_path']
+            );
+            unset($o['include_path']);
+        }
+        $this->templateOptions = array_merge($this->templateOptions, $o);
+    }
+
+    public function getTemplateOptions()
+    {
+        return $this->templateOptions;
+    }
+
     /**
      * Specifies options to the mailer. The keys in this hash directly map to the
      * phpmailer properties.

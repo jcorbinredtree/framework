@@ -10,7 +10,18 @@
   <body>
 
 <div id="main">
-  <h1>@{=get_class(${this.exception})}: ${=this.exception.getMessage()}</h1>
+  <core:set var="exType" value="@{get_class(${this.exception})}" />
+  <h1>${=exType}:</h1>
+  <h2>${=this.exception.getMessage()}</h2>
+  <core:if test="is_a(${this.exception}, 'PHPSTLNoSuchResource')">
+    <h3>Template Providers:</h3>
+    <ul>
+      <core:forEach list="${this.exception.getPHPSTL().getProviders()}" var="provider">
+        <li>${=provider}</li>
+      </core:forEach>
+    </ul>
+  </core:if>
+  <h3>Trace:</h3>
   <ul>
     <li>${=this.exception.getFile()} (${=this.exception.getLine()})</li>
     <core:forEach list="${this.exception.getTrace()}" var="frame">

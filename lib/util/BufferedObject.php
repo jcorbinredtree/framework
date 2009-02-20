@@ -156,8 +156,7 @@ abstract class BufferedObject
      */
     public function viewTemplate($name, $arguments=null)
     {
-        $template = new Template($name);
-        $this->write($template->render($arguments));
+        $this->write(TemplateSystem::process($name, $arguments));
     }
 }
 

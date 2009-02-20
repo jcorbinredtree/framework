@@ -30,9 +30,9 @@ class DefaultTheme extends Theme
          * buffers and generates a wall of text that gets passed into the page
          * template itself
          */
-        $template = new Template("view/layouts/container.xml");
-        $content = $template->render();
-        $this->page->addToBuffer('content', $content);
+        $this->page->addToBuffer('content',
+            TemplateSystem::process('view/layouts/container.xml')
+        );
     }
 
     public function formatPageTitle($title)

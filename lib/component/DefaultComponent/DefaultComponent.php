@@ -43,9 +43,9 @@ class DefaultComponent extends Component
         $page = SitePage::getCurrent();
         $page->title = 'Home Page';
 
-        $template = new Template('view/home.xml');
-        $template->assign('where', 'home');
-        $this->write($template->render());
+        $this->viewTemplate('view/home.xml', array(
+            'where' => 'home'
+        ));
     }
 }
 

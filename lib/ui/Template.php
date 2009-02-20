@@ -36,34 +36,15 @@
  */
 class Template extends PHPSTLTemplate
 {
-    /**
-     * Constructor
-     *
-     * @param template string
-     *
-     * @access public
-     * @return Template new instance
-     */
-    public function __construct($template)
-    {
-        // lib/ui/templates
-        $this->addPath(dirname(__FILE__).'/templates');
+    private $currentPath=null;
 
+    public function __construct(PHPSTLTemplateProvider $provider, $resource)
+    {
+        parent::__construct($provider, $resource);
+
+        // Stash away the current path for when we render
         global $current;
-        $this->addPath($current->path);
-
-        parent::__construct($template);
-    }
-
-    // TODO: until php-stl implements a sane provider delegation mechanism that
-    // allows us to decouple the template and compiler
-    private static $TheCompiler = null;
-    protected function setupCompiler()
-    {
-        if (! isset(self::$TheCompiler)) {
-            self::$TheCompiler = new FrameworkCompiler();
-        }
-        return self::$TheCompiler;
+        $this->currentPath = $current->path;
     }
 
     /**
@@ -73,7 +54,7 @@ class Template extends PHPSTLTemplate
     protected function renderSetup($args)
     {
         parent::renderSetup($args);
-        $this->oldAppPath = CurrentPath::set(dirname($this->getFile()));
+        $this->oldAppPath = CurrentPath::set($this->currentPath);
     }
 
     /**

@@ -33,24 +33,6 @@
 class FrameworkCompiler extends PHPSTLCompiler
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        // Turn off template compiler caching in debug mode
-        global $config;
-        if ($config->isDebugMode()) {
-            $this->noCache = true;
-        }
-
-        // Cache template compilation in a site specific place
-        $policy = PolicyManager::getInstance();
-        $this->setCacheDirectory($policy->getTemplatesDir());
-
-        parent::__construct(PHPSTLCompiler::TYPE_BUILTIN);
-    }
-
-    /**
      * Framework Template preamble
      */
     protected function writeTemplateHeader()

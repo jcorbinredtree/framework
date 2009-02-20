@@ -3,10 +3,7 @@
   xmlns:ui="class://UiTag">
 
 <ui:addAssets>
-  <stylesheet href="${current.path.url.up()}.'/css/container.css'" />
-  <link rel="alternate" type="application/rss+xml" href="some.rss" title="RSS Feed" />
-  <alternate href="another.atom" type="application/atom+xml" title="Atom Feed" />
-  <script href="some.js" />
+  <stylesheet href="view/css/container.css" />
 </ui:addAssets>
 
 <div id="main-container">
