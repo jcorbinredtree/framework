@@ -123,6 +123,10 @@ class UiTag extends Tag
      *   <link href="some/resource" rel="something" type="some/mime" />
      *   <alternate href="some.rss" type="application/rss+xml" title="RSS Feed" />
      *
+     * If any href is a simple string (i.e. no ${...} expression), and it is
+     * relative, it will be passed to CurrentPath->url->down to form an
+     * absolute url.
+     *
      * Full gory attribute details:
      *   script: a HTMLPageScript asset
      *     href string required
@@ -157,9 +161,14 @@ class UiTag extends Tag
         );
         foreach ($element->childNodes as $n) {
             if ($n->nodeType == XML_ELEMENT_NODE) {
+                $href = $this->requiredAttr($n, 'href', false);
+                if ($this->needsQuote($href) && ! preg_match('~^(?:\w+://|/)~', $href)) {
+                    global $current;
+                    $href = (string) $current->path->url->down($href);
+                    $href = $this->quote($href);
+                }
                 switch ($n->tagName) {
                 case 'script':
-                    $href = $this->requiredAttr($n, 'href');
                     $type = $this->getAttr($n, 'type');
                     $this->compiler->write(
                         '<?php $page->addAsset(new HTMLPageScript('.
@@ -169,7 +178,6 @@ class UiTag extends Tag
                     );
                     break;
                 case 'stylesheet':
-                    $href = $this->requiredAttr($n, 'href');
                     $alt = $this->getBooleanAttr($n, 'alternate');
                     $title = $this->getAttr($n, 'title');
                     $media = $this->getAttr($n, 'media');
@@ -190,7 +198,6 @@ class UiTag extends Tag
                     );
                     break;
                 case 'link':
-                    $href = $this->requiredAttr($n, 'href');
                     $rel = $this->requiredAttr($n, 'rel');
                     $type = $this->requiredAttr($n, 'type');
                     $title = $this->getAttr($n, 'title');
@@ -204,7 +211,6 @@ class UiTag extends Tag
                     );
                     break;
                 case 'alternate':
-                    $href = $this->requiredAttr($n, 'href');
                     $type = $this->requiredAttr($n, 'type');
                     $title = $this->getAttr($n, 'title');
                     $this->compiler->write(
