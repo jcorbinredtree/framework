@@ -71,9 +71,9 @@ class FrameworkCompiler extends Compiler
         } else {
             $type = 'text/html';
         }
-        $this->write('<?php $this->type = "'.$type.'"; ?>');
         $this->write(
-            "<?php if (! \$page->compatibleType(\$this->type)) {\n".
+            "<?php \$this->type = '$type';\n".
+            "if (! \$page->compatibleType(\$this->type)) {\n".
             "  throw new RuntimeException(\$this->type.' incompatible ".
             "with a '.\$page->getType().' page');\n".
             '} ?>'
