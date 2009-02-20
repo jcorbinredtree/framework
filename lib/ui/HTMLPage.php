@@ -194,12 +194,6 @@ class HTMLPage extends SitePage
             return $this->title;
         }
     }
-
-    protected function onRender()
-    {
-        $template = new PageTemplate($this);
-        return $template->render();
-    }
 }
 
 ?>

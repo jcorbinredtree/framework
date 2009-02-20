@@ -28,14 +28,14 @@
 /**
  * Describes a page in a site (amazing)
  *
- * Abstract class, manages things such as page "data" which is named arbitrary
+ * Basic page, manages things such as page "data" which is named arbitrary
  * mixed values and "buffers", which is a primitive form of page content on the
  * way out to the client.
  *
  * @package Site
  */
 
-abstract class SitePage extends CallbackManager
+class SitePage extends CallbackManager
 {
     /**
      * Holds the current page
@@ -397,11 +397,18 @@ abstract class SitePage extends CallbackManager
     /**
      * Renders this page
      *
+     * All buffers are finalized using processBuffers directly before calling
+     * onRender
+     *
      * dispatches two callbacks: prerender and postrender
+     *
+     * @see processBuffers
+     * @return void
      */
     final public function render()
     {
         $this->dispatchCallback('prerender', $this);
+        $this->processBuffers();
         print $this->onRender();
         $this->dispatchCallback('postrender', $this);
     }
@@ -409,11 +416,54 @@ abstract class SitePage extends CallbackManager
     /**
      * Generates page output
      *
-     * Subclasses must define this to generate output
+     * The default implementation attempts to load a template based on the page
+     * type and render through it.
+     *
+     * The template is processed with its 'page' property assigned to this page
+     * instance.
      *
      * @return string
      */
-    abstract protected function onRender();
+    protected function onRender()
+    {
+        return $this->getTemplate()->render($this->getTemplateArguments());
+    }
+
+    /**
+     * Returns the template used to render the page by the default onRender
+     * implementation.
+     *
+     * Default implementation builds a template resource string using:
+     *   "page/type.xml" where type is the $type property with all '/'s replaced by '_'s.
+     *
+     * And then asks the TemplateSystem to load that resource
+     *
+     * @return PHPSTLTemplate
+     * @see $type
+     */
+    protected function getTemplate()
+    {
+        $type = preg_replace('/\//', '_', $this->type);
+        return TemplateSystem::load("page/$type.xml");
+    }
+
+    /**
+     * Returns an associative array contaning arguments with which to process
+     * the page template, used by the default onRender implementation.
+     *
+     * @return array
+     */
+    protected function getTemplateArguments()
+    {
+        $args = array('page' => $this);
+
+        // Compatability with old sites
+        if (is_a($this, 'LayoutDescription')) {
+            $args['layout'] = $this;
+        }
+
+        return $args;
+    }
 }
 
 ?>

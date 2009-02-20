@@ -77,12 +77,16 @@ class ExceptionPage extends SitePage
         $this->exception = $ex;
     }
 
-    protected function onRender()
+    protected function getTemplate()
     {
-        $template = new Template('common/exceptionpage.xml');
-        return $template->render(array(
+        return  TemplateSystem::load('page/exception.xml');
+    }
+
+    protected function getTemplateArguments()
+    {
+        return array_merge(parent::getTemplateArguments(), array(
             'exception' => $this->exception,
-            'oldPage' => $this->oldPage
+            'oldPage'   => $this->oldPage
         ));
     }
 }
