@@ -82,7 +82,8 @@ class StupidPath
      *
      * @param <args> strings
      *   If any string contains a '/' it will be exploded and merged as if
-     *   each elemnt had been given individually.
+     *   each elemnt had been given individually.  If a component is '..' it's
+     *   equivalent to calling up(1), while '.' is a no-op.
      *
      * @return StupidPath
      */
@@ -97,9 +98,18 @@ class StupidPath
         foreach ($add as $c) {
             $a = array_merge($a, explode('/', $c));
         }
-        return new StupidPath(array_merge(
-            $this->components, $a
-        ));
+
+        $path = $this->components;
+        foreach ($a as $c) {
+            if ($c == '.') {
+                // pass
+            } elseif ($c == '..' && count($path)) {
+                array_pop($path);
+            } else {
+                array_push($path, $c);
+            }
+        }
+        return new StupidPath($path);
     }
 }
 
