@@ -63,6 +63,7 @@ class TemplateSystem
                 'compiler_class'      => 'FrameworkCompiler',
                 'diskcache_directory' => $policy->getTemplatesDir()
             ), $copt));
+            self::$pstl->addProvider(new CurrentTemplateProvider(self::$pstl));
         }
         return self::$pstl;
     }
