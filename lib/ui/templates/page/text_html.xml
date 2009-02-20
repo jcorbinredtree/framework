@@ -2,7 +2,8 @@
   xmlns:core="class://CoreTag"
   xmlns:ui="class://UiTag">
 
-<core:doctype type="xhtml 1.0" />
+<core:doctype id="${page.doctype}" />
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title><core:out value="${page.formatTitle()}" /></title>
