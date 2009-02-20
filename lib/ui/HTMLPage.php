@@ -35,6 +35,11 @@ require_once(dirname(__FILE__).'/HTMLPageAsset.php');
 class HTMLPage extends SitePage
 {
     /**
+     * Whether to output a <?xml ... ?> header
+     */
+
+    public $xmlHeader = true;
+    /**
      * The <!DOCTYPE ... > of the current page
      *
      * This should be a string known by CoreTag::doctype

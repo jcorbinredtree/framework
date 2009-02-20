@@ -2,6 +2,11 @@
   xmlns:core="class://CoreTag"
   xmlns:ui="class://UiTag">
 
+<core:if test="${page.xmlHeader}">
+  <ui:pageData var="xmlVersion" name="xmlVersion" default="1.0" />
+  <ui:pageData var="xmlEncoding" name="xmlEncoding" default="utf-8" />
+  <core:xmlHeader version="$xmlVersion" encoding="$xmlEncoding" />
+</core:if>
 <core:doctype id="${page.doctype}" />
 
 <html xmlns="http://www.w3.org/1999/xhtml">
