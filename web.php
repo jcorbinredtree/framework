@@ -93,14 +93,17 @@ catch (Exception $ex) {
 
 if ($config->isDebugMode()) {
     $pageTime = (microtime(true) - $__start);
-    $message = '==> Request Served in ' . (sprintf('%.4f', $pageTime)) . ' seconds; ';
+    $message = sprintf('==> Request Served in %.4f seconds; ', $pageTime);
     if (isset($database)) {
         $databaseTime = $database->getTotalTime();
         $databaseQueries = $database->getTotalQueries();
-        $message .= $database->getTotalQueries() . ' queries executed in ';
-        $message .= sprintf('%.4f', $database->getTotalTime()) . ' seconds, ';
-        $message .= sprintf('%.2f', (($databaseTime / $pageTime) * 100)) . '% of total time <==';
+        $message .= sprintf('%d queries executed in %.4f seconds, %.2f%% of total time',
+            $database->getTotalQueries(),
+            $database->getTotalTime(),
+            $databaseTime / $pageTime * 100
+        );
     }
+    $message .= ' <==';
 
     $config->info($message);
 }
