@@ -13,21 +13,34 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
 
-require_once dirname(__FILE__) . '/Config.php';
+/**
+ * DEPRECATED
+ *
+ * this file is a compatability shim for old index.php implementations
+ */
+
+class CompatSite extends Site
+{
+    public function onConfig()
+    {
+        onConfig($this->config);
+    }
+}
+Site::set('CompatSite');
 
 $type = (isset($APP) && $APP) ? $APP : 'web';
-
 switch ($type) {
     case 'web-lite':
-        require_once dirname(__FILE__) . '/web-lite.php';
+        Site::Site()->doWebLite();
         break;
     case 'web':
-        require_once dirname(__FILE__) . '/web.php';
+        Site::Site()->doWeb();
         break;
     case 'test':
-        require_once dirname(__FILE__) . '/tests.php';
+        Site::Site()->doTests();
         break;
     case 'cli':
+        Site::Site()->doCli();
         require_once dirname(__FILE__) . '/cli.php';
         break;
 }

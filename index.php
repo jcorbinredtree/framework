@@ -25,26 +25,29 @@
     </Directory>
  */
 
-function onConfig(Config &$config)
+require_once('SITE/framework/lib/site/Site.php');
+
+class MySite extends Site
 {
-    // This site was developed against this version of the framework
-    $config->setTargetVersion("3.0");
+    public function onConfig()
+    {
+        // This site was developed against this version of the framework
+        $this->config->setTargetVersion("3.1");
 
-    $config->setDebugMode(true);
-    $config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
-    $config->setDatabaseTestInfo('mysql://name:pass@localhost/dbname_test');
-    $config->addMailerOptions(array(
-        'From'      => 'client@example.com',
-        'FromName'  => 'Mr Person',
-        'Host'      => 'localhost'
-    ));
-
-    // $config->setDefaultComponent('SomeComponent');
-    // $config->setDefaultAction('home');
-
-    // $config->addUrlMapping('some/weird/mapping.html', array('SomeComponent', 'home', 'id=2'));
+        $this->config->setDebugMode(true);
+        $this->config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
+        $this->config->setDatabaseTestInfo('mysql://name:pass@localhost/dbname_test');
+        $this->config->addMailerOptions(array(
+            'From'      => 'client@example.com',
+            'FromName'  => 'Mr Person',
+            'Host'      => 'localhost'
+        ));
+    }
 }
-
-include 'SITE/framework/start.php';
+Site::set('MySite');
+Site::Site()->doWeb();
+// Site::Site()->doWebLite();
+// Site::Site()->doTests();
+// Site::Site()->doCli();
 
 ?>
