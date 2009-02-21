@@ -258,12 +258,6 @@ abstract class Site extends CallbackManager
         $this->config->info($message);
     }
 
-    final public function doWebLite()
-    {
-        // TODO convert
-        require_once dirname(__FILE__) . '/web-lite.php';
-    }
-
     final public function doTests()
     {
         // TODO convert
