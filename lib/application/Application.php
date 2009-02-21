@@ -25,7 +25,9 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once(dirname(__FILE__).'/CurrentPath.php');
+require_once 'lib/application/CurrentPath.php';
+require_once 'lib/application/ApplicationData.php';
+require_once 'lib/application/AppConstants.php';
 
 /**
  * Implements PHP's autoload function in order to
