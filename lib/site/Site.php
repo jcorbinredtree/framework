@@ -264,12 +264,6 @@ abstract class Site extends CallbackManager
         require_once dirname(__FILE__) . '/tests.php';
     }
 
-    final public function doCli()
-    {
-        // TODO convert
-        require_once dirname(__FILE__) . '/cli.php';
-    }
-
     abstract public function onConfig();
 
     /**
