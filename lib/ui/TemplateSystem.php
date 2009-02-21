@@ -53,7 +53,7 @@ class TemplateSystem
             }
 
             array_push($inc, SiteLoader::$LocalPath.'/templates');
-            array_push($inc, SiteLoader::$FrameworkPath.'/lib/ui/templates');
+            array_push($inc, SiteLoader::$FrameworkPath.'/templates');
 
             $policy = PolicyManager::getInstance();
 
