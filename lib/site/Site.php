@@ -26,6 +26,7 @@
  */
 
 require_once 'lib/util/CallbackManager.php';
+require_once 'lib/site/SiteHandler.php';
 require_once 'lib/application/Application.php';
 require_once 'Config.php';
 
@@ -91,6 +92,29 @@ abstract class Site extends CallbackManager
     }
 
     /**
+     * Primary entry point, convenience function really
+     *
+     * Exapmle:
+     *   Site::doRole('MySite', 'some-handler', 'some', 'handler', 'args');
+     *
+     * Is equivalent to:
+     *   Site::set('MySite');
+     *   Site::Site()->handle('some-handler', 'some', 'handler', 'args');
+     *
+     * @param SiteClass string as in Site::set
+     * @param role string as in Site::handle
+     * @return void
+     * @see Site::set, Site::handle
+     */
+    final public static function doRole($SiteClass, $role)
+    {
+        self::set($SiteClass);
+        self::Site();
+        $args = array_slice(func_get_args(), 1);
+        call_user_func_array(array(self::$TheSite, 'handle'), $args);
+    }
+
+    /**
      * Instance methods/properties
      */
 
@@ -118,6 +142,73 @@ abstract class Site extends CallbackManager
         if ($this->timing) {
             array_push($this->timePoints, $start);
         }
+    }
+
+    /**
+     * Loads a site handler by role name
+     *   e.g., "role" resolves to "SiteRoleHandler"
+     *
+     * SiteRoleHandler must be a subclass of SiteHandler
+     *
+     * If the SiteRoleHandler class isn't already loaded, then trys to
+     * load "lib/site/SiteRoleHandler.php", failing that, an
+     * InvalidArgumentException is thrown
+     *
+     * @param role string required usually something like 'web', 'web-lite',
+     * etc; will be camelcased with respect to dashes or underscores
+     * @return SiteHandler the handler
+     * @see SiteHandler
+     */
+    public function loadHandler($role)
+    {
+        assert(is_string($role));
+
+        $class = 'Site'.implode('',
+            array_map('ucfirst', preg_split('/[-_]/', $role))
+        ).'Handler';
+        if (! class_exists($class)) {
+            ob_start();
+            include_once "lib/site/$class.php";
+            @ob_end_clean();
+        }
+        if (! class_exists($class)) {
+            throw new InvalidArgumentException("no such handler $role");
+        }
+
+        assert(is_subclass_of($class, 'SiteHandler'));
+
+        return new $class($this);
+    }
+
+    /**
+     * Handles a site request for a given role by delegating to SiteRoleHandler
+     *
+     * Calls the handle method on the handler instance with any additional
+     * arguments passed after $role
+     *
+     * @param role string
+     * @return void
+     * @see loadHandler
+     */
+    final public function handle($role)
+    {
+        $args = array_slice(func_get_args(), 1);
+        try {
+            @ob_start();
+            $handler = $this->loadHandler($role);
+            call_user_func_array(array($handler, 'handle'), $args);
+            @ob_end_flush();
+        } catch (Exception $ex) {
+            @ob_end_clean();
+            if ($role == 'exception') {
+                // Looks like if we want something done right, we'll have to
+                // do it ourselves
+                $this->exceptionHandlerOfLastResort($ex, $args[0]);
+            } else {
+                $this->handle('exception', $ex);
+            }
+        }
+        $this->timingReport();
     }
 
     private $timing = false;
