@@ -258,12 +258,6 @@ abstract class Site extends CallbackManager
         $this->config->info($message);
     }
 
-    final public function doTests()
-    {
-        // TODO convert
-        require_once dirname(__FILE__) . '/tests.php';
-    }
-
     abstract public function onConfig();
 
     /**
