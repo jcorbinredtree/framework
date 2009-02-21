@@ -27,7 +27,6 @@
 
 require_once 'lib/util/CallbackManager.php';
 require_once 'lib/site/SiteHandler.php';
-require_once 'lib/application/Application.php';
 require_once 'Config.php';
 
 /**
@@ -257,34 +256,6 @@ abstract class Site extends CallbackManager
         $message .= ' <==';
 
         $this->config->info($message);
-    }
-
-    final public function doWeb()
-    {
-        try {
-            Application::startWeb();
-            $this->timingReport();
-        } catch (Exception $ex) {
-            try {
-                LifeCycleManager::onException($ex);
-
-                @ob_end_clean();
-
-                // stuff all output in case the broken catcher is broken
-                ob_start();
-
-                // The old page failed, create a new one
-                SitePage::setCurrent(new ExceptionPage($ex));
-                SitePage::renderCurrent();
-
-                // it managed to do its thing, so let it through
-                ob_end_flush();
-            } catch (Exception $rex) {
-                // Throw away any output that the failed exception handling created
-                @ob_end_clean();
-                $this->exceptionHandlerOfLastResort($req, $ex);
-            }
-        }
     }
 
     final public function doWebLite()
