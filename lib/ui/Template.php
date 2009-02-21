@@ -44,7 +44,9 @@ class Template extends PHPSTLTemplate
 
         // Stash away the current path for when we render
         global $current;
-        $this->currentPath = $current->path;
+        if (isset($current)) {
+            $this->currentPath = $current->path;
+        }
     }
 
     /**
@@ -54,7 +56,9 @@ class Template extends PHPSTLTemplate
     protected function renderSetup($args)
     {
         parent::renderSetup($args);
-        $this->oldAppPath = CurrentPath::set($this->currentPath);
+        if (isset($this->currentPath)) {
+            $this->oldAppPath = CurrentPath::set($this->currentPath);
+        }
     }
 
     /**
@@ -63,7 +67,9 @@ class Template extends PHPSTLTemplate
     protected function renderCleanup()
     {
         parent::renderCleanup();
-        CurrentPath::set($this->oldAppPath);
+        if (isset($this->currentPath)) {
+            CurrentPath::set($this->oldAppPath);
+        }
     }
 
     /**
