@@ -13,6 +13,16 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
 
+require_once 'lib/policies/ILocationPolicy.php';
+require_once 'lib/policies/ILinkPolicy.php';
+require_once 'lib/policies/ISecurityPolicy.php';
+require_once 'lib/policies/IThemePolicy.php';
+
+require_once 'lib/policies/DefaultLinkPolicy.php';
+require_once 'lib/policies/DefaultLocationPolicy.php';
+require_once 'lib/policies/DefaultSecurityPolicy.php';
+require_once 'lib/policies/DefaultThemePolicy.php';
+
 class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IThemePolicy
 {
     private static $instance = null;

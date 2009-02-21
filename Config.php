@@ -26,6 +26,7 @@
  */
 
 require_once 'Log.php';
+require_once 'lib/policies/PolicyManager.php';
 
 /**
  * Contains configuration information
