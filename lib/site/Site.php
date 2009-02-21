@@ -17,7 +17,7 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     UI
+ * @category     Site
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2009 Red Tree Systems, LLC
  * @license      MPL 1.1
@@ -25,11 +25,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-set_include_path(
-    get_include_path().
-    ':'.dirname(dirname(dirname(__FILE__))).
-    ':'.dirname(dirname(dirname(dirname(__FILE__)))).'/local'
-);
 require_once 'lib/util/CallbackManager.php';
 require_once "lib/application/Application.php";
 require_once 'Config.php';

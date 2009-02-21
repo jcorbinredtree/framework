@@ -19,6 +19,8 @@
  * this file is a compatability shim for old index.php implementations
  */
 
+require_once('SITE/framework/SiteLoader.php');
+
 class CompatSite extends Site
 {
     public function onConfig()

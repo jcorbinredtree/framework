@@ -25,7 +25,7 @@
     </Directory>
  */
 
-require_once('SITE/framework/lib/site/Site.php');
+require_once('SITE/framework/SiteLoader.php');
 
 class MySite extends Site
 {

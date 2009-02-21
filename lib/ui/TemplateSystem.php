@@ -52,8 +52,8 @@ class TemplateSystem
                 unset($copt['include_path']);
             }
 
-            array_push($inc, $config->absPath.'/SITE/local/templates');
-            array_push($inc, $config->fwAbsPath.'/lib/ui/templates');
+            array_push($inc, SiteLoader::$LocalPath.'/templates');
+            array_push($inc, SiteLoader::$FrameworkPath.'/lib/ui/templates');
 
             $policy = PolicyManager::getInstance();
 

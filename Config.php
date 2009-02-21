@@ -159,7 +159,7 @@ class Config
     private $sessionExpireTime = 0;
 
     private $templateOptions = array(
-        // Extra places to look for templates, entries relative to absPath
+        // Extra places to look for templates, entries relative to SiteLoader::$Base
         // 'include_path' => "path,path,..." -or- array('path','path',...)
 
         // Where templates are cached, default is determined by the policy
@@ -578,9 +578,8 @@ class Config
     public $absUri = null;
 
     /**
-     * The absolute path, such as /var/www/full/path/to/app. This value is
-     * calculated as dirname( __FILE__ ), and is what you want 99% of
-     * the time.
+     * DEPRECATED
+     * use SiteLoader::$Base instead
      *
      * @access public
      * @var string
@@ -588,7 +587,8 @@ class Config
     public $absPath = null;
 
     /**
-     * The absolute path of the framework
+     * DEPRECATED
+     * use SiteLoader::$FrameworkPath instead
      *
      * @var string
      */
@@ -621,10 +621,9 @@ class Config
             );
         }
 
-        $this->fwAbsPath = dirname(__FILE__);
+        $this->fwAbsPath = SiteLoader::$FrameworkPath;
+        $this->absPath = SiteLoader::$Base;
 
-        /* (kinda hacky) */
-        $this->absPath = dirname(dirname($this->fwAbsPath));
         $this->absUriPath = dirname($_SERVER['PHP_SELF']);
 
         $this->log =& Log::singleton('null');
@@ -648,7 +647,7 @@ class Config
      */
     public function getMailer()
     {
-        $mailerPath = "$this->fwAbsPath/extensions/phpmailer";
+        $mailerPath = SiteLoader::$Base."/extensions/phpmailer";
         include_once "$mailerPath/class.phpmailer.php";
 
         $mail = ($this->test ? new PhonyMailer() : new PHPMailer());
