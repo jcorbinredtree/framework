@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/ui/TemplateSystem.php';
+
 /**
  * Describes a page in a site (amazing)
  *

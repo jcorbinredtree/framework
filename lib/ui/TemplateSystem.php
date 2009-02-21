@@ -26,6 +26,12 @@
  * @link         http://www.redtreesystems.com
  */
 
+require_once 'extensions/php-stl/PHPSTL.php';
+require_once 'lib/ui/CurrentTemplateProvider.php';
+require_once 'lib/ui/FrameworkCompiler.php';
+require_once 'lib/ui/Template.php';
+require_once 'lib/ui/tags/UiTag.php';
+
 /**
  * Singleton php-stl template
  */
