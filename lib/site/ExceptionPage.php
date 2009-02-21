@@ -17,13 +17,15 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     UI
+ * @category     Site
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2009 Red Tree Systems, LLC
  * @license      MPL 1.1
  * @version      2.0
  * @link         http://framework.redtreesystems.com
  */
+
+require_once 'lib/site/SitePage.php';
 
 /**
  * ExceptionPage is the page used to display unhandled exceptions
