@@ -271,13 +271,6 @@ class Config
     private $defaultTheme = 'DefaultTheme';
 
     /**
-     * The default exception theme
-     *
-     * @var string
-     */
-    private $defaultExceptionTheme = 'DefaultExceptionTheme';
-
-    /**
      * Holds the user configuration values
      *
      * @var array
@@ -308,27 +301,11 @@ class Config
     }
 
     /**
-     * @return string
-     */
-    public function getDefaultExceptionTheme()
-    {
-        return $this->defaultExceptionTheme;
-    }
-
-    /**
      * @return String
      */
     public function getDefaultTheme()
     {
         return $this->defaultTheme;
-    }
-
-    /**
-     * @param string $defaultExceptionTheme
-     */
-    public function setDefaultExceptionTheme ($defaultExceptionTheme)
-    {
-        $this->defaultExceptionTheme = $defaultExceptionTheme;
     }
 
     /**
@@ -592,7 +569,7 @@ class Config
      *
      * @var string
      */
-    public $fwAbsPath = '';
+    public $fwAbsPath = null;
 
     /**
      * The absolute uri path, such as /full/path/to/app. This value is
@@ -634,8 +611,15 @@ class Config
      */
     public function initalize()
     {
-        $https = (isset($_SERVER['SERVER_PORT']) && ($_SERVER['SERVER_PORT'] == 443));
-        $this->absUri = 'http' . ($https ? 's' : '') . '://' . $_SERVER['SERVER_NAME'] . (($this->absUriPath == '/') ? '' : $this->absUriPath);
+        $proto = (
+            isset($_SERVER['SERVER_PORT']) &&
+            $_SERVER['SERVER_PORT'] == 443
+        ) ? 'https' : 'http';
+        $this->absUri = sprintf('%s://%s%s',
+            $proto,
+            $_SERVER['SERVER_NAME'],
+            ($this->absUriPath == '/' ? '' : $this->absUriPath)
+        );
     }
 
     /**

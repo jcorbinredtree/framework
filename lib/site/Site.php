@@ -26,7 +26,7 @@
  */
 
 require_once 'lib/util/CallbackManager.php';
-require_once "lib/application/Application.php";
+require_once 'lib/application/Application.php';
 require_once 'Config.php';
 
 /**
@@ -196,6 +196,10 @@ abstract class Site extends CallbackManager
             'Broken exception handler' => $rex,
             'Original exception' => $ex
         );
+        print
+            "<html><head>\n".
+            "  <title>Broken exception handler</title>\n".
+            "</head><body>\n\n";
         foreach ($l as $title => $e) {
             print "<p><h1>$title:</h1>\n";
             print $e->getMessage()." at ".htmlentities($e->getFile().':'.$e->getLine())."<br />\n";
@@ -215,8 +219,9 @@ abstract class Site extends CallbackManager
                 }
                 print "</td></tr>\n";
             }
-            print "</table></p>\n";
+            print "</table></p>\n\n";
         }
+        print "</body></html>\n";
     }
 }
 
