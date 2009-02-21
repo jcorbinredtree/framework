@@ -55,8 +55,21 @@ abstract class Site extends CallbackManager
      * Static management
      */
 
+    /**
+     * The site, really, no foolies
+     * @var Site
+     * @see Site::Site
+     */
     private static $TheSite;
 
+    /**
+     * Returns $TheSite
+     *
+     * Site::set must've been called firt to instantiate the site subclass
+     *
+     * @return Site
+     * @see Site::set
+     */
     final public static function Site()
     {
         if (! isset(self::$TheSite)) {
@@ -65,6 +78,12 @@ abstract class Site extends CallbackManager
         return self::$TheSite;
     }
 
+    /**
+     * Sets the site class in play and instantiates $TheSite
+     *
+     * @param class string classname, subclass of Site
+     * @return void
+     */
     final public static function set($class)
     {
         assert(is_subclass_of($class, 'Site'));
@@ -72,7 +91,7 @@ abstract class Site extends CallbackManager
     }
 
     /**
-     * Instances methods/properties
+     * Instance methods/properties
      */
 
     /**
@@ -80,6 +99,11 @@ abstract class Site extends CallbackManager
      */
     public $config;
 
+    /**
+     * Creates a new site:
+     *   starts the timing clock (if enabled)
+     *   sets up config
+     */
     private function __construct()
     {
         $start = array(microtime(true), 'start');
@@ -94,12 +118,17 @@ abstract class Site extends CallbackManager
         if ($this->timing) {
             array_push($this->timePoints, $start);
         }
-
     }
 
     private $timing = false;
     private $timePoints = array();
 
+    /**
+     * If timing is enabled, adds a named time point
+     *
+     * @param what string the label for this time point
+     * @return void
+     */
     public function timePoint($what)
     {
         if ($this->timing) {
@@ -108,6 +137,9 @@ abstract class Site extends CallbackManager
         }
     }
 
+    /**
+     * If timing is enabled, generates a final timing report
+     */
     public function timingReport()
     {
         if (! $this->timing) {
@@ -188,6 +220,9 @@ abstract class Site extends CallbackManager
      * yes it's got a long name
      * yes it's supposed to be a pain in the ass
      * no you shouldn't touch it
+     *
+     * @param rex Exception recursive exception (what went really wrong)
+     * @param ex Exception oriiginal exception (what went wrong)
      */
     final private function exceptionHandlerOfLastResort($rex, $ex)
     {
