@@ -16,31 +16,6 @@
 abstract class LifeCycleAdapter implements ILifeCycle
 {
     /**
-     * Called when an exception is generated from the system
-     *
-     * @param Exception $ex the exception
-     * @return void
-     */
-    public function onException(Exception &$ex)
-    {
-        global $config;
-
-        $config->info('onException');
-    }
-
-    /**
-     * Called when the application first starts
-     *
-     * @return void
-     */
-    public function onInitialize()
-    {
-        global $config;
-
-        $config->info("onInitialize");
-    }
-
-    /**
      * Invoked to parse GET info out of the URL.
      * Returning a true value stops the processor and leaves
      * the parsing up to you. Tread lightly!
@@ -54,18 +29,6 @@ abstract class LifeCycleAdapter implements ILifeCycle
         $config->info("onURLRewrite");
 
         return false;
-    }
-
-    /**
-     * The request has started, and basic initializations have been performed
-     *
-     * @return void
-     */
-    public function onRequestStart()
-    {
-        global $config;
-
-        $config->info("onRequestStart");
     }
 
     /**

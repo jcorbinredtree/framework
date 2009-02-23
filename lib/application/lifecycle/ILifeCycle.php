@@ -17,21 +17,6 @@
 interface ILifeCycle
 {
     /**
-     * Called when an exception is generated from the system
-     *
-     * @param Exception $ex the exception
-     * @return void
-     */
-    public function onException(Exception &$ex);
-
-    /**
-     * Called when the application first starts
-     *
-     * @return void
-     */
-    public function onInitialize();
-
-    /**
      * Invoked to parse GET and POST info out of the URL.
      * Returning a true value stops the processor and leaves
      * the parsing up to you. Tread lightly!
@@ -39,13 +24,6 @@ interface ILifeCycle
      * @return boolean true if you handled the operation
      */
     public function onURLRewrite();
-
-    /**
-     * The request has started, and basic initializations have been performed
-     *
-     * @return void
-     */
-    public function onRequestStart();
 
     /**
      * Called when an action is invoked. Returning a boolean value here will prevent the action

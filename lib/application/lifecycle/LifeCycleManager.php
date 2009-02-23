@@ -163,26 +163,9 @@ class LifeCycleManager
         self::instance()->unregister($item);
     }
 
-    public static function onInitialize()
-    {
-        self::instance()->dispatch('onInitialize');
-    }
-
-    public static function onException(Exception &$ex)
-    {
-        self::instance()->dispatch('onException', $ex);
-
-        return false;
-    }
-
     public static function onURLRewrite()
     {
         return self::instance()->delegate('onURLRewrite');
-    }
-
-    public static function onRequestStart()
-    {
-        self::instance()->dispatch('onRequestStart');
     }
 
     public static function onAction(ActionProvider &$provider, ActionDescription &$description)
