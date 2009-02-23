@@ -27,16 +27,49 @@
 
 require_once 'lib/application/Application.php';
 
+/**
+ * This is the primary site handler, it maps urls to components and pages
+ */
 class SiteWebHandler extends SiteHandler
 {
+    public function initialize()
+    {
+        parent::initialize();
+        Application::start();
+        Main::startSession();
+        $this->site->getDatabase();
+
+        $this->site->config->info(
+            "==> Framework v".$this->site->config->getVersion().
+            ": New Request from ".Params::server('REMOTE_ADDR').
+            ' - ' . Params::server('REQUEST_URI').
+            ' <=='
+        );
+    }
+
     /**
      * Handles the request
      *
      * @see Site::handle
      */
+    public function resolvePage()
+    {
+        Main::parseRequest();
+        Main::loadCurrent(); // Restores the Current object from the session if needed
+        Main::populateCurrent(); // fill out the current ticket
+
+        $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
+
+        Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
+        Main::restoreRequest(); // Restore any previously saved requests
+        Main::setLanguageAndTheme();
+    }
+
     public function sendResponse()
     {
-        Application::startWeb();
+        Main::render();
+
+        Application::end();
     }
 }
 
