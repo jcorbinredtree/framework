@@ -29,29 +29,27 @@ require_once 'lib/application/Application.php';
 
 class SiteWebLiteHandler extends SiteHandler
 {
+    public function initialize()
+    {
+        parent::initialize();
+        Application::start();
+        Main::startSession();
+        $this->site->getDatabase();
+    }
+
     /**
      * Handles the request
      *
      * @see Site::handle
      */
-    public function handle()
+    public function resolvePage()
     {
-        Application::start();
-
-        Main::startSession();
-
-        global $current;
-
-        $current = new Current();
-
-        $this->site->getDatabase();
-
-        $this->site->config->initalize();
-
         Main::setLanguageAndTheme();
 
         // set appropriate path
         CurrentPath::set(SiteLoader::$Base);
+
+        // TODO LitePage of some sort
     }
 }
 

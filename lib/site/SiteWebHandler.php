@@ -34,7 +34,7 @@ class SiteWebHandler extends SiteHandler
      *
      * @see Site::handle
      */
-    public function handle()
+    public function sendResponse()
     {
         Application::startWeb();
     }

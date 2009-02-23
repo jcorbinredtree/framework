@@ -34,17 +34,15 @@ class SiteCliHandler extends SiteHandler
      *
      * @see Site::handle
      */
-    public function handle()
+    public function initialize()
     {
-        global $_SESSION, $current;
+        parent::initialize();
 
+        global $_SESSION;
         $_SESSION = array();
 
         Application::start();
-
         $this->site->getDatabase();
-
-        $current = new Current();
     }
 }
 

@@ -35,10 +35,8 @@ class SiteTestsHandler extends SiteCliHandler
      *
      * @see Site::handle
      */
-    public function handle()
+    public function sendResponse()
     {
-        parent::handle();
-
         $this->site->config->setTestMode(true);
 
         if (! class_exists('UnitTestCase')) {

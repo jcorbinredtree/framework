@@ -27,6 +27,13 @@
 
 /**
  * Abstract base class for site request handlers
+ * Handler stages:
+ *   initialize
+ *   resolve
+ *   access
+ *   response
+ *   cleanup
+ *
  */
 abstract class SiteHandler
 {
@@ -47,22 +54,55 @@ abstract class SiteHandler
     }
 
     /**
-     * Handles the request
+     * Sets per request arguments, these are additional arguments passed to
+     * Site->handle.
      *
-     * Subclasses must override this to handle requests
+     * The default implementation does nothing, if a subclass cares about extra
+     * arguments, it needs to override this method
      *
-     * Gets any additional arguments passed to Site::handle
-     *
-     * @see Site::handle
+     * @param args array
      */
-    public function handle()
-    // NOTE: this method is not declared abstract on purpose so that subclass
-    // methods can declare whatever argumetns they may want; however this
-    // method is effectively abstract, subclasses must override it
+    public function setArguments($args)
     {
-        throw new RuntimeException(
-            get_class($this)." doesn't implement handle"
-        );
+    }
+
+    /**
+     * @return void
+     */
+    public function initialize()
+    {
+        // TODO SitePage will supercede this eventually
+        global $current;
+        $current = new Current();
+
+        $this->site->config->initalize();
+    }
+
+    /**
+     * @return void
+     */
+    public function cleanup()
+    {
+        global $current;
+        unset($current);
+    }
+
+    /**
+     * @return SitePage
+     */
+    public function resolvePage()
+    {
+        return null;
+    }
+
+    /**
+     * @return void
+     */
+    public function sendResponse()
+    {
+        if (isset($this->site->page)) {
+            $this->site->page->render();
+        }
     }
 }
 

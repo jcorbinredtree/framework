@@ -29,19 +29,19 @@ require_once 'lib/site/ExceptionPage.php';
 
 class SiteExceptionHandler extends SiteHandler
 {
-    /**
-     * Handles the request
-     *
-     * @see Site::handle
-     */
-    public function handle(Exception $ex)
-    {
-        global $current;
-        $current = new Current();
+    protected $exception;
 
+    public function setArguments($args)
+    {
+        assert(count($args) > 0);
+        assert(is_a($args[0], 'Exception'));
+        $this->exception = $args[0];
+    }
+
+    public function resolvePage()
+    {
         // The old page failed, create a new one
-        SitePage::setCurrent(new ExceptionPage($ex));
-        SitePage::renderCurrent();
+        return new ExceptionPage($this->exception);
     }
 }
 
