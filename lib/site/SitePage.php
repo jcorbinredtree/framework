@@ -39,6 +39,12 @@ require_once 'lib/ui/TemplateSystem.php';
 class SitePage extends CallbackManager
 {
     /**
+     * The component responsible for this page, if any
+     * @var Component
+     */
+    public $component;
+
+    /**
      * The mime type of the page
      *
      * @var string
@@ -352,6 +358,9 @@ class SitePage extends CallbackManager
     final public function render()
     {
         $this->dispatchCallback('prerender', $this);
+        if (isset($this->component)) {
+            $this->component->render();
+        }
         $this->processBuffers();
         print $this->onRender();
         $this->dispatchCallback('postrender', $this);
