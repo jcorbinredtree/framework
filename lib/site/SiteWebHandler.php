@@ -55,19 +55,33 @@ class SiteWebHandler extends SiteHandler
     public function resolvePage()
     {
         Main::parseRequest();
+        if (! $this->site->config->targetVersionOver(3, 0, 76)) {
+            $page = new LayoutDescription();
+        } else {
+            $page = new HTMLPage();
+        }
+
         Main::loadCurrent(); // Restores the Current object from the session if needed
         Main::populateCurrent(); // fill out the current ticket
+
+        $page->setData('isPopup', Params::request(AppConstants::POPUP_KEY, false));
+
+        global $current;
+        $page->component = $current->component;
 
         $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
 
         Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
         Main::restoreRequest(); // Restore any previously saved requests
         Main::setLanguageAndTheme();
+
+        return $page;
     }
 
     public function sendResponse()
     {
-        Main::render();
+        $page = Site::getPage();
+        $page->render();
 
         Application::end();
     }

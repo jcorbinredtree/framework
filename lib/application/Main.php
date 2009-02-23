@@ -206,27 +206,6 @@ class Main
             }
         }
     }
-
-    /**
-     * Render the current setup to the user
-     *
-     * @return void
-     */
-    public static function render()
-    {
-        global $config, $current;
-
-        if (! $config->targetVersionOver(3, 0, 76)) {
-            Site::Site()->page = new LayoutDescription();
-        } else {
-            Site::Site()->page = new HTMLPage();
-        }
-        $page = Site::getPage();
-
-        $current->component->render();
-
-        $page->render();
-    }
 }
 
 ?>
