@@ -81,7 +81,7 @@ class ExceptionPage extends SitePage
 
     protected function getTemplate()
     {
-        return  TemplateSystem::load('page/exception.xml');
+        return TemplateSystem::load('page/exception.xml');
     }
 
     protected function getTemplateArguments()
