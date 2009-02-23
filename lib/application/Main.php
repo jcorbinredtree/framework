@@ -223,43 +223,7 @@ class Main
         }
         $page = Site::getPage();
 
-        /*
-         * +====================+
-         * |  VIEW (cacheable)  <-------------^------------<
-         * +====================+             |            |
-         *                                 NO |            |
-         * +====================+     +==============+     |
-         * |      VALIDATE      |-----> Return True? |     |
-         * +====================+     +==============+     |
-         *                                    |            |
-         * +====================+             |            |
-         * |       PERFORM      <-------------v YES        |
-         * +=========|==========+                          |
-         *           |                                     |
-         * +=========v==========+                          |
-         * |    Return False?   |--------------------------^ YES
-         * +====================+
-         */
-        switch ($current->component->stage) {
-            default:
-            case Stage::VIEW:
-                Application::performAction($current->component, $current->component->action, $current->component->stage);
-                break;
-            case Stage::VALIDATE:
-                if (!Application::call($current->component, $current->component->action, Stage::VALIDATE)) {
-                    Application::performAction($current->component, $current->component->action, Stage::VIEW);
-                    break;
-                }
-            case Stage::PERFORM:
-                if (!Application::call($current->component, $current->component->action, Stage::PERFORM)) {
-                    Application::performAction($current->component, $current->component->action, Stage::VIEW);
-                }
-
-                break;
-        }
-
-
-        $page->addToBuffer('content', $current->component);
+        $current->component->render();
 
         $page->render();
     }

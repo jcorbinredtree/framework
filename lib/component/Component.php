@@ -248,6 +248,46 @@ abstract class Component extends ActionProvider
         );
     }
 
+    /*
+     * +====================+
+     * |  VIEW (cacheable)  <-------------^------------<
+     * +====================+             |            |
+     *                                 NO |            |
+     * +====================+     +==============+     |
+     * |      VALIDATE      |-----> Return True? |     |
+     * +====================+     +==============+     |
+     *                                    |            |
+     * +====================+             |            |
+     * |       PERFORM      <-------------v YES        |
+     * +=========|==========+                          |
+     *           |                                     |
+     * +=========v==========+                          |
+     * |    Return False?   |--------------------------^ YES
+     * +====================+
+     */
+    public function render()
+    {
+        switch ($this->stage) {
+            default:
+            case Stage::VIEW:
+                Application::performAction($this, $this->action, $this->stage);
+                break;
+            case Stage::VALIDATE:
+                if (!Application::call($this, $this->action, Stage::VALIDATE)) {
+                    Application::performAction($this, $this->action, Stage::VIEW);
+                    break;
+                }
+            case Stage::PERFORM:
+                if (!Application::call($this, $this->action, Stage::PERFORM)) {
+                    Application::performAction($this, $this->action, Stage::VIEW);
+                }
+                break;
+        }
+
+        $page = Site::getPage();
+        $page->addToBuffer('content', $this);
+    }
+
     /**
      * DEPRECATED, use HTMLPage->addAsset(...)
      */
