@@ -32,9 +32,9 @@ require_once 'Config.php';
 /**
  * A site has:
  *   pages
+ *   a database
  *
  * TODO Coming soon to a Site near you:
- *   database
  *   configuration
  *   components
  *   a life
@@ -259,6 +259,21 @@ abstract class Site extends CallbackManager
     }
 
     abstract public function onConfig();
+
+    /**
+     * Returns the database interface for the site
+     */
+    public function getDatabase()
+    {
+        // TODO move away from using a global, this should be consumed
+        // through the Site singleton
+        global $database;
+        if (!isset($database)) {
+            $database = new Database();
+            $database->log = $database->time = $this->config->isDebugMode();
+        }
+        return $database;
+    }
 
     /**
      * yes it's got a long name

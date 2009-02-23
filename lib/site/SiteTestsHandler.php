@@ -38,14 +38,13 @@ class SiteTestsHandler extends SiteHandler
     {
         $this->site->config->setTestMode(true);
 
-        global $_SESSION, $current, $database;
+        global $_SESSION, $current;
 
         $_SESSION = array();
 
         Application::start();
 
-        $database = new Database($this->site->config->getDatabaseInfo());
-        $database->log = $database->time = true;
+        $this->site->getDatabase();
 
         $current = new Current();
 

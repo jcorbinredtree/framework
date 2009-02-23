@@ -40,12 +40,11 @@ class SiteWebLiteHandler extends SiteHandler
 
         Main::startSession();
 
-        global $current, $database;
+        global $current;
 
         $current = new Current();
 
-        $database = new Database();
-        $database->log = $database->time = $this->site->config->isDebugMode();
+        $this->site->getDatabase();
 
         $this->site->config->initalize();
 
