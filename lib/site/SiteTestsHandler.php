@@ -26,8 +26,9 @@
  */
 
 require_once 'lib/application/Application.php';
+require_once 'lib/site/SiteCliHandler.php';
 
-class SiteTestsHandler extends SiteHandler
+class SiteTestsHandler extends SiteCliHandler
 {
     /**
      * Handles the request
@@ -36,17 +37,9 @@ class SiteTestsHandler extends SiteHandler
      */
     public function handle()
     {
+        parent::handle();
+
         $this->site->config->setTestMode(true);
-
-        global $_SESSION, $current;
-
-        $_SESSION = array();
-
-        Application::start();
-
-        $this->site->getDatabase();
-
-        $current = new Current();
 
         if (! class_exists('UnitTestCase')) {
             require_once SiteLoader::$FrameworkPath.
