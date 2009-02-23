@@ -36,6 +36,9 @@ class SiteExceptionHandler extends SiteHandler
      */
     public function handle(Exception $ex)
     {
+        global $current;
+        $current = new Current();
+
         // The old page failed, create a new one
         SitePage::setCurrent(new ExceptionPage($ex));
         SitePage::renderCurrent();
