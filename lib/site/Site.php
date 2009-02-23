@@ -114,6 +114,19 @@ abstract class Site extends CallbackManager
     }
 
     /**
+     * Returns the site config, convenience for Site::Site()->config
+     * @return Config
+     */
+    final public static function getConfig()
+    {
+        $site = self::Site();
+        if (! isset($site->config)) {
+            throw new RuntimeException('no site config');
+        }
+        return $site->page;
+    }
+
+    /**
      * Instance methods/properties
      */
 
