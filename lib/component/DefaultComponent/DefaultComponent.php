@@ -40,7 +40,7 @@ class DefaultComponent extends Component
 
     public function onHome($stage)
     {
-        $page = SitePage::getCurrent();
+        $page = Site::getPage();
         $page->title = 'Home Page';
 
         $this->viewTemplate('view/home.xml', array(

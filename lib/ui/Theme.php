@@ -47,12 +47,12 @@ abstract class Theme extends BufferedObject
     /**
      * Creats a theme object for a page
      *
-     * @param page HTMLPage optional, defaults to SitePage::getCurrent
+     * @param page HTMLPage optional, defaults to Site::getPage
      */
     public function __construct($page=null)
     {
         if (! isset($page)) {
-            $page = SitePage::getCurrent();
+            $page = Site::getPage();
         } elseif (! is_a($page, 'HTMLPage')) {
             throw new InvalidArgumentException('Not a HTMLPage');
         }

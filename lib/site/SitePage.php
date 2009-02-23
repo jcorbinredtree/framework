@@ -36,59 +36,8 @@ require_once 'lib/ui/TemplateSystem.php';
  *
  * @package Site
  */
-
 class SitePage extends CallbackManager
 {
-    /**
-     * Holds the current page
-     */
-    private static $TheCurrentPage = null;
-
-    /**
-     * Returns the current page, throws a RuntimeException if there is none
-     *
-     * @param nullok boolean default false, if true null will be returned
-     * instead of throwing an exception when no curret page is set
-     *
-     * @return SitePage
-     */
-    public static function getCurrent($nullok=false)
-    {
-        if (! isset(self::$TheCurrentPage)) {
-            if ($nullok) {
-                return null;
-            } else {
-                throw new RuntimeException('no current page');
-            }
-        }
-        return self::$TheCurrentPage;
-    }
-
-    /**
-     * Sets the current page
-     *
-     * @param page SitePage the new current page or null to clear
-     *
-     * @return SitePage the old current page
-     */
-    public static function setCurrent(SitePage $page)
-    {
-        $old = self::$TheCurrentPage;
-        self::$TheCurrentPage = $page;
-        return $old;
-    }
-
-    /**
-     * Renders the current page
-     *
-     * @see render, getCurrent
-     * @return void
-     */
-    final static public function renderCurrent()
-    {
-        self::getCurrent()->render();
-    }
-
     /**
      * The mime type of the page
      *
@@ -119,12 +68,7 @@ class SitePage extends CallbackManager
     /**
      * Constructor
      *
-     * Creates a new WebPage.
-     *
-     * While this is publically accessible for flexibility, this should be
-     * sparingly used; you likely meant to call the static method Current.
-     *
-     * @see Current
+     * Creates a new SitePage.
      *
      * @param type string the type of the page, defaults to 'text/plain'
      */
@@ -208,7 +152,6 @@ class SitePage extends CallbackManager
         }
 
         $this->renderingBuffer = $name;
-        $oldPage = self::setCurrent($this);
 
         if ($asArray) {
             $ret = array();
@@ -224,7 +167,6 @@ class SitePage extends CallbackManager
         }
 
         $this->renderingBuffer = null;
-        self::setCurrent($oldPage);
 
         return $ret;
     }

@@ -127,6 +127,19 @@ abstract class Site extends CallbackManager
     }
 
     /**
+     * Returns the current SitePage, convenience for Site::Site()->page
+     * @return SitePage
+     */
+    final public static function getPage()
+    {
+        $site = self::Site();
+        if (! isset($site->page)) {
+            throw new RuntimeException('no current site page');
+        }
+        return $site->page;
+    }
+
+    /**
      * Instance methods/properties
      */
 
@@ -134,6 +147,14 @@ abstract class Site extends CallbackManager
      * @var Config
      */
     public $config;
+
+    /**
+     * This member is meant to supercede the old $current global, it should
+     * embody all aspects of the current request/response context
+     *
+     * @var SitePage
+     */
+    public $page;
 
     /**
      * Creates a new site:

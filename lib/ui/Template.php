@@ -103,7 +103,7 @@ class Template extends PHPSTLTemplate
             'Template->getThemeImage',
             '$page->theme->getImage'
         );
-        $page = SitePage::getCurrent();
+        $page = Site::getPage();
         if (! is_a($page, 'HTMLPage')) {
             throw new RuntimeException('Only html pages are themed');
         }
@@ -119,7 +119,7 @@ class Template extends PHPSTLTemplate
             'Template->getThemeIcon',
             '$page->theme->getIcon'
         );
-        $page = SitePage::getCurrent();
+        $page = Site::getPage();
         if (! is_a($page, 'HTMLPage')) {
             throw new RuntimeException('Only html pages are themed');
         }

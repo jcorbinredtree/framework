@@ -53,7 +53,7 @@ class ExceptionPage extends SitePage
      *
      * @var SitePage
      */
-    public $oldPage;
+    public $oldPage=null;
 
     /**
      * Constructor
@@ -69,13 +69,13 @@ class ExceptionPage extends SitePage
     {
         parent::__construct('text/html');
 
-        if (! isset($oldPage)) {
-            $oldPage = SitePage::getCurrent(true);
-            if ($oldPage === $this) {
-                $oldPage = null;
+        $this->oldPage = $oldPage;
+        if (! isset($this->oldPage)) {
+            $site = Site::Site();
+            if (isset($site->page) && $site->page !== $this) {
+                $this->oldPage = $site->page;
             }
         }
-        $this->oldPage = $oldPage;
         $this->exception = $ex;
     }
 

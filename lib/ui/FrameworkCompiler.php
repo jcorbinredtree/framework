@@ -44,7 +44,7 @@ class FrameworkCompiler extends PHPSTLCompiler
         $this->write("<?php if (isset(\$this->page)) {\n");
         $this->write("  \$page = \$this->page;\n");
         $this->write("} else {\n");
-        $this->write("  \$page = SitePage::getCurrent();\n");
+        $this->write("  \$page = Site::getPage();\n");
         $this->write('} ?>');
 
         $doc = $this->dom->documentElement;
