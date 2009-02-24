@@ -25,6 +25,7 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/util/CallbackManager.php';
 require_once 'lib/ui/TemplateSystem.php';
 
 /**
@@ -80,9 +81,9 @@ class SitePage extends CallbackManager
      */
     public function __construct($type='text/plain')
     {
-        $this->type = $type;
         $this->buffers = array();
         $this->data = array();
+        $this->type = $type;
     }
 
     /**
@@ -358,24 +359,24 @@ class SitePage extends CallbackManager
     final public function render()
     {
         $this->dispatchCallback('prerender', $this);
+
         if (isset($this->component)) {
             $this->component->render();
         }
         $this->processBuffers();
         print $this->onRender();
+
         $this->dispatchCallback('postrender', $this);
     }
 
     /**
      * Generates page output
      *
-     * The default implementation attempts to load a template based on the page
-     * type and render through it.
-     *
-     * The template is processed with its 'page' property assigned to this page
-     * instance.
+     * The default implementation attempts to load the $template property
+     * through the TemplateSystem and render through it
      *
      * @return string
+     * @see $template, getTemplateArguments
      */
     protected function onRender()
     {
@@ -403,6 +404,8 @@ class SitePage extends CallbackManager
     /**
      * Returns an associative array contaning arguments with which to process
      * the page template, used by the default onRender implementation.
+     *
+     * The default implementation simply addes a 'page' entry for $this
      *
      * @return array
      */

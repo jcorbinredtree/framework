@@ -230,19 +230,14 @@ abstract class Site extends CallbackManager
             @ob_start();
             $handler = $this->loadHandler($role);
             $handler->setArguments($args);
-
             $handler->initialize();
             $this->dispatchCallback('onHandlerInitialize', $handler);
-
             $this->page = $handler->resolvePage();
             $this->dispatchCallback('onResolvePage', $this, $this->page);
-
             $this->dispatchCallback('onAccessCheck', $this);
-
             $this->dispatchCallback('onRequestStart', $this);
             $handler->sendResponse();
             $this->dispatchCallback('onRequestSent', $this);
-
             $this->dispatchCallback('onHandlerCleanup', $handler);
             $handler->cleanup();
             @ob_end_flush();

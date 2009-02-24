@@ -59,6 +59,7 @@ class SiteWebHandler extends SiteHandler
 
         global $current;
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
+        $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
 
         // TODO better component determination
         $componentClass = Params::request(AppConstants::COMPONENT_KEY);
@@ -67,8 +68,6 @@ class SiteWebHandler extends SiteHandler
         }
         $current->component = Component::getInstance($componentClass);
         $page = $current->component->createPage();
-
-        $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
 
         Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
         Main::restoreRequest(); // Restore any previously saved requests
