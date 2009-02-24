@@ -219,6 +219,24 @@ abstract class Site extends CallbackManager
      * Calls the handle method on the handler instance with any additional
      * arguments passed after $role
      *
+     * Handling process:
+     *   Load Handler                            role => handler
+     *   handler->setArguments                   args -> handler
+     *   handler->initialize                     handler stage
+     *   dispatch: onHandlerInitialize           callback
+     *   handler->resolvePaage                   handler stage
+     *   Got a page?
+     *     yes: continue
+     *     no: page = new NotFoundPage
+     *   dispatch: onPageResolved                callback
+     *   dispatch: onAccessCheck                 callback
+     *   handler->processPage                    handler stage
+     *   dispatch: onRequestStart                callback
+     *   handler->sendResponse                   handler stage
+     *   dispatch: onRequestSent                 callback
+     *   dispatch: onHandlerCleanup              callback
+     *   $andler->cleanup                        handler stage
+     *
      * @param role string
      * @return void
      * @see loadHandler
