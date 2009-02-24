@@ -238,6 +238,7 @@ abstract class Site extends CallbackManager
             }
             $this->dispatchCallback('onPageResolved', $this);
             $this->dispatchCallback('onAccessCheck', $this);
+            $handler->processPage();
             $this->dispatchCallback('onRequestStart', $this);
             $handler->sendResponse();
             $this->dispatchCallback('onRequestSent', $this);

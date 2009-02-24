@@ -94,6 +94,7 @@ class SiteWebHandler extends SiteHandler
             $policy->parse();
         }
 
+        // TODO implement this in SitePage
         global $current;
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
         $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
@@ -102,16 +103,17 @@ class SiteWebHandler extends SiteHandler
         if (isset($componentClass)) {
             $page = Component::createComponentPage($componentClass);
             $current->component = $page->component;
-        }
-
-        if (isset($page)) {
-            Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
-            Main::restoreRequest(); // Restore any previously saved requests
-            Main::setLanguageAndTheme();
             return $page;
         } else {
             return null;
         }
+    }
+
+    public function processPage()
+    {
+        Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
+        Main::restoreRequest(); // Restore any previously saved requests
+        Main::setLanguageAndTheme();
     }
 
     public function cleanup()
