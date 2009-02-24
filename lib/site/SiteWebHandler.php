@@ -55,12 +55,6 @@ class SiteWebHandler extends SiteHandler
     public function resolvePage()
     {
         Main::parseRequest();
-        if (! $this->site->config->targetVersionOver(3, 0, 76)) {
-            $page = new LayoutDescription();
-        } else {
-            $page = new HTMLPage();
-        }
-
         Main::loadCurrent(); // Restores the Current object from the session if needed
 
         global $current;
@@ -72,8 +66,7 @@ class SiteWebHandler extends SiteHandler
             $componentClass = $this->site->config->getDefaultComponent();
         }
         $current->component = Component::getInstance($componentClass);
-        $page->setData('isPopup', Params::request(AppConstants::POPUP_KEY, false));
-        $page->component = $current->component;
+        $page = $current->component->createPage();
 
         $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
 

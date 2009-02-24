@@ -113,6 +113,22 @@ abstract class Component extends ActionProvider
         }
     }
 
+    /**
+     * Constructs the SitePage for this component
+     */
+    public function createPage()
+    {
+        if (! $this->site->config->targetVersionOver(3, 0, 76)) {
+            $page = new LayoutDescription();
+        } else {
+            $page = new HTMLPage();
+        }
+
+        $page->component = $this;
+
+        return $page;
+    }
+
     public function onInitialize()
     {
     }
