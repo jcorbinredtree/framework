@@ -233,6 +233,9 @@ abstract class Site extends CallbackManager
             $handler->initialize();
             $this->dispatchCallback('onHandlerInitialize', $handler);
             $this->page = $handler->resolvePage();
+            if (! isset($this->page)) {
+                $this->page = new NotFoundPage();
+            }
             $this->dispatchCallback('onPageResolved', $this);
             $this->dispatchCallback('onAccessCheck', $this);
             $this->dispatchCallback('onRequestStart', $this);

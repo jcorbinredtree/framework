@@ -1,0 +1,23 @@
+<template
+  xmlns:core="class://CoreTag"
+  xmlns:ui="class://UiTag">
+
+<core:set var="status" value="${page.headers.getStatus()}" />
+<core:doctype id="xhtml 1.1" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>${=status}</title>
+  </head>
+  <body>
+
+<div id="main">
+  <h1>${=status}</h1>
+  <h2>@{=$_SERVER['REQUEST_URI']}</h2>
+
+  <ui:warnings />
+  <ui:notices />
+</div>
+
+  </body>
+</html>
+</template>
