@@ -233,7 +233,7 @@ abstract class Site extends CallbackManager
             $handler->initialize();
             $this->dispatchCallback('onHandlerInitialize', $handler);
             $this->page = $handler->resolvePage();
-            $this->dispatchCallback('onResolvePage', $this, $this->page);
+            $this->dispatchCallback('onPageResolved', $this);
             $this->dispatchCallback('onAccessCheck', $this);
             $this->dispatchCallback('onRequestStart', $this);
             $handler->sendResponse();
