@@ -67,15 +67,11 @@ class SiteWebHandler extends SiteHandler
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
 
         // TODO better component determination
-        $componentClass = Params::request(AppConstants::COMPONENT_KEY)
-            ? Params::request(AppConstants::COMPONENT_KEY)
-            : $this->site->config->getDefaultComponent();
-
-        $current->component = Component::getInstance($componentClass);
-        if (! $current->component) {
-            throw new RuntimeException("Unknown component $componentClass");
+        $componentClass = Params::request(AppConstants::COMPONENT_KEY);
+        if (! isset($componentClass)) {
+            $componentClass = $this->site->config->getDefaultComponent();
         }
-
+        $current->component = Component::getInstance($componentClass);
         $page->setData('isPopup', Params::request(AppConstants::POPUP_KEY, false));
         $page->component = $current->component;
 

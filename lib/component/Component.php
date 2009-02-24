@@ -50,17 +50,27 @@ abstract class Component extends ActionProvider
     /*
      * Returns the singleton instance of the given component class
      *
-     * @param c string class name
+     * If the class does not exist, trys to load lib/component/CLASS/CLASS.php
      *
+     * @param class string class name
      * @return Object a sub class of Component
      */
-    final public static function getInstance($c)
+    final public static function getInstance($class)
     {
-        if (! array_key_exists($c, Component::$instances)) {
-            Component::$instances[$c] = new $c();
+        if (! array_key_exists($class, Component::$instances)) {
+            if (! class_exists($class)) {
+                @ob_start();
+                include_once "lib/component/$class/$class.php";
+                if (! class_exists($class)) {
+                    $mess = ob_get_clean();
+                    throw new RuntimeException("no such component $class: $mess");
+                }
+                @ob_end_clean();
+            }
+            Component::$instances[$class] = new $class();
         }
 
-        return Component::$instances[$c];
+        return Component::$instances[$class];
     }
 
     public $stage;
