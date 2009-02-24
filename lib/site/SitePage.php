@@ -53,6 +53,20 @@ class SitePage extends CallbackManager
     protected $type;
 
     /**
+     * The template resource sting to use to render this page
+     *
+     * The default implementation defaults to "page/type.xml" where the "type"
+     * portion is the $type property with all '/'s replaced with '_'s.
+     *
+     * This can be null if a subclass does not wish to use a template-based
+     * approach
+     *
+     * @var string
+     * @see onRender
+     */
+    protected $template;
+
+    /**
      * Named page content buffers such as 'head', 'top', 'left', etc.
      */
     private $buffers;
@@ -78,12 +92,26 @@ class SitePage extends CallbackManager
      * Creates a new SitePage.
      *
      * @param type string the type of the page, defaults to 'text/plain'
+     * @param template the template resource string used to render this page
+     * if set to the false value, then the $template property will not be set
+     * @see $template
      */
-    public function __construct($type='text/plain')
+    public function __construct($type='text/plain', $template=null)
     {
         $this->buffers = array();
         $this->data = array();
         $this->type = $type;
+        if (isset($template)) {
+            if ($template === false) {
+                $this->template = null;
+            } else {
+                $this->template = $template;
+            }
+        } else {
+            $this->template = sprintf('page/%s.xml',
+                preg_replace('/\//', '_', $this->type)
+            );
+        }
     }
 
     /**
@@ -373,32 +401,20 @@ class SitePage extends CallbackManager
      * Generates page output
      *
      * The default implementation attempts to load the $template property
-     * through the TemplateSystem and render through it
+     * through the TemplateSystem and render through it, or if the $template
+     * property is not set, simply returns the 'content' buffer
      *
      * @return string
      * @see $template, getTemplateArguments
      */
     protected function onRender()
     {
-        return $this->getTemplate()->render($this->getTemplateArguments());
-    }
-
-    /**
-     * Returns the template used to render the page by the default onRender
-     * implementation.
-     *
-     * Default implementation builds a template resource string using:
-     *   "page/type.xml" where type is the $type property with all '/'s replaced by '_'s.
-     *
-     * And then asks the TemplateSystem to load that resource
-     *
-     * @return PHPSTLTemplate
-     * @see $type
-     */
-    protected function getTemplate()
-    {
-        $type = preg_replace('/\//', '_', $this->type);
-        return TemplateSystem::load("page/$type.xml");
+        if (isset($this->template)) {
+            $template = TemplateSystem::load($this->template);
+            return $template->render($this->getTemplateArguments());
+        } else {
+            return $this->getBuffer('content');
+        }
     }
 
     /**

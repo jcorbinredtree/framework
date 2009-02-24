@@ -67,7 +67,7 @@ class ExceptionPage extends SitePage
      */
     public function __construct(Exception $ex, $oldPage=null)
     {
-        parent::__construct('text/html');
+        parent::__construct('text/html', 'page/exception.xml');
 
         $this->oldPage = $oldPage;
         if (! isset($this->oldPage)) {
@@ -77,11 +77,6 @@ class ExceptionPage extends SitePage
             }
         }
         $this->exception = $ex;
-    }
-
-    protected function getTemplate()
-    {
-        return TemplateSystem::load('page/exception.xml');
     }
 
     protected function getTemplateArguments()
