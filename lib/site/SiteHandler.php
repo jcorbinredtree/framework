@@ -67,6 +67,8 @@ abstract class SiteHandler
     }
 
     /**
+     * Sets up the environment
+     *
      * @return void
      */
     public function initialize()
@@ -79,6 +81,8 @@ abstract class SiteHandler
     }
 
     /**
+     * Cleanps up the request, called after page output has been flushed
+     *
      * @return void
      */
     public function cleanup()
@@ -88,6 +92,11 @@ abstract class SiteHandler
     }
 
     /**
+     * Called by Site to resolve the current request into a page
+     *
+     * If the handler returns null, then the normal SitePageProvider delegation
+     * goes into effect
+     *
      * @return SitePage
      */
     public function resolvePage()
@@ -96,6 +105,9 @@ abstract class SiteHandler
     }
 
     /**
+     * Flushes output to the browser
+     *
+     * The default implementation renders the current SitePage
      * @return void
      */
     public function sendResponse()
