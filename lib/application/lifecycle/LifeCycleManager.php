@@ -163,11 +163,6 @@ class LifeCycleManager
         self::instance()->unregister($item);
     }
 
-    public static function onURLRewrite()
-    {
-        return self::instance()->delegate('onURLRewrite');
-    }
-
     public static function onAction(ActionProvider &$provider, ActionDescription &$description)
     {
         return self::instance()->delegateReturn('onAction', $provider, $description);

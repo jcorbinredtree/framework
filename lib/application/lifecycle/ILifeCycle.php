@@ -17,15 +17,6 @@
 interface ILifeCycle
 {
     /**
-     * Invoked to parse GET and POST info out of the URL.
-     * Returning a true value stops the processor and leaves
-     * the parsing up to you. Tread lightly!
-     *
-     * @return boolean true if you handled the operation
-     */
-    public function onURLRewrite();
-
-    /**
      * Called when an action is invoked. Returning a boolean value here will prevent the action
      * from being called, and pass your value through to the framework. There are no guarantees
      * about the chain of events. Your implementation may or may not get called depending on

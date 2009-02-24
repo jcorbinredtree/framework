@@ -16,22 +16,6 @@
 abstract class LifeCycleAdapter implements ILifeCycle
 {
     /**
-     * Invoked to parse GET info out of the URL.
-     * Returning a true value stops the processor and leaves
-     * the parsing up to you. Tread lightly!
-     *
-     * @return boolean true if you handled the operation
-     */
-    public function onURLRewrite()
-    {
-        global $config;
-
-        $config->info("onURLRewrite");
-
-        return false;
-    }
-
-    /**
      * Called when an action is invoked. Returning a boolean value here will prevent the action
      * from being called, and pass your value through to the framework.
      *

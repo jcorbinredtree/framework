@@ -34,9 +34,8 @@ class Main
     /**
      * Parses the request and populates the $_GET and $_REQUEST arrays. The order of precedence is as follows:
      *
-     * 1.) An ILifeCycle implementation handling onURLRewrite()
-     * 2.) A matching key in $config->getUrlMappings()
-     * 3.) The ILinkPolicy::parse() method
+     * 1.) A matching key in $config->getUrlMappings()
+     * 2.) The ILinkPolicy::parse() method
      *
      * @return void
      */
@@ -44,42 +43,39 @@ class Main
     {
         global $config;
 
-        $handledUrl = LifeCycleManager::onURLRewrite();
-        if (!$handledUrl) {
-            $mappings = $config->getUrlMappings();
-            $url = preg_replace('|^' . $config->absUriPath . '[/]?|i', '', Params::server('REQUEST_URI'));
-            if ($url) {
-                foreach ($mappings as $key => $map) {
-                    if ($key == $url) {
-                        $_REQUEST[AppConstants::COMPONENT_KEY] = $_GET[AppConstants::COMPONENT_KEY] = $map[0];
-                        $_REQUEST[AppConstants::ACTION_KEY] = $_GET[AppConstants::ACTION_KEY] = $map[1];
-                        if (count($map) > 2) {
-                            $sets = explode(',', 'null,' . $map[2]);
-                            foreach ($sets as $set) {
-                                if ($set == 'null') {
-                                    continue;
-                                }
-
-                                $args = explode('=', $set);
-
-                                $_REQUEST[$args[0]] = $_GET[$args[0]] = $args[1];
+        $mappings = $config->getUrlMappings();
+        $url = preg_replace('|^' . $config->absUriPath . '[/]?|i', '', Params::server('REQUEST_URI'));
+        if ($url) {
+            foreach ($mappings as $key => $map) {
+                if ($key == $url) {
+                    $_REQUEST[AppConstants::COMPONENT_KEY] = $_GET[AppConstants::COMPONENT_KEY] = $map[0];
+                    $_REQUEST[AppConstants::ACTION_KEY] = $_GET[AppConstants::ACTION_KEY] = $map[1];
+                    if (count($map) > 2) {
+                        $sets = explode(',', 'null,' . $map[2]);
+                        foreach ($sets as $set) {
+                            if ($set == 'null') {
+                                continue;
                             }
-                        }
 
-                        if (count($map) > 3) {
-                            $_REQUEST[AppConstants::STAGE_KEY] = $_GET[AppConstants::STAGE_KEY] = $map[3];
-                        }
+                            $args = explode('=', $set);
 
-                        $handledUrl = true;
-                        break;
+                            $_REQUEST[$args[0]] = $_GET[$args[0]] = $args[1];
+                        }
                     }
+
+                    if (count($map) > 3) {
+                        $_REQUEST[AppConstants::STAGE_KEY] = $_GET[AppConstants::STAGE_KEY] = $map[3];
+                    }
+
+                    $handledUrl = true;
+                    break;
                 }
             }
+        }
 
-            if (!$handledUrl) {
-                $policy = PolicyManager::getInstance();
-                $policy->parse();
-            }
+        if (!$handledUrl) {
+            $policy = PolicyManager::getInstance();
+            $policy->parse();
         }
     }
 
