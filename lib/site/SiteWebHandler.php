@@ -54,7 +54,45 @@ class SiteWebHandler extends SiteHandler
      */
     public function resolvePage()
     {
-        Main::parseRequest();
+        /**
+         * Parses the request and populates the $_GET and $_REQUEST arrays.
+         * The order of precedence is as follows:
+         *
+         * 1.) A matching key in $this->site->config->getUrlMappings()
+         * 2.) The ILinkPolicy::parse() method
+         */
+        $pathBase = $this->site->config->absUriPath;
+        $url = Params::server('REQUEST_URI');
+        if (substr($url, 0, strlen($pathBase)) == $pathBase) {
+            $url = substr($url, strlen($pathBase));
+        }
+        if (strlen($url) > 0 && $url[0] == '/') {
+            $url = strlen($url) > 1 ?  substr($url, 0) : '';
+        }
+
+        $mappings = $this->site->config->getUrlMappings();
+        if (array_key_exists($url, $mappings)) {
+            $map = $mappings[$url];
+            $_REQUEST[AppConstants::COMPONENT_KEY] = $_GET[AppConstants::COMPONENT_KEY] = $map[0];
+            $_REQUEST[AppConstants::ACTION_KEY] = $_GET[AppConstants::ACTION_KEY] = $map[1];
+            if (count($map) > 2) {
+                $sets = explode(',', 'null,' . $map[2]);
+                foreach ($sets as $set) {
+                    if ($set == 'null') {
+                        continue;
+                    }
+                    $args = explode('=', $set);
+                    $_REQUEST[$args[0]] = $_GET[$args[0]] = $args[1];
+                }
+            }
+
+            if (count($map) > 3) {
+                $_REQUEST[AppConstants::STAGE_KEY] = $_GET[AppConstants::STAGE_KEY] = $map[3];
+            }
+        } else {
+            $policy = PolicyManager::getInstance();
+            $policy->parse();
+        }
 
         global $current;
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
