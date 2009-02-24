@@ -251,13 +251,6 @@ class Config
     private $urlMappings = array();
 
     /**
-     * The default or "home page" component
-     *
-     * @var String
-     */
-    private $defaultComponent = 'DefaultComponent';
-
-    /**
      * The default or "home page" action
      *
      * @var String
@@ -325,27 +318,11 @@ class Config
     }
 
     /**
-     * @return String
-     */
-    public function getDefaultComponent ()
-    {
-        return $this->defaultComponent;
-    }
-
-    /**
      * @param String $defaultAction
      */
     public function setDefaultAction ($defaultAction)
     {
         $this->defaultAction = $defaultAction;
-    }
-
-    /**
-     * @param String $defaultComponent
-     */
-    public function setDefaultComponent ($defaultComponent)
-    {
-        $this->defaultComponent = $defaultComponent;
     }
 
     /**

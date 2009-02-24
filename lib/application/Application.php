@@ -289,9 +289,8 @@ class Application
             return;
         }
 
-        if (!$uri) {
-            $policy = PolicyManager::getInstance();
-            $uri = $policy->getActionURI($config->getDefaultComponent(), $config->getDefaultAction());
+        if (! $uri) {
+            $uri = $config->absUri;
         }
 
         session_write_close();
