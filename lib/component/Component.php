@@ -118,7 +118,8 @@ abstract class Component extends ActionProvider
      */
     public function createPage()
     {
-        if (! $this->site->config->targetVersionOver(3, 0, 76)) {
+        $config = Site::getConfig();
+        if (! $config->targetVersionOver(3, 0, 76)) {
             $page = new LayoutDescription();
         } else {
             $page = new HTMLPage();
