@@ -26,6 +26,7 @@
  */
 
 require_once 'lib/util/CallbackManager.php';
+require_once 'lib/site/SitePageHeaders.php';
 require_once 'lib/ui/TemplateSystem.php';
 
 /**
@@ -44,6 +45,13 @@ class SitePage extends CallbackManager
      * @var Component
      */
     public $component;
+
+    /**
+     * Outgoing HTTP Header interface
+     *
+     * @var SitePageHeaders
+     */
+    public $headers;
 
     /**
      * The mime type of the page
@@ -112,6 +120,8 @@ class SitePage extends CallbackManager
                 preg_replace('/\//', '_', $this->type)
             );
         }
+        $this->headers = new SitePageHeaders();
+        $this->headers->setContentType($this->type);
     }
 
     /**
@@ -392,7 +402,10 @@ class SitePage extends CallbackManager
             $this->component->render();
         }
         $this->processBuffers();
-        print $this->onRender();
+
+        $output = $this->onRender();
+        $this->headers->send();
+        print $output;
 
         $this->dispatchCallback('postrender', $this);
     }

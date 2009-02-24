@@ -90,6 +90,7 @@ class HTMLPage extends SitePage
     public function __construct()
     {
         parent::__construct('text/html');
+        $this->headers->setContentTypeCharset('utf-8');
         $this->assets = array();
         $this->meta = new HTMLPageMeta();
 

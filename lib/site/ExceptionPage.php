@@ -77,6 +77,9 @@ class ExceptionPage extends SitePage
             }
         }
         $this->exception = $ex;
+
+        $this->headers->setContentTypeCharset('utf-8');
+        $this->headers->setStatus(500, 'Unhandled Exception');
     }
 
     protected function getTemplateArguments()
