@@ -43,13 +43,6 @@ class ActionDescription extends NavigatorItem implements ICacheable
     public $handler;
 
     /**
-     * True if this action requires a user
-     *
-     * @var boolean
-     */
-    public $requiresUser = false;
-
-    /**
      * True if this action requires https encryption
      *
      * @var boolean
@@ -57,17 +50,7 @@ class ActionDescription extends NavigatorItem implements ICacheable
     public $requiresSSL = false;
 
     /**
-     * The groups allowed to run this action
-     *
-     * @var array
-     */
-    public $requireGroups = array();
-
-    /**
-     * When set to a boolean value, overrides the settings of
-     * $requiresUser or requireGroups, allowing for custom
-     * or more complex permissions. Set to null to use the
-     * standard access system.
+     * Whether the action is accesible
      *
      * @var boolean
      */

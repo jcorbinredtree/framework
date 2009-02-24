@@ -149,59 +149,9 @@ class Main
             Application::saveRequest();
 
             $current->addNotice("Your session has timed-out, please log in again");
-
-            Application::login($current);
         }
         elseif ($config->getSessionExpireTime()) {
             Session::set(AppConstants::TIME_KEY, time());
-        }
-    }
-
-    /**
-     * Loads a user from the session or request
-     *
-     * @return void
-     */
-    public static function loadUser()
-    {
-        global $config, $current;
-
-        $policy = PolicyManager::getInstance();
-        $user = $policy->restore();
-        if (!$user) {
-            return;
-        }
-
-        $current->user =& $user;
-        Session::set(AppConstants::TIME_KEY, time());
-    }
-
-    /**
-     * Defines the user access rules
-     *
-     * @return void
-     */
-    public static function accessRules()
-    {
-        global $current, $config;
-
-        $denied = false;
-
-        /* current action denied */
-        if (!$current->component->allows($current->component->action)) {
-            $config->info('permission denied by component access rules, loading Application::login');
-            $denied = true;
-        }
-
-        /* request to log in (but not user) */
-        if (!$current->user && Params::request(AppConstants::FORCE_LOGIN_KEY))
-        {
-            $config->info('permission denied by force-login rule, loading Application::login');
-            $denied = true;
-        }
-
-        if ($denied) {
-            Application::login($current);
         }
     }
 
@@ -214,7 +164,7 @@ class Main
     {
         global $current, $config;
 
-        if (!$current->user || !Session::get(AppConstants::SAVED_REQUEST_KEY)) {
+        if (!Session::get(AppConstants::SAVED_REQUEST_KEY)) {
             return;
         }
 

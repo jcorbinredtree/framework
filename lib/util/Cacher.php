@@ -277,7 +277,7 @@ return false;
             $params .= (is_array($value) ? implode(',', $value) : $value);
         }
 
-        $params .= ($current->user ? $current->user->id : -1);
+        // TODO $params .= ($current->user ? $current->user->id : -1);
 
         $path = $config->absPath . "/cache/objects/" . md5($params);
         if (!file_exists($path)) {

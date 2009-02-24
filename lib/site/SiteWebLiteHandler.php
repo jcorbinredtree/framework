@@ -49,9 +49,6 @@ class SiteWebLiteHandler extends SiteHandler
 
         $this->site->config->initalize();
 
-        // Load a user if there is one to load
-        Main::loadUser();
-
         Main::setLanguageAndTheme();
 
         // set appropriate path

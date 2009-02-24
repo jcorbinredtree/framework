@@ -15,15 +15,13 @@
 
 require_once 'lib/policies/ILocationPolicy.php';
 require_once 'lib/policies/ILinkPolicy.php';
-require_once 'lib/policies/ISecurityPolicy.php';
 require_once 'lib/policies/IThemePolicy.php';
 
 require_once 'lib/policies/DefaultLinkPolicy.php';
 require_once 'lib/policies/DefaultLocationPolicy.php';
-require_once 'lib/policies/DefaultSecurityPolicy.php';
 require_once 'lib/policies/DefaultThemePolicy.php';
 
-class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IThemePolicy
+class PolicyManager implements ILocationPolicy, ILinkPolicy, IThemePolicy
 {
     private static $instance = null;
 
@@ -42,13 +40,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
     private $linkPolicy = null;
 
     /**
-     * The security policy
-     *
-     * @var ISecurityPolicy
-     */
-    private $securityPolicy = null;
-
-    /**
      * The theme policy
      *
      * @var IThemePolicy
@@ -62,8 +53,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
                 return $this->locationPolicy;
             case 'link':
                 return $this->linkPolicy;
-            case 'security':
-                return $this->securityPolicy;
             case 'theme':
                 return $this->themePolicy;
             default:
@@ -87,13 +76,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
                 }
 
                 $this->locationPolicy = $handler;
-                break;
-            case 'security':
-                if (!($handler instanceof ISecurityPolicy )) {
-                    throw new InvalidArgumentException("handler for $policy does not adhere to ISecurityPolicy");
-                }
-
-                $this->securityPolicy = $handler;
                 break;
             case 'theme':
                 if (!($handler instanceof IThemePolicy )) {
@@ -145,42 +127,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
         return $this->linkPolicy->getActionURI($component, $action, $options, $stage);
     }
 
-    public function getLoginUrl()
-    {
-        return $this->securityPolicy->getLoginUrl();
-    }
-
-    /**
-     * @see ISecurityPolicy::login()
-     *
-     * @param string $un
-     * @param string $pass
-     * @return boolean
-     */
-    public function login($un, $pass)
-    {
-        return $this->securityPolicy->login($un, $pass);
-    }
-
-    /**
-     * @see ISecurityPolicy::logout()
-     *
-     */
-    public function logout()
-    {
-        $this->securityPolicy->logout();
-    }
-
-    /**
-     * @see ISecurityPolicy::restore()
-     *
-     * @return IUser
-     */
-    public function restore()
-    {
-        return $this->securityPolicy->restore();
-    }
-
     /**
      * @param page SitePage
      * @see IThemePolicy::getTheme()
@@ -210,7 +156,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, ISecurityPolicy, IT
     {
         $this->locationPolicy = new DefaultLocationPolicy();
         $this->linkPolicy = new DefaultLinkPolicy();
-        $this->securityPolicy = new DefaultSecurityPolicy();
         $this->themePolicy = new DefaultThemePolicy();
     }
 }

@@ -112,13 +112,6 @@ class AppConstants
     const LAST_CURRENT_KEY = '_lc';
 
     /**
-     * A key used to force user login
-     *
-     * @var string
-     */
-    const FORCE_LOGIN_KEY = '_fl';
-
-    /**
      * Language key
      *
      * @var string

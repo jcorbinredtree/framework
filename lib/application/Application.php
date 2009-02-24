@@ -66,21 +66,6 @@ class Application
     }
 
     /**
-     * Forwards to the login page
-     *
-     * @return void
-     */
-    public static function login()
-    {
-        global $config;
-
-        $policy = PolicyManager::getInstance();
-
-        Application::saveRequest();
-        Application::forward($policy->getLoginUrl());
-    }
-
-    /**
      * Call back for File::find. Finds file
      * names consisting of <class>.php, and
      * includes them into global space.
@@ -328,10 +313,6 @@ class Application
     {
         global $current;
 
-        if (!$provider->allows($action)) {
-            return null;
-        }
-
         $current->action =& $action;
 
         if (null !== ($res = LifeCycleManager::onAction($provider, $action))) {
@@ -353,10 +334,6 @@ class Application
      */
     static public function performAction(ActionProvider &$component, ActionDescription &$action, $stage=Stage::VIEW)
     {
-        if (!$component->allows($action)) {
-            return false;
-        }
-
         $data = '';
 
         /*
@@ -500,14 +477,8 @@ class Application
         // Restores the Current object from the session if needed
         Main::loadCurrent();
 
-        // Load a user if there is one to load
-        Main::loadUser();
-
         // fill out the current ticket
         Main::populateCurrent();
-
-        // Perform access rules
-        Main::accessRules();
 
         LifeCycleManager::onRequestStart();
 
