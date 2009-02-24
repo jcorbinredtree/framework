@@ -100,8 +100,8 @@ class SiteWebHandler extends SiteHandler
 
         $componentClass = Params::request(AppConstants::COMPONENT_KEY);
         if (isset($componentClass)) {
-            $current->component = Component::getInstance($componentClass);
-            $page = $current->component->createPage();
+            $page = Component::createComponentPage($componentClass);
+            $current->component = $page->component;
         }
 
         if (isset($page)) {

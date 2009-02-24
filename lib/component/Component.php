@@ -73,6 +73,25 @@ abstract class Component extends ActionProvider
         return Component::$instances[$class];
     }
 
+    /**
+     * Constructs a SitePage that will render a given component class
+     */
+    static public function createComponentPage($class)
+    {
+        $config = Site::getConfig();
+        $component = self::getInstance($class);
+
+        if (! $config->targetVersionOver(3, 0, 76)) {
+            $page = new LayoutDescription();
+        } else {
+            $page = new HTMLPage();
+        }
+
+        $page->component = $component;
+
+        return $page;
+    }
+
     public $stage;
     public $action;
 
@@ -111,23 +130,6 @@ abstract class Component extends ActionProvider
                 $current->getCurrentRequest(array('-secure'=>true))
             );
         }
-    }
-
-    /**
-     * Constructs the SitePage for this component
-     */
-    public function createPage()
-    {
-        $config = Site::getConfig();
-        if (! $config->targetVersionOver(3, 0, 76)) {
-            $page = new LayoutDescription();
-        } else {
-            $page = new HTMLPage();
-        }
-
-        $page->component = $this;
-
-        return $page;
     }
 
     public function onInitialize()
