@@ -236,42 +236,6 @@ class Application
     }
 
     /**
-     * Saves the value of the global $current variable into
-     * the session.
-     *
-     * @static
-     * @access public
-     * @return void
-     */
-    static public function saveCurrent()
-    {
-        global $current;
-
-        $_SESSION[AppConstants::LAST_CURRENT_KEY] = serialize($current);
-    }
-
-    /**
-     * Gets the $current variable from the session, and returns it.
-     *
-     * @static
-     * @access public
-     * @return Current $current upon success; null otherwise
-     */
-    static public function popSavedCurrent()
-    {
-        global $current, $config;
-
-        if (Params::session(AppConstants::LAST_CURRENT_KEY)) {
-            $request = Params::session(AppConstants::LAST_CURRENT_KEY);
-            unset($_SESSION[AppConstants::LAST_CURRENT_KEY]);
-
-            return unserialize($request);
-        }
-
-        return null;
-    }
-
-    /**
      * Forward the user to another location. Note that this must happen
      * before headers are sent. This method terminates the script.
      *
@@ -282,8 +246,6 @@ class Application
     static public function forward($uri=null)
     {
         global $config;
-
-        Application::saveCurrent();
 
         if ($config->isTestMode()) {
             return;

@@ -55,7 +55,6 @@ class SiteWebHandler extends SiteHandler
     public function resolvePage()
     {
         Main::parseRequest();
-        Main::loadCurrent(); // Restores the Current object from the session if needed
 
         global $current;
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));

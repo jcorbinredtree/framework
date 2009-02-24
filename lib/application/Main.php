@@ -84,20 +84,6 @@ class Main
     }
 
     /**
-     * Initialize the current component
-     *
-     * @return void
-     */
-    public static function loadCurrent()
-    {
-        global $current;
-
-        if (Session::get(AppConstants::LAST_CURRENT_KEY)) {
-            $current = Application::popSavedCurrent();
-        }
-    }
-
-    /**
      * Requires the -secure requests be secured via https by forwarding the request
      * to the https equivalent
      *
