@@ -114,11 +114,8 @@ class SiteWebHandler extends SiteHandler
         }
     }
 
-    public function sendResponse()
+    public function cleanup()
     {
-        $page = Site::getPage();
-        $page->render();
-
         Application::end();
     }
 }
