@@ -98,25 +98,6 @@ class Main
     }
 
     /**
-     * populates the current ticket
-     *
-     * @return  void
-     */
-    public static function populateCurrent()
-    {
-        global $current, $config;
-
-        $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
-        $componentClass = (Params::request(AppConstants::COMPONENT_KEY)
-                              ? Params::request(AppConstants::COMPONENT_KEY)
-                              : $config->getDefaultComponent());
-        $current->component = Component::getInstance($componentClass);
-        if (! $current->component) {
-            throw new RuntimeException("Unknown component $componentClass");
-        }
-    }
-
-    /**
      * Requires the -secure requests be secured via https by forwarding the request
      * to the https equivalent
      *

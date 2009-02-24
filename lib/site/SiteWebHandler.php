@@ -62,11 +62,21 @@ class SiteWebHandler extends SiteHandler
         }
 
         Main::loadCurrent(); // Restores the Current object from the session if needed
-        Main::populateCurrent(); // fill out the current ticket
-
-        $page->setData('isPopup', Params::request(AppConstants::POPUP_KEY, false));
 
         global $current;
+        $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
+
+        // TODO better component determination
+        $componentClass = Params::request(AppConstants::COMPONENT_KEY)
+            ? Params::request(AppConstants::COMPONENT_KEY)
+            : $this->site->config->getDefaultComponent();
+
+        $current->component = Component::getInstance($componentClass);
+        if (! $current->component) {
+            throw new RuntimeException("Unknown component $componentClass");
+        }
+
+        $page->setData('isPopup', Params::request(AppConstants::POPUP_KEY, false));
         $page->component = $current->component;
 
         $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
