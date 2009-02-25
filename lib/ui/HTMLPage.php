@@ -85,9 +85,13 @@ class HTMLPage extends SitePage
      * While this is publically accessible for flexibility, this should be
      * sparingly used; you likely meant to call the static method Current.
      *
+     * @param content mixed convenience argument, will be added to the
+     * 'content' buffer if a string, the string is treated as a template
+     * resource and passed through TemplateSystem::load
+     *
      * @see Current
      */
-    public function __construct()
+    public function __construct($content=null)
     {
         parent::__construct('text/html');
         $this->headers->setContentTypeCharset('utf-8');
@@ -100,6 +104,12 @@ class HTMLPage extends SitePage
             throw new RuntimeException('no theme for '.get_class($this));
         }
         $this->theme = $theme;
+        if (isset($content)) {
+            if (is_string($content)) {
+                $content = TemplateSystem::load($content);
+            }
+            $this->addToBuffer('content', $content);
+        }
     }
 
     /**
