@@ -178,12 +178,13 @@ class SitePage extends CallbackManager
      * @param asArray boolean if true, an array is returned containing each
      * item from the buffer rendered, otherwise the concatenation of this array
      * is returned.
+     * @param flush boolean, if true call clearBuffer right before returning
      *
      * @return string or array if name exists, null otherwise
      *
      * @see renderBufferedItem
      */
-    public function getBuffer($name, $asArray=false)
+    public function getBuffer($name, $asArray=false, $flush=false)
     {
         if (isset($this->renderingBuffer)) {
             throw new RuntimeException(
@@ -213,6 +214,9 @@ class SitePage extends CallbackManager
 
         $this->renderingBuffer = null;
 
+        if ($flush) {
+            $this->clearBuffer($name);
+        }
         return $ret;
     }
 

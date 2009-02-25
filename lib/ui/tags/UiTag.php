@@ -50,13 +50,10 @@ class UiTag extends Tag
     {
         $area = $this->requiredAttr($element, 'area', false);
         $clear = $this->getBooleanAttr($element, 'clear', true);
-
-        $this->compiler->write("<?php // Page Buffer: $area\n");
-        $this->compiler->write("  print \$page->getBuffer('$area');\n");
-        if ($clear) {
-            $this->compiler->write("  \$page->clearBuffer('$area');\n");
-        }
-        $this->compiler->write("?>");
+        $clear = $clear ? 'true' : 'false';
+        $this->compiler->write(
+            "<?php print \$page->getBuffer('$area', false, $clear); ?>"
+        );
     }
 
     /**
