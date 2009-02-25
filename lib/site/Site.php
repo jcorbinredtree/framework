@@ -281,12 +281,15 @@ abstract class Site extends CallbackManager
             @ob_end_flush();
         } catch (Exception $ex) {
             @ob_end_clean();
-            if ($role == 'exception') {
+            try {
+                @ob_start();
+                $this->page = new ExceptionPage($ex, $this->page);
+                $this->page->render();
+                @ob_end_flush();
+            } catch (Exception $rex) {
                 // Looks like if we want something done right, we'll have to
                 // do it ourselves
-                $this->exceptionHandlerOfLastResort($ex, $args[0]);
-            } else {
-                $this->handle('exception', $ex);
+                $this->exceptionHandlerOfLastResort($rex, $ex);
             }
         }
         $this->timingReport();
