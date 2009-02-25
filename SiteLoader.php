@@ -33,6 +33,11 @@ class SiteLoader
     static public $Base;
 
     /**
+     * The base of the site's url space, this is the url that serves $Base
+     */
+    static public $UrlBase;
+
+    /**
      * The absolute path of the framework
      */
     static public $FrameworkPath;
@@ -48,6 +53,10 @@ class SiteLoader
     static public function load()
     {
         self::$Base = dirname(dirname(dirname(__FILE__)));
+        self::$UrlBase = dirname($_SERVER['PHP_SELF']);
+        if (self::$UrlBase == '/') {
+            self::$UrlBase = '';
+        }
         self::$FrameworkPath = self::$Base.'/SITE/framework';
         self::$LocalPath = self::$Base.'/SITE/local';
         set_include_path(implode(':', array(

@@ -578,8 +578,7 @@ class Config
 
         $this->fwAbsPath = SiteLoader::$FrameworkPath;
         $this->absPath = SiteLoader::$Base;
-
-        $this->absUriPath = dirname($_SERVER['PHP_SELF']);
+        $this->absUriPath = SiteLoader::$UrlBase;
 
         $this->log =& Log::singleton('null');
     }
