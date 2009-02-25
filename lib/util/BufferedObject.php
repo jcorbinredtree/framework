@@ -157,14 +157,22 @@ class BufferedObject
     /**
      * A simple method to simply view a template, optionally setting aruments
      *
-     * @param string name the location of the template
+     * @param string|Template name the location of the template
      * @param array arguments [optional] the arguments to pass to the template,
      * expressed as name/value pairs
      * @return void
      */
     public function writeTemplate($template, $arguments=null)
     {
-        $this->write(TemplateSystem::process($name, $arguments));
+        if (is_string($template)) {
+            $template = TemplateSystem::load($name);
+        } elseif (
+            ! is_object($template) ||
+            ! is_a($template, TemplateSystem::$TemplateClass)
+        ) {
+            throw new InvalidArgumentException('not a template');
+        }
+        $this->write($template->render($arguments));
     }
 }
 
