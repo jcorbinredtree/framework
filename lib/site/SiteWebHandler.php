@@ -46,16 +46,26 @@ class SiteWebHandler extends SiteHandler
             ' <=='
         );
 
-        $this->site->addCallback('onResolvePage', array($this, 'resolvePage'), true);
+        new SiteWebHandlerPageProvider($this->site);
         $this->site->addCallback('onRequestStart', array($this, 'startRequest'), true);
     }
 
-    /**
-     * Handles the request
-     *
-     * @see Site::handle
-     */
-    public function resolvePage($url)
+    public function startRequest()
+    {
+        Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
+        Main::restoreRequest(); // Restore any previously saved requests
+        Main::setLanguageAndTheme();
+    }
+
+    public function cleanup()
+    {
+        Application::end();
+    }
+}
+
+class SiteWebHandlerPageProvider extends SitePageProvider
+{
+    public function loadPage($url)
     {
         /**
          * Parses the request and populates the $_GET and $_REQUEST arrays.
@@ -76,21 +86,7 @@ class SiteWebHandler extends SiteHandler
             $page = Component::createComponentPage($componentClass);
             $current->component = $page->component;
             return $page;
-        } else {
-            return null;
         }
-    }
-
-    public function startRequest()
-    {
-        Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
-        Main::restoreRequest(); // Restore any previously saved requests
-        Main::setLanguageAndTheme();
-    }
-
-    public function cleanup()
-    {
-        Application::end();
     }
 }
 

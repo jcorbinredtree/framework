@@ -28,6 +28,7 @@
 require_once 'lib/util/CallbackManager.php';
 require_once 'lib/util/Params.php';
 require_once 'lib/site/SiteHandler.php';
+require_once 'lib/site/SitePageProvider.php';
 require_once 'Config.php';
 
 /**
@@ -273,15 +274,21 @@ abstract class Site extends CallbackManager
             $handler->setArguments($args);
             $handler->initialize();
             $this->dispatchCallback('onHandlerInitialize', $handler);
-            $this->page = $this->marshallSingleCallback('onResolvePage', $url);
-            if (! isset($this->page)) {
+            $r = $this->marshallSingleCallback('onResolvePage', $url);
+            if (! isset($r) || $r === SitePageProvider::FAIL) {
                 $this->page = new NotFoundPage();
+            } elseif ($r === SitePageProvider::REDIRECT) {
+                $this->dispatchCallback('onRedirect', $this);
+            } else {
+                $this->page = $r;
             }
-            $this->dispatchCallback('onPageResolved', $this);
-            $this->dispatchCallback('onAccessCheck', $this);
-            $this->dispatchCallback('onRequestStart', $this);
-            $handler->sendResponse();
-            $this->dispatchCallback('onRequestSent', $this);
+            if (isset($this->page)) {
+                $this->dispatchCallback('onPageResolved', $this);
+                $this->dispatchCallback('onAccessCheck', $this);
+                $this->dispatchCallback('onRequestStart', $this);
+                $handler->sendResponse();
+                $this->dispatchCallback('onRequestSent', $this);
+            }
             $this->dispatchCallback('onHandlerCleanup', $handler);
             $handler->cleanup();
             @ob_end_flush();
