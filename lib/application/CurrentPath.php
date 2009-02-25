@@ -113,7 +113,8 @@ class CurrentPath
             global $config;
             $base = $config->absPath;
             if (substr($url, 0, strlen($base)) == $base) {
-                $url = explode('/', substr($url, strlen($base)));
+                $url = substr($url, strlen($base));
+                $url = explode('/', $url);
 
                 if (count($url) >= 1 && $url[0] == 'SITE') {
                     $url = array_slice($url, 2);
@@ -121,9 +122,10 @@ class CurrentPath
                     $url = array_slice($url, 3);
                 }
 
-                if ($url[0] != '') {
-                    $url = array_merge(explode('/', $config->absUriPath), $url);
+                if ($url[0] == '') {
+                    array_shift($url);
                 }
+                $url = array_merge(explode('/', $config->absUriPath), $url);
 
                 $this->url = new StupidPath($url);
             }

@@ -100,6 +100,7 @@ class Current
      */
     public function __construct()
     {
+        $this->path = new CurrentPath(SiteLoader::$Base);
     }
 
     /**
