@@ -35,13 +35,8 @@ require_once 'Config.php';
  * A site has:
  *   pages
  *   a database
- *
- * TODO Coming soon to a Site near you:
- *   configuration
- *   components
- *   a life
- *   a policy
- *   a current request
+ *   a configuration
+ *   and more
  *
  * Example usage in inedx.php:
  *   require_once('SITE/framework/lib/site/Site.php');

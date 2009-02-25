@@ -66,8 +66,6 @@ class DefaultLinkPolicy implements ILinkPolicy
      * -popup indicates a popup window
      *
      * -secure indicates a secure (https) link
-     *
-     * -no-html indicates to disregard the theme, and go directly to the action (for binary and such)
      * @param int $stage the stage you want to link to, default Stage::VIEW
      * @return string text to use in an href upon success; null upon failure
      */

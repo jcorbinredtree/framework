@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/util/BufferedObject.php';
+
 /**
  * Sets up the abstract definition of a Theme
  *

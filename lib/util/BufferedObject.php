@@ -18,18 +18,16 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
  * @category     Core
- * @author         Red Tree Systems, LLC <support@redtreesystems.com>
+ * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2007 Red Tree Systems, LLC
- * @license        MPL 1.1
- * @version        1.0
- * @link             http://framework.redtreesystems.com
+ * @license      MPL 1.1
+ * @version      1.0
+ * @link         http://framework.redtreesystems.com
  */
 
 /**
  * Allows an object to be buffered through standard methods.
  * Obviously this class is worthless if clients don't behave.
- *
- * @package        Core
  */
 abstract class BufferedObject
 {
@@ -79,9 +77,9 @@ abstract class BufferedObject
     }
 
     /**
-     * Sets the content of the buffer. Note
-     * that the previous contents will be
-     * destroyed.
+     * Sets the content of the buffer.
+     *
+     * Note that the previous contents will be destroyed.
      *
      * @access public
      * @param string $content
@@ -133,8 +131,9 @@ abstract class BufferedObject
     }
 
     /**
-     * Flushes the current buffer via a 'print', calling
-     * each filter as it was added.
+     * Flushes the current buffer via a 'print', calling each filter as it was
+     * added.
+     *
      * Note that this also calls the clear() method.
      *
      * @access public

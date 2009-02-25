@@ -17,20 +17,19 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     UI
- * @author         Red Tree Systems, LLC <support@redtreesystems.com>
+ * @category     Core
+ * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2007 Red Tree Systems, LLC
- * @license        MPL 1.1
- * @version        1.0
- * @link             http://framework.redtreesystems.com
+ * @license      MPL 1.1
+ * @version      1.0
+ * @link         http://framework.redtreesystems.com
  */
 
 /**
  * Defines a standard interface to control an output filter
- *
- * @package        UI
  */
-interface IOutputFilter {
+interface IOutputFilter
+{
     /**
      * Processes the text and returns the result
      *
