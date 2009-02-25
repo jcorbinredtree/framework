@@ -55,10 +55,12 @@ class Main
      */
     public static function sessionTimeout()
     {
+        // TODO modularize session handling
+        $time_key = '__time';
         global $config, $current;
 
         if ($config->getSessionExpireTime() && Params::session('user_id')
-            && (((time() - Session::get(AppConstants::TIME_KEY)) >= $config->sessionExpireTime)))
+            && (((time() - Session::get($time_key)) >= $config->sessionExpireTime)))
         {
             $_SESSION = array();
             Application::saveRequest();
@@ -66,7 +68,7 @@ class Main
             $current->addNotice("Your session has timed-out, please log in again");
         }
         elseif ($config->getSessionExpireTime()) {
-            Session::set(AppConstants::TIME_KEY, time());
+            Session::set($time_key, time());
         }
     }
 

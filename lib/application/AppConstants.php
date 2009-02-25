@@ -133,13 +133,6 @@ class AppConstants
     const LANGUAGE_COOKIE = 'lang';
 
     /**
-     * Session time key
-     *
-     * @var string
-     */
-    const TIME_KEY = '__time';
-
-    /**
      * private constructor
      *
      */
