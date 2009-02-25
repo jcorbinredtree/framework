@@ -203,21 +203,30 @@ class HTMLPage extends SitePage
     }
 
     /**
-     * Gets the page title
-     *
-     * If the current theme defines a 'formatPageTitle' method, then it is
-     * called with the page title as argument, and its return value passed on;
-     * otherwise the $title property is simply returned.
+     * Formats the page title
      *
      * @return string
      */
     public function formatTitle()
     {
-        $theme = $this->getTheme();
-        if (method_exists($theme, 'formatPageTitle')) {
-            return $theme->formatPageTitle($this->title);
+        $site = Site::Site();
+        if (
+            property_exists($site, 'title') &&
+            isset($site->title)
+        ) {
+            $siteTitle = $site->title;
+        } elseif (
+            property_exists($site->config, 'title') &&
+            isset($site->config->title)
+        ) {
+            $siteTitle = $site->config->title;
         } else {
             return $this->title;
+        }
+        if ($this->title) {
+            return "$siteTitle - $this->title";
+        } else {
+            return "$siteTitle";
         }
     }
 }

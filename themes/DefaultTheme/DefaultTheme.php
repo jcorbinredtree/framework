@@ -26,15 +26,6 @@ class DefaultTheme extends Theme
             TemplateSystem::process('view/layouts/container.xml')
         );
     }
-
-    public function formatPageTitle($title)
-    {
-        if ($title) {
-            return "Site - $title";
-        } else {
-            return "Site";
-        }
-    }
 }
 
 ?>
