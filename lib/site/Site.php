@@ -367,6 +367,23 @@ abstract class Site extends CallbackManager
     }
 
     /**
+     * Converts the given url to be absolute in this site
+     * @param url string
+     * @return string
+     */
+    public function rel2abs($url)
+    {
+        assert(is_string($url));
+        if (strlen($url) > 0 && $url[0] == '/') {
+            return $this->serverUrl.$url;
+        } elseif (! preg_match('~^\w+://~', $url)) {
+            return $this->config->absUri.'/'.$url;
+        } else {
+            return $url;
+        }
+    }
+
+    /**
      * yes it's got a long name
      * yes it's supposed to be a pain in the ass
      * no you shouldn't touch it
