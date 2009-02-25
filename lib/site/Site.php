@@ -48,6 +48,8 @@ require_once 'Config.php';
  */
 abstract class Site extends CallbackManager
 {
+    public static $DefaultPageLayout = 'layouts/default.xml';
+
     /**
      * Static management
      */
@@ -382,6 +384,29 @@ abstract class Site extends CallbackManager
             return $this->config->absUri.'/'.$url;
         } else {
             return $url;
+        }
+    }
+
+    /**
+     * Determines the layout for a page
+     *
+     * This is called if no layout is specified to the HTMLPage constructor
+     *
+     * The layout is determined by single-marshalling the onLayoutHTMLPage callback.
+     *
+     * If the callback provides no layout, then Site::$DefaultPageLayout is used
+     *
+     * @param page HTMLPage
+     * @return string
+     * @see HTMLPage, CallbackManager::marshallSingleCallback
+     */
+    public function setHTMLPageLayout(HTMLPage &$page)
+    {
+        $layout = $this->marshallSingleCallback('onLayoutHTMLPage', $page);
+        if (isset($layout)) {
+            return $layout;
+        } else {
+            return self::$DefaultPageLayout;
         }
     }
 

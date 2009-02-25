@@ -2,6 +2,8 @@
   xmlns:core="class://CoreTag"
   xmlns:ui="class://UiTag">
 
+<core:param name="content" default="${page.getBuffer('content', false, true)}" />
+
 <core:if test="${page.xmlHeader}">
   <ui:pageData var="xmlVersion" name="xmlVersion" default="1.0" />
   <ui:pageData var="xmlEncoding" name="xmlEncoding" default="utf-8" />
@@ -18,7 +20,7 @@
     <!-- FIXME meta -->
   </head>
   <body>
-    <ui:pageBuffer area="content" />
+    ${=content}
 
     <!--
       Output warnings and errors, this only generates output if no inner

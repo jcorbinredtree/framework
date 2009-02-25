@@ -84,18 +84,43 @@ class HTMLPage extends SitePage
      * While this is publically accessible for flexibility, this should be
      * sparingly used; you likely meant to call the static method Current.
      *
+     * @param layout string the layout template
+     * if null, Site->setHTMLPageLayout is called to determine the layout
+     *
      * @param content mixed convenience argument, will be added to the
      * 'content' buffer if a string, the string is treated as a template
      * resource and passed through TemplateSystem::load
      *
-     * @see Current
+     * The layout template should start like:
+     *   <template
+     *     xmlns:core="class://CoreTag"
+     *     core:extends="${this.pageTemplate}">
+     *
+     * Details:
+     *   The value of $layout, whatever it ends up being, is set as the
+     *   $template property and so is processed by SitePage::render. If the page
+     *   layout cares to be a well behaved html page in the normal sense, it
+     *   needs to extend the normal html template.
+     *
+     *   When the HTMLPage is rendered, it sets the template argument
+     *   'pageTemplate' to the value of the $template property usually provided
+     *   for a text/html page, see SitePage for whatever that means,
+     *
+     * @see Current, SitePage::$template, SitePage::render,
+     * Site::setHTMLPageLayout, CoreTag::_extends, getTemplateArguments
      */
-    public function __construct($content=null)
+    public function __construct($layout=null, $content=null)
     {
         parent::__construct('text/html');
         $this->headers->setContentTypeCharset('utf-8');
         $this->assets = array();
         $this->meta = new HTMLPageMeta();
+        $this->setData('pageTemplate', $this->template);
+        if (isset($layout)) {
+            $this->template = $layout;
+        } else {
+            $this->template = Site::Site()->setHTMLPageLayout($this);
+        }
         if (isset($content)) {
             if (is_string($content)) {
                 $content = TemplateSystem::load($content);
@@ -210,6 +235,16 @@ class HTMLPage extends SitePage
         } else {
             return "$siteTitle";
         }
+    }
+
+    /**
+     * @see SitePage::getTemplateArguments
+     */
+    protected function getTemplateArguments()
+    {
+        return array_merge(parent::getTemplateArguments(), array(
+            'pageTemplate' => $this->getData('pageTemplate')
+        ));
     }
 }
 

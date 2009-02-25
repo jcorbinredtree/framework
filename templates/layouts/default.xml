@@ -1,6 +1,7 @@
 <template
   xmlns:core="class://CoreTag"
-  xmlns:ui="class://UiTag">
+  xmlns:ui="class://UiTag"
+  core:extends="${this.pageTemplate}">
 
 <ui:addAssets>
   <stylesheet href="css/layouts/default.css" />
