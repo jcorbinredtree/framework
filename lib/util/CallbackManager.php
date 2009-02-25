@@ -89,6 +89,7 @@ abstract class CallbackManager
                 }
             }
         } catch (StopException $s) {
+            return $s;
         }
         return $ret;
     }
