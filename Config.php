@@ -244,13 +244,6 @@ class Config
     private $version = "3.0";
 
     /**
-     * Holds a refernence to the url mappings
-     *
-     * @var array
-     */
-    private $urlMappings = array();
-
-    /**
      * The default or "home page" action
      *
      * @var String
@@ -477,40 +470,6 @@ class Config
     public function getVersion()
     {
         $this->version;
-    }
-
-    /**
-     * Returns an associtive array of url mappings. The map must be in format:
-     * page => array(<component>, <action>, [<args>], [<stage>])
-     *
-     * <args> should be given as <name>=<value>&<name>=<value>, such that a complete map would
-     * look like:
-     *
-     * array(
-     *  'other-file.html' => array('Documents', Document::ACTION_GET, 'id=1&name=file', Stage::VIEW)
-     * );
-     *
-     * @return array of mappings
-     */
-    public function getUrlMappings()
-    {
-        return $this->urlMappings;
-    }
-
-    /**
-     * Add a mapping in the format:
-     * array(
-     *  'other-file.html' => array('Documents', Document::ACTION_GET, 'id=1&name=file', Stage::VIEW)
-     * );
-     *
-     * @see Config#getUrlMappings()
-     * @param string $key
-     * @param array $mapping
-     * @return void
-     */
-    public function addUrlMapping($url, $mapping)
-    {
-        $this->urlMappings[$url] = $mapping;
     }
 
     /**
