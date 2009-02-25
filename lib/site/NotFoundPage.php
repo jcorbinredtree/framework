@@ -25,14 +25,14 @@
  * @link         http://framework.redtreesystems.com
  */
 
-class NotFoundPage extends SitePage
+class NotFoundPage extends HTMLPage
 {
     public function __construct($url=null)
     {
         if (! isset($url)) {
             $url = Params::server('REQUEST_URI');
         }
-        parent::__construct('text/html', 'page/nopage.xml');
+        parent::__construct(null, 'page/nopage.xml');
         $this->headers->setContentTypeCharset('utf-8');
         $this->headers->setStatus(404, 'Not Found');
         $this->setData('status', $this->headers->getStatus());
