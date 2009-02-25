@@ -37,6 +37,9 @@ require_once 'lib/ui/tags/UiTag.php';
  */
 class TemplateSystem
 {
+    public static $TemplateClass = 'Template';
+    public static $CompilerClass = 'FrameworkCompiler';
+
     private static $pstl;
 
     public static function instance()
@@ -65,8 +68,8 @@ class TemplateSystem
 
             self::$pstl = new PHPSTL(array_merge(array(
                 'include_path'        => $inc,
-                'template_class'      => 'Template',
-                'compiler_class'      => 'FrameworkCompiler',
+                'template_class'      => self::$TemplateClass,
+                'compiler_class'      => self::$CompilerClass,
                 'diskcache_directory' => $policy->getTemplatesDir()
             ), $copt));
             self::$pstl->addProvider(new CurrentTemplateProvider(self::$pstl));
