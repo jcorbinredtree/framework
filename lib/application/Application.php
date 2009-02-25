@@ -153,10 +153,6 @@ class Application
             "$config->absPath/SITE/local/lib",
             "$config->fwAbsPath/lib",
 
-            // themes
-            "$config->absPath/SITE/local/themes",
-            "$config->fwAbsPath/themes",
-
             // extensions
             "$config->absPath/SITE/local/extensions",
             "$config->fwAbsPath/extensions"

@@ -57,7 +57,7 @@ class Current
 
     /**
      * Holds the current path. The current path is set to
-     * the last operating component, module, or theme's directory.
+     * the last operating component, or module's directory.
      *
      * @access public
      * @var CurrentPath

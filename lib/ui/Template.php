@@ -93,38 +93,6 @@ class Template extends PHPSTLTemplate
 
         return $component->getActionURI($action, $args, $stage);
     }
-
-    /**
-     * DEPRECATED
-     */
-    public function getThemeImage($key)
-    {
-        $config->deprecatedComplain(
-            'Template->getThemeImage',
-            '$page->theme->getImage'
-        );
-        $page = Site::getPage();
-        if (! is_a($page, 'HTMLPage')) {
-            throw new RuntimeException('Only html pages are themed');
-        }
-        return $page->getTheme()->getImage($key);
-    }
-
-    /**
-     * DEPRECATED
-     */
-    public function getThemeIcon($key)
-    {
-        $config->deprecatedComplain(
-            'Template->getThemeIcon',
-            '$page->theme->getIcon'
-        );
-        $page = Site::getPage();
-        if (! is_a($page, 'HTMLPage')) {
-            throw new RuntimeException('Only html pages are themed');
-        }
-        return $page->getTheme()->getIcon($key);
-    }
 }
 
 ?>

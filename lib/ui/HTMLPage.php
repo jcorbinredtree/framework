@@ -28,7 +28,13 @@
 require_once(dirname(__FILE__).'/HTMLPageAsset.php');
 
 /**
- * HTMLPages are themed SitePages
+ * HTMLPages are SitePages with codified detail needed to coherently build an
+ * HTML page such as:
+ *   whether to include an <?xml ... ?> header
+ *   doctype
+ *   page title
+ *   <meta /> data
+ *   assets such as scripts, stylesheets, and links
  *
  * @package Ui
  */
@@ -71,13 +77,6 @@ class HTMLPage extends SitePage
     private $assets;
 
     /**
-     * Holds the current theme object
-     *
-     * @var Theme
-     */
-    private $theme;
-
-    /**
      * Constructor
      *
      * Creates a new HTMLPage.
@@ -97,29 +96,12 @@ class HTMLPage extends SitePage
         $this->headers->setContentTypeCharset('utf-8');
         $this->assets = array();
         $this->meta = new HTMLPageMeta();
-
-        $policy = PolicyManager::getInstance();
-        $theme = $policy->getTheme($this);
-        if (! $theme) {
-            throw new RuntimeException('no theme for '.get_class($this));
-        }
-        $this->theme = $theme;
         if (isset($content)) {
             if (is_string($content)) {
                 $content = TemplateSystem::load($content);
             }
             $this->addToBuffer('content', $content);
         }
-    }
-
-    /**
-     * Returns the theme that should render the current page
-     *
-     * @return Theme
-     */
-    public function getTheme()
-    {
-        return $this->theme;
     }
 
     /**

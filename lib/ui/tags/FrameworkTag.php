@@ -144,23 +144,6 @@ class FrameworkTag extends Tag
         $this->compiler->write('<?php echo ' . $pager . '->makeNavigation(); ?>');
     }
 
-    public function getThemeIcon(DOMElement &$element)
-    {
-        $name = $this->requiredAttr($element, 'name');
-        $alt = $this->requiredAttr($element, 'alt');
-        $align = $this->getAttr($element, 'align');
-
-        $img = '<img src="<?php echo $this->getThemeIcon(' . $name . '); ?>" alt="' . $alt . '"';
-
-        if($align){
-            $img .= ' align = "' . $align . '"';
-        }
-
-        $img .= "/>";
-
-        $this->compiler->write($img);
-    }
-
     public function form(DOMElement &$element)
     {
         global $current;

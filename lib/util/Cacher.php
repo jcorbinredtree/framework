@@ -47,7 +47,7 @@ class Cacher
     }
 
     /*
-     * @TODO: implement theme + request caching
+     * @TODO: implement request caching
      */
 
     /**

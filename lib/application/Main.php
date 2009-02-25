@@ -97,11 +97,11 @@ class Main
     }
 
     /**
-     * Set the language & theme
+     * Set the language
      *
      * @return void
      */
-    public static function setLanguageAndTheme()
+    public static function setLanguage()
     {
         global $config, $current;
 

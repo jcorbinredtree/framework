@@ -119,13 +119,6 @@ class AppConstants
     const LANGUAGE_KEY = '_la';
 
     /**
-     * Theme key
-     *
-     * @var string
-     */
-    const THEME_KEY = '_tk';
-
-    /**
      * Popup key
      *
      * @var string
@@ -152,13 +145,6 @@ class AppConstants
      * @var string
      */
     const LANGUAGE_COOKIE = 'lang';
-
-    /**
-     * Theme cookie name
-     *
-     * @var string
-     */
-    const THEME_COOKIE = 'theme';
 
     /**
      * Session time key

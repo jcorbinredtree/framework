@@ -15,13 +15,11 @@
 
 require_once 'lib/policies/ILocationPolicy.php';
 require_once 'lib/policies/ILinkPolicy.php';
-require_once 'lib/policies/IThemePolicy.php';
 
 require_once 'lib/policies/DefaultLinkPolicy.php';
 require_once 'lib/policies/DefaultLocationPolicy.php';
-require_once 'lib/policies/DefaultThemePolicy.php';
 
-class PolicyManager implements ILocationPolicy, ILinkPolicy, IThemePolicy
+class PolicyManager implements ILocationPolicy, ILinkPolicy
 {
     private static $instance = null;
 
@@ -39,13 +37,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, IThemePolicy
      */
     private $linkPolicy = null;
 
-    /**
-     * The theme policy
-     *
-     * @var IThemePolicy
-     */
-    private $themePolicy = null;
-
     public function get($policy)
     {
         switch ($policy) {
@@ -53,8 +44,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, IThemePolicy
                 return $this->locationPolicy;
             case 'link':
                 return $this->linkPolicy;
-            case 'theme':
-                return $this->themePolicy;
             default:
                 return null;
         }
@@ -76,13 +65,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, IThemePolicy
                 }
 
                 $this->locationPolicy = $handler;
-                break;
-            case 'theme':
-                if (!($handler instanceof IThemePolicy )) {
-                    throw new InvalidArgumentException("handler for $policy does not adhere to IThemePolicy");
-                }
-
-                $this->themePolicy = $handler;
                 break;
             default:
                 throw new InvalidArgumentException("unknown policy $policy");
@@ -128,17 +110,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, IThemePolicy
     }
 
     /**
-     * @param page SitePage
-     * @see IThemePolicy::getTheme()
-     *
-     * @return Theme
-     */
-    public function getTheme(SitePage $page=null)
-    {
-        return $this->themePolicy->getTheme($page);
-    }
-
-    /**
      * Gets a PolicyManager instance
      *
      * @return PolicyManager
@@ -156,7 +127,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy, IThemePolicy
     {
         $this->locationPolicy = new DefaultLocationPolicy();
         $this->linkPolicy = new DefaultLinkPolicy();
-        $this->themePolicy = new DefaultThemePolicy();
     }
 }
 

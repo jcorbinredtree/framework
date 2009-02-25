@@ -54,7 +54,7 @@ class SiteWebHandler extends SiteHandler
     {
         Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
         Main::restoreRequest(); // Restore any previously saved requests
-        Main::setLanguageAndTheme();
+        Main::setLanguage();
     }
 
     public function cleanup()

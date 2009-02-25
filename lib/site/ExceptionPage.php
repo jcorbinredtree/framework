@@ -32,8 +32,8 @@ require_once 'lib/site/SitePage.php';
  *
  * It's a basic no frills html page.
  *
- * Note: this should NOT be an HTMLPage, there's no reason that an exception
- * needs to be themed, it's a programming error if this page needs to be used
+ * Note: this should NOT be an HTMLPage, the idea is that this page is used when
+ * something goes wrong, and so should have as few moving parts as possible
  *
  * @package Ui
  */

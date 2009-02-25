@@ -251,13 +251,6 @@ class Config
     private $defaultAction = 'home';
 
     /**
-     * The default theme
-     *
-     * @var String
-     */
-    private $defaultTheme = 'DefaultTheme';
-
-    /**
      * Holds the user configuration values
      *
      * @var array
@@ -287,21 +280,6 @@ class Config
         return $this->userConfig[$key];
     }
 
-    /**
-     * @return String
-     */
-    public function getDefaultTheme()
-    {
-        return $this->defaultTheme;
-    }
-
-    /**
-     * @param String $defaultTheme
-     */
-    public function setDefaultTheme ($defaultTheme)
-    {
-        $this->defaultTheme = $defaultTheme;
-    }
     /**
      * @return String
      */

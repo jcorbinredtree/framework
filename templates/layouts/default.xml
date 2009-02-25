@@ -3,7 +3,7 @@
   xmlns:ui="class://UiTag">
 
 <ui:addAssets>
-  <stylesheet href="view/css/container.css" />
+  <stylesheet href="css/layouts/default.css" />
 </ui:addAssets>
 
 <div id="main-container">

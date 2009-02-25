@@ -27,7 +27,7 @@
  */
 
 /**
- * Simplifies theme construction by adding several standard tags
+ * Provides template tages for interfacing with HTMLPage objects
  *
  * @package      UI
  * @category     Tags

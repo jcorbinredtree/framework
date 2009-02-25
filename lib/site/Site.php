@@ -395,7 +395,7 @@ abstract class Site extends CallbackManager
      */
     final private function exceptionHandlerOfLastResort($rex, $ex)
     {
-        // Hopelessly broken policy/theme/whatever, we'll just do it ourselves
+        // The rat fell off the wheel so hard that even ExceptionPage failed
         $l = array(
             'Broken exception handler' => $rex,
             'Original exception' => $ex
