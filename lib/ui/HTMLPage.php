@@ -91,6 +91,8 @@ class HTMLPage extends SitePage
      * 'content' buffer if a string, the string is treated as a template
      * resource and passed through TemplateSystem::load
      *
+     * @param data mixed null or an array of data items to initially set
+     *
      * The layout template should start like:
      *   <template
      *     xmlns:core="class://CoreTag"
@@ -109,7 +111,7 @@ class HTMLPage extends SitePage
      * @see Current, SitePage::$template, SitePage::render,
      * Site::setHTMLPageLayout, CoreTag::_extends
      */
-    public function __construct($layout=null, $content=null)
+    public function __construct($layout=null, $content=null, $data=null)
     {
         parent::__construct('text/html');
         $this->headers->setContentTypeCharset('utf-8');
@@ -126,6 +128,12 @@ class HTMLPage extends SitePage
                 $content = TemplateSystem::load($content);
             }
             $this->addToBuffer('content', $content);
+        }
+        if (isset($data)) {
+            assert(is_array($data));
+            foreach ($data as $n => &$v) {
+                $this->setData($n, $v);
+            }
         }
     }
 
