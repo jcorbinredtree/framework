@@ -29,7 +29,6 @@
  * Abstract base class for site request handlers
  * Handler stages:
  *   initialize
- *   resolve
  *   access
  *   response
  *   cleanup
@@ -87,19 +86,6 @@ abstract class SiteHandler
     {
         global $current;
         unset($current);
-    }
-
-    /**
-     * Called by Site to resolve the current request into a page
-     *
-     * If the handler returns null, then the normal SitePageProvider delegation
-     * goes into effect
-     *
-     * @return SitePage
-     */
-    public function resolvePage()
-    {
-        return null;
     }
 
     /**

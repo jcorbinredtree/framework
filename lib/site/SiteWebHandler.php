@@ -46,6 +46,7 @@ class SiteWebHandler extends SiteHandler
             ' <=='
         );
 
+        $this->site->addCallback('onResolvePage', array($this, 'resolvePage'), true);
         $this->site->addCallback('onRequestStart', array($this, 'startRequest'), true);
     }
 
@@ -54,7 +55,7 @@ class SiteWebHandler extends SiteHandler
      *
      * @see Site::handle
      */
-    public function resolvePage()
+    public function resolvePage($url)
     {
         /**
          * Parses the request and populates the $_GET and $_REQUEST arrays.
@@ -63,14 +64,6 @@ class SiteWebHandler extends SiteHandler
          * 1.) A matching key in $this->site->config->getUrlMappings()
          * 2.) The ILinkPolicy::parse() method
          */
-        $pathBase = $this->site->config->absUriPath;
-        $url = Params::server('REQUEST_URI');
-        if (substr($url, 0, strlen($pathBase)) == $pathBase) {
-            $url = substr($url, strlen($pathBase));
-        }
-        if (strlen($url) > 0 && $url[0] == '/') {
-            $url = strlen($url) > 1 ?  substr($url, 0) : '';
-        }
 
         $mappings = $this->site->config->getUrlMappings();
         if (array_key_exists($url, $mappings)) {

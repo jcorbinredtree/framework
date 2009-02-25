@@ -26,6 +26,7 @@
  */
 
 require_once 'lib/util/CallbackManager.php';
+require_once 'lib/util/Params.php';
 require_once 'lib/site/SiteHandler.php';
 require_once 'Config.php';
 
@@ -240,7 +241,6 @@ abstract class Site extends CallbackManager
      *   handler->setArguments                   args -> handler
      *   handler->initialize                     handler stage
      *   dispatch: onHandlerInitialize           callback
-     *   handler->resolvePaage                   handler stage
      *   Got a page?
      *     yes: continue
      *     no: page = new NotFoundPage
@@ -260,12 +260,20 @@ abstract class Site extends CallbackManager
     {
         $args = array_slice(func_get_args(), 1);
         try {
+            $urlPat = quoteMeta(SiteLoader::$UrlBase);
+            $urlPat = "~^$urlPat(?:/(.*))?\$~";
+            $url = Params::server('REQUEST_URI');
+            $matches = array();
+            if (preg_match($urlPat, $url, $matches)) {
+                $url = $matches[1];
+            }
+
             @ob_start();
             $handler = $this->loadHandler($role);
             $handler->setArguments($args);
             $handler->initialize();
             $this->dispatchCallback('onHandlerInitialize', $handler);
-            $this->page = $handler->resolvePage();
+            $this->page = $this->marshallSingleCallback('onResolvePage', $url);
             if (! isset($this->page)) {
                 $this->page = new NotFoundPage();
             }
