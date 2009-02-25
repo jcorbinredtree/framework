@@ -93,6 +93,33 @@ abstract class CallbackManager
         }
         return $ret;
     }
+
+    /**
+     * Like marshallCallback, except stops on the first non-null return and
+     * returns it rather than collecting an array
+     *
+     * @param name string
+     * @return mixed StopException as in dispatchCallback, mixed otherwise
+     * @see dispatchCallback
+     */
+    final protected function marshallSingleCallback($name)
+    {
+        if (! array_key_exists($name, $this->callbacks)) {
+            return;
+        }
+        $args = array_slice(func_get_args(), 1);
+        try {
+            foreach ($this->callbacks[$name] as $call) {
+                $r = call_user_func_array($call, $args);
+                if (isset($r)) {
+                    return $r;
+                }
+            }
+        } catch (StopException $s) {
+            return $s;
+        }
+        return null;
+    }
 }
 
 ?>
