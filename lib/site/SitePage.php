@@ -444,14 +444,7 @@ class SitePage extends CallbackManager
      */
     protected function getTemplateArguments()
     {
-        $args = array('page' => $this);
-
-        // Compatability with old sites
-        if (is_a($this, 'LayoutDescription')) {
-            $args['layout'] = $this;
-        }
-
-        return $args;
+        return array('page' => $this);
     }
 }
 

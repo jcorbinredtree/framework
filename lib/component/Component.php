@@ -81,14 +81,8 @@ abstract class Component extends ActionProvider
         $config = Site::getConfig();
         $component = self::getInstance($class);
 
-        if (! $config->targetVersionOver(3, 0, 76)) {
-            $page = new LayoutDescription();
-        } else {
-            $page = new HTMLPage();
-        }
-
+        $page = new HTMLPage();
         $page->component = $component;
-
         return $page;
     }
 

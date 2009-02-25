@@ -17,14 +17,6 @@ class DefaultTheme extends Theme
 {
     public function onRender()
     {
-        /* TODO need to implement this agani
-         * if (is_a($page, 'LayoutDescription')) {
-         *     if ($page->isHomePage) {
-         *         $page->setData('layout', 'homelayout');
-         *     }
-         * }
-         */
-
         /* TODO implement better template wrapping
          * The idea is that the layout template pulls what's in the page
          * buffers and generates a wall of text that gets passed into the page
