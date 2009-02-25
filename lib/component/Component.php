@@ -149,7 +149,6 @@ abstract class Component extends ActionProvider
     /**
      * Returns text in href form suitable for linking to other actions within the framework.
      *
-     * @see ILinkPolicy::getActionURI
      * @access public
      * @param string a component class name
      * @param int $action the action id you want to link to, defaults to the current action

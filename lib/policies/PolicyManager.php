@@ -14,12 +14,10 @@
  */
 
 require_once 'lib/policies/ILocationPolicy.php';
-require_once 'lib/policies/ILinkPolicy.php';
 
-require_once 'lib/policies/DefaultLinkPolicy.php';
 require_once 'lib/policies/DefaultLocationPolicy.php';
 
-class PolicyManager implements ILocationPolicy, ILinkPolicy
+class PolicyManager implements ILocationPolicy
 {
     private static $instance = null;
 
@@ -30,20 +28,11 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy
      */
     private $locationPolicy = null;
 
-    /**
-     * The link policy
-     *
-     * @var ILinkPolicy
-     */
-    private $linkPolicy = null;
-
     public function get($policy)
     {
         switch ($policy) {
             case 'location':
                 return $this->locationPolicy;
-            case 'link':
-                return $this->linkPolicy;
             default:
                 return null;
         }
@@ -52,13 +41,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy
     public function set($policy, $handler)
     {
         switch ($policy) {
-            case 'link':
-                if (!($handler instanceof ILinkPolicy)) {
-                    throw new InvalidArgumentException("handler for $policy does not adhere to ILinkPolicy");
-                }
-
-                $this->linkPolicy = $handler;
-                break;
             case 'location':
                 if (!($handler instanceof ILocationPolicy)) {
                     throw new InvalidArgumentException("handler for $policy does not adhere to ILocationPolicy");
@@ -92,24 +74,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy
     }
 
     /**
-     * @see ILinkPolicy::parse()
-     *
-     */
-    public function parse()
-    {
-        $this->linkPolicy->parse();
-    }
-
-    /**
-     * @see ILinkPolicy::getActionURI()
-     * @return string
-     */
-    public function getActionURI($component, $action, $options=array(), $stage=Stage::VIEW)
-    {
-        return $this->linkPolicy->getActionURI($component, $action, $options, $stage);
-    }
-
-    /**
      * Gets a PolicyManager instance
      *
      * @return PolicyManager
@@ -126,7 +90,6 @@ class PolicyManager implements ILocationPolicy, ILinkPolicy
     private function __construct()
     {
         $this->locationPolicy = new DefaultLocationPolicy();
-        $this->linkPolicy = new DefaultLinkPolicy();
     }
 }
 

@@ -67,15 +67,6 @@ class SiteWebHandlerPageProvider extends SitePageProvider
 {
     public function loadPage($url)
     {
-        /**
-         * Parses the request and populates the $_GET and $_REQUEST arrays.
-         * The order of precedence is as follows:
-         *
-         * 1.) The ILinkPolicy::parse() method
-         */
-        $policy = PolicyManager::getInstance();
-        $policy->parse();
-
         // TODO implement this in SitePage
         global $current;
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));

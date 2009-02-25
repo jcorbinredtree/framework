@@ -362,8 +362,6 @@ class Application
 
         require_once "$config->fwAbsPath/lib/policies/ILocationPolicy.php";
         require_once "$config->fwAbsPath/lib/policies/DefaultLocationPolicy.php";
-        require_once "$config->fwAbsPath/lib/policies/ILinkPolicy.php";
-        require_once "$config->fwAbsPath/lib/policies/DefaultLinkPolicy.php";
         require_once "$config->fwAbsPath/lib/policies/PolicyManager.php";
     }
 
