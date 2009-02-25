@@ -45,6 +45,8 @@ class SiteWebHandler extends SiteHandler
             ' - ' . Params::server('REQUEST_URI').
             ' <=='
         );
+
+        $this->site->addCallback('onRequestStart', array($this, 'startRequest'), true);
     }
 
     /**
@@ -109,7 +111,7 @@ class SiteWebHandler extends SiteHandler
         }
     }
 
-    public function processPage()
+    public function startRequest()
     {
         Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
         Main::restoreRequest(); // Restore any previously saved requests

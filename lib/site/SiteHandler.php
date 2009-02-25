@@ -103,16 +103,6 @@ abstract class SiteHandler
     }
 
     /**
-     * Called after a page has been resolved, either as a result of the
-     * handler's resolvePage or of SitePageProvider delegation
-     *
-     * @return void
-     */
-    public function processPage()
-    {
-    }
-
-    /**
      * Flushes output to the browser
      *
      * The default implementation renders the current SitePage
