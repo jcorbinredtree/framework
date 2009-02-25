@@ -34,9 +34,9 @@ interface IOutputFilter
      * Processes the text and returns the result
      *
      * @param string $output the output to filter
-     * @return string filtered output
+     * @return void
      */
-    public function filter(&$output);
+    public function filterOutput(&$output);
 }
 
 ?>

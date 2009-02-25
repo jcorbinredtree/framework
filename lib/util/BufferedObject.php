@@ -66,15 +66,14 @@ class BufferedObject
      * @param IOutputFilter $remove the filter to remove
      * @return void
      */
-    public function removeFilter(IOutputFilter $remove)
+    public function removeFilter(IOutputFilter &$remove)
     {
         $filters = array();
-        foreach ($this->filters as $filter) {
+        foreach ($this->filters as &$filter) {
             if ($filter !== $remove) {
                 array_push($filters, $filter);
             }
         }
-
         $this->filters = $filters;
     }
 
@@ -107,7 +106,7 @@ class BufferedObject
 
         $buffer = $this->buffer;
         foreach ($this->filters as &$filter) {
-            $buffer = $filter->filter($buffer);
+            $filter->filterOutput($buffer);
         }
         return $buffer;
     }

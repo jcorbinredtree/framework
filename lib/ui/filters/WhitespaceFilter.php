@@ -43,9 +43,9 @@ class WhitespaceFilter implements IOutputFilter
     *
     * @access public
     * @param string $output The source text to be filtered.
-    * @return string The filtered text.
+    * @return void
     */
-    public function filter(&$output)
+    public function filterOutput(&$output)
     {
         $match = array();
 
@@ -100,10 +100,7 @@ class WhitespaceFilter implements IOutputFilter
             $textarea_blocks,
             $output
         );
-
-        return $output;
     }
-
 
     /**
     *
