@@ -48,6 +48,11 @@ class SiteLoader
     static public $LocalPath;
 
     /**
+     * Whether we're running from the cli or not
+     */
+    static public $IsCli;
+
+    /**
      * Loads the site
      */
     static public function load()
@@ -64,6 +69,14 @@ class SiteLoader
             self::$FrameworkPath,
             self::$LocalPath
         )));
+        self::$IsCli = 'cli' === php_sapi_name();
+        if (self::$IsCli) {
+            $_SERVER = array(
+                'SERVER_NAME' => 'cli',
+                'SERVER_PORT' => 80,
+                'PHP_SELF'    => '/'
+            );
+        }
 
         require_once 'lib/site/Site.php';
     }

@@ -567,15 +567,7 @@ class Config
      */
     public function __construct()
     {
-        $this->cli = ('cli' === php_sapi_name());
-        if ( $this->cli ) {
-            $_SERVER = array(
-                'SERVER_NAME' => 'cli',
-                'SERVER_PORT' => 80,
-                'PHP_SELF' => '/'
-            );
-        }
-
+        $this->cli = SiteLoader::$IsCli;
         $this->fwAbsPath = SiteLoader::$FrameworkPath;
         $this->absPath = SiteLoader::$Base;
         $this->absUriPath = SiteLoader::$UrlBase;
