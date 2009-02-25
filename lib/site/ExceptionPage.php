@@ -40,22 +40,6 @@ require_once 'lib/site/SitePage.php';
 class ExceptionPage extends SitePage
 {
     /**
-     * The exception being displayed
-     *
-     * @var Exception
-     */
-    public $exception;
-
-    /**
-     * The page context that the original exception was thrown from
-     *
-     * This may be null if the exception happened early enough
-     *
-     * @var SitePage
-     */
-    public $oldPage=null;
-
-    /**
      * Constructor
      *
      * Creates a new HTMLPage.
@@ -69,25 +53,17 @@ class ExceptionPage extends SitePage
     {
         parent::__construct('text/html', 'page/exception.xml');
 
-        $this->oldPage = $oldPage;
-        if (! isset($this->oldPage)) {
+        if (! isset($oldPage)) {
             $site = Site::Site();
             if (isset($site->page) && $site->page !== $this) {
-                $this->oldPage = $site->page;
+                $oldPage = $site->page;
             }
         }
-        $this->exception = $ex;
+        $this->setData('oldPage', $oldPage);
+        $this->setData('exception', $ex);
 
         $this->headers->setContentTypeCharset('utf-8');
         $this->headers->setStatus(500, 'Unhandled Exception');
-    }
-
-    protected function getTemplateArguments()
-    {
-        return array_merge(parent::getTemplateArguments(), array(
-            'exception' => $this->exception,
-            'oldPage'   => $this->oldPage
-        ));
     }
 }
 

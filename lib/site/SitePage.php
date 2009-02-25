@@ -293,7 +293,7 @@ class SitePage extends CallbackManager
                 if (is_a($item, 'BufferedObject')) {
                     return $item->getBuffer();
                 } elseif (is_a($item, 'PHPSTLTemplate')) {
-                    return $item->render();
+                    return $this->renderTemplate($item);
                 } elseif (method_exists($item, '__tostring')) {
                     return (string) $item;
                 } else {
@@ -419,32 +419,33 @@ class SitePage extends CallbackManager
      *
      * The default implementation attempts to load the $template property
      * through the TemplateSystem and render through it, or if the $template
-     * property is not set, simply returns the 'content' buffer
+     * property is not set, simply returns the 'content' buffer.
      *
      * @return string
-     * @see $template, getTemplateArguments
+     * @see $template, renderTemplate
      */
     protected function onRender()
     {
         if (isset($this->template)) {
-            $template = TemplateSystem::load($this->template);
-            return $template->render($this->getTemplateArguments());
+            return $this->renderTemplate(TemplateSystem::load($this->template));
         } else {
             return $this->getBuffer('content');
         }
     }
 
     /**
-     * Returns an associative array contaning arguments with which to process
-     * the page template, used by the default onRender implementation.
+     * Renders a template with special argument semantics
      *
-     * The default implementation simply addes a 'page' entry for $this
+     * The template is rendered with arguments set from the $data field merged
+     * with array('page' => $this)
      *
      * @return array
      */
-    protected function getTemplateArguments()
+    protected function renderTemplate(PHPSTLTemplate &$template)
     {
-        return array('page' => $this);
+        return $template->render(array_merge(
+            $this->data, array('page' => $this)
+        ));
     }
 }
 

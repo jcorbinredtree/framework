@@ -107,7 +107,7 @@ class HTMLPage extends SitePage
      *   for a text/html page, see SitePage for whatever that means,
      *
      * @see Current, SitePage::$template, SitePage::render,
-     * Site::setHTMLPageLayout, CoreTag::_extends, getTemplateArguments
+     * Site::setHTMLPageLayout, CoreTag::_extends
      */
     public function __construct($layout=null, $content=null)
     {
@@ -235,16 +235,6 @@ class HTMLPage extends SitePage
         } else {
             return "$siteTitle";
         }
-    }
-
-    /**
-     * @see SitePage::getTemplateArguments
-     */
-    protected function getTemplateArguments()
-    {
-        return array_merge(parent::getTemplateArguments(), array(
-            'pageTemplate' => $this->getData('pageTemplate')
-        ));
     }
 }
 

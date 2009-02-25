@@ -35,14 +35,8 @@ class NotFoundPage extends SitePage
         parent::__construct('text/html', 'page/nopage.xml');
         $this->headers->setContentTypeCharset('utf-8');
         $this->headers->setStatus(404, 'Not Found');
+        $this->setData('status', $this->headers->getStatus());
         $this->setData('requestUrl', $url);
-    }
-
-    protected function getTemplateArguments()
-    {
-        return array_merge(parent::getTemplateArguments(),
-            array('requestUrl' => $this->getData('requestUrl'))
-        );
     }
 }
 
