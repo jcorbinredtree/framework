@@ -25,11 +25,13 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/util/IOutputFilter.php';
+
 /**
  * Allows an object to be buffered through standard methods.
  * Obviously this class is worthless if clients don't behave.
  */
-abstract class BufferedObject
+class BufferedObject
 {
     /**
      * The filter chain
@@ -45,7 +47,7 @@ abstract class BufferedObject
      * @access protected
      * @var string a binary buffer
      */
-    protected $buffer = '';
+    protected $buffer = null;
 
     /**
      * Adds a filter to the output chain
@@ -68,7 +70,7 @@ abstract class BufferedObject
     {
         $filters = array();
         foreach ($this->filters as $filter) {
-            if ($filter != $remove) {
+            if ($filter !== $remove) {
                 array_push($filters, $filter);
             }
         }
@@ -87,7 +89,8 @@ abstract class BufferedObject
      */
     public function setBuffer($content)
     {
-        $this->buffer = $content;
+        assert(is_string($content) || !isset($content));
+        $this->buffer = strlen($content) > 0 ? $content : null;
     }
 
     /**
@@ -98,12 +101,14 @@ abstract class BufferedObject
      */
     public function getBuffer()
     {
-        $buffer = $this->buffer;
-
-        foreach ($this->filters as $filter) {
-            $buffer = $filter->filter($buffer);
+        if (!isset($this->buffer)) {
+            return '';
         }
 
+        $buffer = $this->buffer;
+        foreach ($this->filters as &$filter) {
+            $buffer = $filter->filter($buffer);
+        }
         return $buffer;
     }
 
@@ -116,7 +121,11 @@ abstract class BufferedObject
      */
     public function write($str)
     {
-        $this->buffer .= $str;
+        if (isset($this->buffer)) {
+            $this->buffer .= $str;
+        } else {
+            $this->buffer = $str;
+        }
     }
 
     /**
@@ -127,7 +136,7 @@ abstract class BufferedObject
      */
     public function clear()
     {
-        $this->buffer = '';
+        $this->buffer = null;
     }
 
     /**
