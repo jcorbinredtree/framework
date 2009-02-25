@@ -60,22 +60,11 @@ abstract class Theme extends BufferedObject
         }
         $this->page = $page;
 
-        $page->addCallback('prerender', array($this, 'pushPath'));
-        if (method_exists($this, 'onDisplay')) {
-            // Deprecated pre 3.0.76 interface
-            global $config;
-            if ($config->isDebugMode()) {
-                $cls = get_class($this);
-                $config->deprecatedComplain(
-                    $cls.'->onDisplay', 'prerender page callback'
-                );
-            }
-            $page->addCallback('prerender', array($this, 'onDisplayShim'));
-        }
         if (method_exists($this, 'onRender')) {
+            $page->addCallback('prerender', array($this, 'pushPath'));
             $page->addCallback('prerender', array($this, 'onRender'));
+            $page->addCallback('prerender', array($this, 'popPath'));
         }
-        $page->addCallback('prerender', array($this, 'popPath'));
     }
 
     private $oldPath = null;
@@ -101,18 +90,6 @@ abstract class Theme extends BufferedObject
             CurrentPath::set($this->oldPath);
             $this->pushed = false;
         }
-    }
-
-    /**
-     * Compatability shim that sets curret path for old onDisplay hooks
-     *
-     * Deprecated, keeps pre 3.0.76 themes working
-     */
-    final private function onDisplayShim(SitePage $page)
-    {
-        $this->onDisplay();
-        $page->addToBuffer('content', $this->getBuffer());
-        $this->clear();
     }
 
     /**
