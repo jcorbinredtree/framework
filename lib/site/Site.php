@@ -157,6 +157,11 @@ abstract class Site extends CallbackManager
     public $page;
 
     /**
+     * Absolute url for how the client got to the server
+     */
+    public $serverUrl;
+
+    /**
      * Creates a new site:
      *   starts the timing clock (if enabled)
      *   sets up config
@@ -165,6 +170,17 @@ abstract class Site extends CallbackManager
     {
         $start = array(microtime(true), 'start');
         $this->timePoint('start');
+
+        $proto = 'http';
+        $port = '';
+        if (isset($_SERVER['SERVER_PORT'])) {
+            if ($_SERVER['SERVER_PORT'] == 443) {
+                $proto = 'https';
+            } elseif ($_SERVER['SERVER_PORT'] != 80) {
+                $port = ':'.$_SERVER['SERVER_PORT'];
+            }
+        }
+        $this->serverUrl = "$proto://".$_SERVER['SERVER_NAME'].$port;
 
         // TODO allow for changable config class name?
         global $config; // compatability global
