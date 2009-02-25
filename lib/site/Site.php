@@ -184,7 +184,7 @@ abstract class Site extends CallbackManager
 
         // TODO allow for changable config class name?
         global $config; // compatability global
-        $config = $this->config = new Config();
+        $config = $this->config = new Config($this);
         $this->onConfig();
 
         $this->timing = $config->isDebugMode();

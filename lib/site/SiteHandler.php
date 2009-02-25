@@ -76,8 +76,6 @@ abstract class SiteHandler
         // TODO SitePage will supercede this eventually
         global $current;
         $current = new Current();
-
-        $this->site->config->initalize();
     }
 
     /**

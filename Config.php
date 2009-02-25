@@ -565,30 +565,20 @@ class Config
      * @access public
      * @return Config a new instance
      */
-    public function __construct()
+    public function __construct($site=null)
     {
+        if (! isset($site)) {
+            $site = Site::Site();
+        }
+
         $this->cli = SiteLoader::$IsCli;
         $this->fwAbsPath = SiteLoader::$FrameworkPath;
         $this->absPath = SiteLoader::$Base;
         $this->absUriPath = SiteLoader::$UrlBase;
 
-        $this->log =& Log::singleton('null');
-    }
+        $this->absUri = $site->serverUrl.$this->absUriPath;
 
-    /**
-     * Initializes the config (mostly just sets the absUri though)
-     */
-    public function initalize()
-    {
-        $proto = (
-            isset($_SERVER['SERVER_PORT']) &&
-            $_SERVER['SERVER_PORT'] == 443
-        ) ? 'https' : 'http';
-        $this->absUri = sprintf('%s://%s%s',
-            $proto,
-            $_SERVER['SERVER_NAME'],
-            ($this->absUriPath == '/' ? '' : $this->absUriPath)
-        );
+        $this->log =& Log::singleton('null');
     }
 
     /**
