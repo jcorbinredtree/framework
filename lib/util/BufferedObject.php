@@ -162,7 +162,7 @@ class BufferedObject
      * expressed as name/value pairs
      * @return void
      */
-    public function viewTemplate($name, $arguments=null)
+    public function writeTemplate($template, $arguments=null)
     {
         $this->write(TemplateSystem::process($name, $arguments));
     }

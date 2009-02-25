@@ -17,7 +17,7 @@ class StaticContentModule extends Module
 {
     public function onDisplay($position)
     {
-        $this->viewTemplate('view/content.xml');
+        $this->writeTemplate('view/content.xml');
     }
 
     public function isCacheable()
