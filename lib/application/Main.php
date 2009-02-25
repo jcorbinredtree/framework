@@ -105,22 +105,26 @@ class Main
      */
     public static function setLanguage()
     {
+        // TODO revamp this into site/page
         global $config, $current;
 
-        { // set language from A.) Cookies, B.) _lang_id request, C.) default
-            // TODO honor language in page
-            $langId = (int) Params::cookie(AppConstants::LANGUAGE_COOKIE, 0);
+        $req_key = '_la';
+        $cookie_key = 'lang';
+        // set language from
+        // A.) Cookies
+        // B.) _lang_id request
+        // C.) default
+        $langId = (int) Params::cookie($cookie_key, 0);
 
-            if (Params::request(AppConstants::LANGUAGE_KEY)) {
-                $langId = (int) Params::request(AppConstants::LANGUAGE_KEY);
-                setcookie(LANGUAGE_COOKIE, $langId, time() + EXPIRY_TIME);
-            }
+        if (Params::request($req_key)) {
+            $langId = (int) Params::request($req_key);
+            setcookie($cookie_key, $langId, time() + EXPIRY_TIME);
+        }
 
-            if ($langId) {
-                I18N::set($langId);
-            } else {
-                I18N::set('EN');
-            }
+        if ($langId) {
+            I18N::set($langId);
+        } else {
+            I18N::set('EN');
         }
     }
 }

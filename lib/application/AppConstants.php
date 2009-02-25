@@ -98,13 +98,6 @@ class AppConstants
     const LAST_CURRENT_KEY = '_lc';
 
     /**
-     * Language key
-     *
-     * @var string
-     */
-    const LANGUAGE_KEY = '_la';
-
-    /**
      * Popup key
      *
      * @var string
@@ -124,13 +117,6 @@ class AppConstants
      * @var string
      */
     const KEYWORD_KEY = '_keyword';
-
-    /**
-     * Language cookie name
-     *
-     * @var string
-     */
-    const LANGUAGE_COOKIE = 'lang';
 
     /**
      * private constructor
