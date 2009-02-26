@@ -37,18 +37,6 @@
 class AppConstants
 {
     /**
-     * The key used to store the application data
-     */
-    const APPLICATION_DATA_KEY = '__application_data';
-
-    /**
-     * The key used to store class information
-     *
-     * @var string
-     */
-    const CLASSMAP_KEY = 'applicationclassmap';
-
-    /**
      * The key used to store application lifecycle objects
      *
      * @var string

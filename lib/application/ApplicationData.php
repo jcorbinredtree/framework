@@ -15,6 +15,11 @@
 
 class ApplicationData
 {
+    /**
+     * The key used to store the application data
+     */
+    public static $SessionKey = '__application_data';
+
     private static $dirty = false;
     private static $data;
 
@@ -27,7 +32,7 @@ class ApplicationData
         /*
          * try to load our data from the session
          */
-        ApplicationData::$data = Session::get(AppConstants::APPLICATION_DATA_KEY);
+        ApplicationData::$data = Session::get(self::$SessionKey);
         if (ApplicationData::$data && is_array(ApplicationData::$data)) {
             return;
         }
@@ -89,7 +94,7 @@ class ApplicationData
     public static function set($key, &$d)
     {
         ApplicationData::$data[$key] = $d;
-        Session::set(AppConstants::APPLICATION_DATA_KEY, ApplicationData::$data);
+        Session::set(self::$SessionKey, ApplicationData::$data);
 
         ApplicationData::$dirty = true;
     }
@@ -115,19 +120,19 @@ class ApplicationData
 
     public static function addClassEntry($className, $file)
     {
-       $map =& ApplicationData::get(AppConstants::CLASSMAP_KEY);
+       $map =& ApplicationData::get('applicationclassmap');
        if (!is_array($map)) {
            $map = array();
        }
 
        $map[$className] = $file;
-       ApplicationData::$data[AppConstants::CLASSMAP_KEY] =& $map;
+       ApplicationData::$data['applicationclassmap'] =& $map;
        ApplicationData::$dirty = true;
     }
 
     public static function getClassLocation($className)
     {
-       $map =& ApplicationData::get(AppConstants::CLASSMAP_KEY);
+       $map =& ApplicationData::get('applicationclassmap');
        if (!is_array($map)) {
            $map = array();
        }
