@@ -27,6 +27,7 @@
  */
 
 require_once 'extensions/php-stl/PHPSTL.php';
+require_once 'lib/ui/ContentPageTemplateProvider.php';
 require_once 'lib/ui/CurrentTemplateProvider.php';
 require_once 'lib/ui/FrameworkCompiler.php';
 require_once 'lib/ui/Template.php';
@@ -54,19 +55,36 @@ class TemplateSystem
                 unset($copt['include_path']);
             }
 
+            $content = array();
+            if (array_key_exists('contentpage_path', $copt)) {
+                $content = Site::pathArray($copt['contentpage_path']);
+                unset($copt['contentpage_path']);
+            }
+
             // TODO maybe we shouldn't add local paths here at all, leave that
             // up to the config
             array_push($inc, SiteLoader::$LocalPath.'/templates');
             array_push($inc, SiteLoader::$FrameworkPath.'/templates');
+            array_push($content, SiteLoader::$LocalPath.'/content');
+            $nos = false;
+            if (array_key_exists('contentpage_noshared_content', $copt)) {
+                $nos = (bool) $copt['contentpage_noshared_content'];
+                unset($copt['contentpage_noshared_content']);
+            }
+            if (! $nos) {
+                array_push($content, SiteLoader::$FrameworkPath.'/content');
+            }
 
             $policy = PolicyManager::getInstance();
 
             self::$pstl = new PHPSTL(array_merge(array(
+                'contentpage_path'    => $content,
                 'include_path'        => $inc,
                 'template_class'      => self::$TemplateClass,
                 'compiler_class'      => self::$CompilerClass,
                 'diskcache_directory' => $policy->getTemplatesDir()
             ), $copt));
+            self::$pstl->addProvider(new ContentPageTemplateProvider(self::$pstl));
             self::$pstl->addProvider(new CurrentTemplateProvider(self::$pstl));
         }
         return self::$pstl;
