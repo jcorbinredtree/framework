@@ -102,7 +102,7 @@ abstract class Component extends ActionProvider
         $this->onRegisterActions();
 
         if (! isset($actionId)) {
-            $actionId = Params::request(AppConstants::ACTION_KEY, null);
+            $actionId = Params::request('_a', null);
         }
         if (! isset($actionId)) {
             if (get_class($this) == $config->getDefaultComponent()) {
@@ -117,7 +117,7 @@ abstract class Component extends ActionProvider
             throw new RuntimeException("Unknown action $actionId");
         }
 
-        $this->stage = Params::request(AppConstants::STAGE_KEY, Stage::VIEW);
+        $this->stage = Params::request('_s', Stage::VIEW);
 
         if ((Params::server('HTTPS') != 'on') && $this->action->requiresSSL) {
             Application::forward(

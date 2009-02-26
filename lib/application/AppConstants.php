@@ -37,20 +37,6 @@
 class AppConstants
 {
     /**
-     * The key used for passing action back and forth
-     *
-     * @var string
-     */
-    const ACTION_KEY = '_a';
-
-    /**
-     * The key used for passing stage back and forth
-     *
-     * @var string
-     */
-    const STAGE_KEY = '_s';
-
-    /**
      * The key used to store the application data
      */
     const APPLICATION_DATA_KEY = '__application_data';

@@ -146,8 +146,6 @@ class Current
 
         $options = array_merge($_GET, $_POST);
 
-        unset($options[AppConstants::ACTION_KEY]);
-
         if ($addOptions) {
             $options = array_merge($options, $addOptions);
         }
