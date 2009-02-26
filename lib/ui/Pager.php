@@ -279,9 +279,7 @@ class Pager extends SessionObject
         $args['start'] = $start;
 
         if (isset($this->component)) {
-            return PolicyManager::getInstance()->getActionURI(
-                $this->component, $this->action, $args, Stage::VIEW
-            );
+            return $this->component->getActionURI($action, $args, Stage::VIEW);
         } else {
             return $current->component->getActionURI(null, $args, Stage::VIEW);
         }

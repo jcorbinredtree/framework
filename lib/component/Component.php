@@ -91,6 +91,10 @@ abstract class Component extends ActionProvider
     public $stage;
     public $action;
 
+    static public $ComponentKey = '_c';
+    static public $ActionKey = '_a';
+    static public $StageKey = '_s';
+
     /**
      * contructor; generic initializations
      * do your initializations onInitialize()
@@ -104,7 +108,7 @@ abstract class Component extends ActionProvider
         $this->onRegisterActions();
 
         if (! isset($actionId)) {
-            $actionId = Params::request('_a', null);
+            $actionId = Params::request(self::$ActionKey, null);
         }
         if (! isset($actionId)) {
             if (get_class($this) == $config->getDefaultComponent()) {
@@ -119,7 +123,7 @@ abstract class Component extends ActionProvider
             throw new RuntimeException("Unknown action $actionId");
         }
 
-        $this->stage = Params::request('_s', Stage::VIEW);
+        $this->stage = Params::request(self::$StageKey, Stage::VIEW);
 
         if ((Params::server('HTTPS') != 'on') && $this->action->requiresSSL) {
             Application::forward(
@@ -173,8 +177,95 @@ abstract class Component extends ActionProvider
         if (! isset($stage)) {
             $stage = $this->stage;
         }
-        $policy = PolicyManager::getInstance();
-        return $policy->getActionURI(get_class($this), $action, $options, $stage);
+
+        // TODO this is a historical conversion, it won't work at all currently
+        //
+        $config = Site::getConfig();
+
+        $component = urlencode(get_class($this));
+
+        $link = $config->absUri;
+
+        // The Action Rule:
+        // if the action linked to requires ssl, then set the link to https
+        // otherwise to http
+        {
+            $a = $this->getAction($action);
+            if (! $a) {
+                throw new InvalidArgumentException("unknown action $component.$action");
+            }
+
+            if (!($a instanceof ActionDescription)) {
+                throw new InvalidArgumentException("bad action $component.$action");
+            }
+
+            $link = $this->replaceProto($link, (bool) $a->requiresSSL);
+        }
+
+        $path = array();
+
+        array_push($path, self::$ComponentKey, $component);
+
+        if ($action) {
+            array_push($path, self::$ActionKey, $action);
+        }
+
+        if ($stage) {
+            array_push($path, self::$StageKey, $stage);
+        }
+
+        $link .= '/'.implode('/', $path);
+
+        return $link;
+
+        /* TODO rewrite, this, just use http_build_query, needs secure page handling
+         * to be reimplemented, and also depends on the currently nebulous idea of a
+         * "page form factor".
+         *
+         * // if we're a popup, other links should be popups
+         * if (!array_key_exists('-popup', $options) && Params::request(AppConstants::POPUP_KEY)) {
+         *     $options[AppConstants::POPUP_KEY] = 1;
+         * }
+         *
+         * $qs = '';
+         * foreach ($options as $kw => $val) {
+         *     if ($kw[0] == '-') {
+         *         switch ($kw) {
+         *             case '-popup':
+         *                 $kw = AppConstants::POPUP_KEY;
+         *                 break;
+         *             case '-secure':
+         *                 $kw = AppConstants::SECURE_KEY;
+         *                 break;
+         *         }
+         *     }
+         *     if ($val === null) {
+         *         continue;
+         *     }
+         *     // -secure takes precendence over The Action Rule
+         *     if ($kw == AppConstants::SECURE_KEY) {
+         *         $link = $this->replaceProto($link, (bool) $val);
+         *     }
+         *     $kw  = urlencode($kw);
+         *     $val = urlencode($val);
+         *     // the query string rule: apache will freak out if %2F is part of the url
+         *     if (false !== strpos($val, '%2F')) {
+         *         $qs .= "&$kw=$val";
+         *     }
+         *     else {
+         *         $link .= "/$kw/$val";
+         *     }
+         * }
+         *
+         *if ($qs) {
+         *    $qs[0] = '?';
+         *}
+         */
+    }
+
+    private function replaceProto($link, $https)
+    {
+        return preg_replace('~^\w+?://~i', ($https ? 'https:' : 'http:'), $link);
     }
 
     /**

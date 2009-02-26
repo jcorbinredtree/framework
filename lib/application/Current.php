@@ -150,8 +150,9 @@ class Current
             $options = array_merge($options, $addOptions);
         }
 
-        $policy = PolicyManager::getInstance();
-        return $policy->getActionURI(get_class($this->component), $this->action->id, $options, $this->stage);
+        return $this->component->getActionURI(
+            $this->action->id, $options, $this->stage
+        );
     }
 
     /**
