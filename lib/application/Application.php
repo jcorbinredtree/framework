@@ -27,7 +27,6 @@
 
 require_once 'lib/application/CurrentPath.php';
 require_once 'lib/application/ApplicationData.php';
-require_once 'lib/application/AppConstants.php';
 
 /**
  * Implements PHP's autoload function in order to
@@ -355,7 +354,6 @@ class Application
     {
         global $config;
 
-        require_once "$config->fwAbsPath/lib/application/AppConstants.php";
         require_once "$config->fwAbsPath/lib/application/ApplicationData.php";
         require_once "$config->fwAbsPath/lib/application/Main.php";
         require_once "$config->fwAbsPath/lib/database/Database.php";
