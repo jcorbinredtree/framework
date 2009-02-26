@@ -177,6 +177,11 @@ class Application
     }
 
     /**
+     * TODO modularize request saving if it seems to have any use going forward
+     */
+    public static $RequestSaveKey = '_sr';
+
+    /**
      * Saves the current request into the session. A new class
      * is created with the following properties:
      *     stage (int)
@@ -202,7 +207,7 @@ class Application
 
         $config->info("saving request");
 
-        $_SESSION[AppConstants::SAVED_REQUEST_KEY] = serialize($obj);
+        $_SESSION[self::$RequestSaveKey] = serialize($obj);
     }
 
     /**
@@ -221,9 +226,9 @@ class Application
      */
     static public function popSavedRequest()
     {
-        if (Params::session(AppConstants::SAVED_REQUEST_KEY)) {
-            $request = Params::session(AppConstants::SAVED_REQUEST_KEY);
-            unset($_SESSION[AppConstants::SAVED_REQUEST_KEY]);
+        if (Params::session(self::$RequestSaveKey)) {
+            $request = Params::session(self::$RequestSaveKey);
+            unset($_SESSION[self::$RequestSaveKey]);
 
             return unserialize($request);
         }

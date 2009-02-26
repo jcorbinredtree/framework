@@ -79,13 +79,9 @@ class Main
      */
     public static function restoreRequest()
     {
-        global $current, $config;
-
-        if (!Session::get(AppConstants::SAVED_REQUEST_KEY)) {
-            return;
-        }
-
         if ($request = Application::popSavedRequest()) {
+            global $current, $config;
+
             if ($config->isDebugMode()) {
                 $config->debug("restoring saved request: " . print_r($request, true));
             }

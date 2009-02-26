@@ -70,13 +70,6 @@ class AppConstants
     const COMPONENT_FILE_KEY = '_cfk';
 
     /**
-     * The key used in saved requests
-     *
-     * @var string
-     */
-    const SAVED_REQUEST_KEY = '_sr';
-
-    /**
      * The key used to save the Current structure
      *
      * @var string
