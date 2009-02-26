@@ -60,23 +60,7 @@ class ApplicationData
 
     public static function getDataFile()
     {
-        $policy = PolicyManager::getInstance();
-        $dir = $policy->getCacheDir();
-        if (!is_writable($dir)) {
-            if (is_dir($dir)) {
-                throw new Exception("$dir is not writable");
-            }
-
-            ob_start();
-            if (! mkdir($dir, 0777, true)) {
-                $mess = ob_get_clean();
-                throw new Exception("Could not create $dir: $mess");
-            } else {
-                ob_end_clean();
-            }
-        }
-
-        return "$dir/application.data";
+        return Site::Site()->layout->getCacheArea().'/application.data';
     }
 
     /**

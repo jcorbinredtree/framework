@@ -349,10 +349,6 @@ class Application
         require_once "$config->fwAbsPath/lib/component/RequestObject.php";
         require_once "$config->fwAbsPath/lib/database/IDatabaseObject.php";
         require_once "$config->fwAbsPath/lib/database/DatabaseObject.php";
-
-        require_once "$config->fwAbsPath/lib/policies/ILocationPolicy.php";
-        require_once "$config->fwAbsPath/lib/policies/DefaultLocationPolicy.php";
-        require_once "$config->fwAbsPath/lib/policies/PolicyManager.php";
     }
 
     public static function start()

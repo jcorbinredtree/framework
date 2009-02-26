@@ -75,14 +75,12 @@ class TemplateSystem
                 array_push($content, SiteLoader::$FrameworkPath.'/content');
             }
 
-            $policy = PolicyManager::getInstance();
-
             self::$pstl = new PHPSTL(array_merge(array(
                 'contentpage_path'    => $content,
                 'include_path'        => $inc,
                 'template_class'      => self::$TemplateClass,
                 'compiler_class'      => self::$CompilerClass,
-                'diskcache_directory' => $policy->getTemplatesDir()
+                'diskcache_directory' => $site->layout->getCacheArea('template')
             ), $copt));
             self::$pstl->addProvider(new ContentPageTemplateProvider(self::$pstl));
             self::$pstl->addProvider(new CurrentTemplateProvider(self::$pstl));

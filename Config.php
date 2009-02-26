@@ -26,7 +26,6 @@
  */
 
 require_once 'Log.php';
-require_once 'lib/policies/PolicyManager.php';
 
 /**
  * Contains configuration information
@@ -163,7 +162,7 @@ class Config
         // Extra places to look for templates, entries relative to SiteLoader::$Base
         // 'include_path' => "path,path,..." -or- array('path','path',...)
 
-        // Where templates are cached, default is determined by the policy
+        // Where templates are cached, default is determined by SiteLayout
         //   which defaults to SITE/writable/cache/templates
         // 'diskcache_directory' => '...'
     );
@@ -376,14 +375,8 @@ class Config
      */
     public function setTestMode($val)
     {
-        if (!$val) {
-            $this->test = false;
-            return;
-        }
-
-        $this->test = true;
-        $policy = PolicyManager::getInstance();
-        $policy->logs();
+        $this->test = (bool) $val;
+        $this->site->layout->setupLog();
     }
 
     /**
@@ -434,10 +427,8 @@ class Config
      */
     public function setDebugMode($val)
     {
-        $this->debug = $val;
-
-        $policy = PolicyManager::getInstance();
-        $policy->logs();
+        $this->debug = (bool) $val;
+        $this->site->layout->setupLog();
     }
 
     /**
@@ -496,6 +487,8 @@ class Config
      */
     public $absUriPath = null;
 
+    private $site;
+
     /**
      * Constructor; Sets up a lot of vars & such
      *
@@ -507,13 +500,14 @@ class Config
         if (! isset($site)) {
             $site = Site::Site();
         }
+        $this->site = $site;
 
         $this->cli = SiteLoader::$IsCli;
         $this->fwAbsPath = SiteLoader::$FrameworkPath;
         $this->absPath = SiteLoader::$Base;
         $this->absUriPath = SiteLoader::$UrlBase;
 
-        $this->absUri = $site->serverUrl.$this->absUriPath;
+        $this->absUri = $this->site->serverUrl.$this->absUriPath;
 
         $this->log =& Log::singleton('null');
     }
