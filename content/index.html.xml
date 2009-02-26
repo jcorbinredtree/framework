@@ -1,0 +1,8 @@
+<template xmlns:core="class://CoreTag">
+
+<core:param name="requestUrl" />
+<core:param name="pageUrl" />
+
+Hello ${=pageUrl} called ${=requestUrl}
+
+</template>
