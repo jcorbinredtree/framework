@@ -35,6 +35,7 @@ class NotFoundPage extends HTMLPage
         parent::__construct(null, 'page/nopage.xml');
         $this->headers->setContentTypeCharset('utf-8');
         $this->headers->setStatus(404, 'Not Found');
+        $this->title = $this->headers->getStatus();
         $this->setData('status', $this->headers->getStatus());
         $this->setData('requestUrl', $url);
     }
