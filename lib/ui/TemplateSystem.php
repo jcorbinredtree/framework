@@ -50,17 +50,12 @@ class TemplateSystem
 
             $inc = array();
             if (array_key_exists('include_path', $copt)) {
-                $cinc = $copt['include_path'];
-                if (is_string($cinc)) {
-                    $cinc = explode(',', $cinc);
-                }
-                assert(is_array($cinc));
-                foreach ($cinc as $p) {
-                    array_push($inc, "$config->absPath/$p");
-                }
+                $inc = Site::pathArray($copt['include_path']);
                 unset($copt['include_path']);
             }
 
+            // TODO maybe we shouldn't add local paths here at all, leave that
+            // up to the config
             array_push($inc, SiteLoader::$LocalPath.'/templates');
             array_push($inc, SiteLoader::$FrameworkPath.'/templates');
 

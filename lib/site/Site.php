@@ -139,6 +139,33 @@ abstract class Site extends CallbackManager
     }
 
     /**
+     * Convenience utility, if argument is a string, explodes it on ',', other
+     * wise the argument should be an array of strings
+     *
+     * The array is then walked, and each path that is non-absolute, prepended
+     * with SiteLoader::$Base. Each path is resolved with realpath() and added
+     * to the result list only if it is a directory
+     */
+    public static function pathArray($path)
+    {
+        if (is_string($path)) {
+            $path = explode(',', $path);
+        }
+        assert(is_array($path));
+        $r = array();
+        foreach ($path as $p) {
+            if (! preg_match('/^((\w:)?\/|~)/', $p)) {
+                $p = SiteLoader::$Base."/$p";
+            }
+            $p = realpath($p);
+            if ($p !== false && is_dir($p)) {
+                array_push($r, $p);
+            }
+        }
+        return $r;
+    }
+
+    /**
      * Instance methods/properties
      */
 
