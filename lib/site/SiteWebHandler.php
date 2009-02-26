@@ -26,6 +26,7 @@
  */
 
 require_once 'lib/application/Application.php';
+require_once 'lib/site/SiteContentPageProvider.php';
 
 /**
  * This is the primary site handler, it maps urls to components and pages
@@ -52,6 +53,8 @@ class SiteWebHandler extends SiteHandler
         $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
 
         $this->site->addCallback('onRequestStart', array($this, 'startRequest'), true);
+
+        new SiteContentPageProvider($this->site);
     }
 
     public function startRequest()
