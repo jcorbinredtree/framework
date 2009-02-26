@@ -26,6 +26,9 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/util/ICacheable.php';
+require_once 'lib/component/NavigatorItem.php';
+
 /**
  * Defines a structure describing actions
  *

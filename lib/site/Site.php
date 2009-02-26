@@ -31,6 +31,10 @@ require_once 'lib/site/SiteHandler.php';
 require_once 'lib/site/SitePageProvider.php';
 require_once 'Config.php';
 
+// TODO this is just here for the autoloading, which needs to be split into its
+// own independant class
+require_once 'lib/application/Application.php';
+
 /**
  * A site has:
  *   pages
@@ -39,10 +43,9 @@ require_once 'Config.php';
  *   and more
  *
  * Example usage in inedx.php:
- *   require_once('SITE/framework/lib/site/Site.php');
+ *   require_once('SITE/framework/SiteLoader.php');
  *   class MySite extends Site { ... }
- *   Site::set('MySite')
- *   Site::Site()->handleRequest()
+ *   Site::doRole('MySite', 'web');
  *
  * @package Site
  */

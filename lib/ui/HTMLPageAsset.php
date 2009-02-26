@@ -51,7 +51,7 @@ class HTMLPageScript extends HTMLPageAsset
 
     public function compare($other)
     {
-        if (! isset($other) || ! is_a($other, 'HTMLPageScript')) {
+        if (! isset($other) || ! $other instanceof self) {
             return false;
         }
 
@@ -88,7 +88,7 @@ class HTMLPageLinkedResource extends HTMLPageAsset
 
     public function compare($other)
     {
-        if (! isset($other) || ! is_a($other, 'HTMLPageLinkedResource')) {
+        if (! isset($other) || ! $other instanceof self) {
             return false;
         }
 

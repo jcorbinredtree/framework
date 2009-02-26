@@ -46,8 +46,8 @@ class TemplateSystem
     public static function instance()
     {
         if (! isset(self::$pstl)) {
-            global $config;
-            $copt = $config->getTemplateOptions();
+            $site = Site::Site();
+            $copt = $site->config->getTemplateOptions();
 
             $inc = array();
             if (array_key_exists('include_path', $copt)) {

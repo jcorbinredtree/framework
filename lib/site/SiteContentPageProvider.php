@@ -32,6 +32,10 @@ require_once 'lib/site/SitePageProvider.php';
  */
 class SiteContentPageProvider extends SitePageProvider
 {
+    /**
+     * Loads a content page, currently limited to being "only" an HTMLPage
+     * @see SitePageProvider::loadPage
+     */
     public function loadPage($url)
     {
         try {

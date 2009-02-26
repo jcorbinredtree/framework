@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/i18n/LangPack.php';
+
 /**
  * A static class that manages languages and strings
  *

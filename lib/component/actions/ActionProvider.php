@@ -26,6 +26,10 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/util/BufferedObject.php';
+require_once 'lib/component/actions/ActionDescription.php';
+require_once 'lib/component/actions/HandlerDelegate.php';
+
 /**
  * Objects wishing to provide actions should extend this class
  *

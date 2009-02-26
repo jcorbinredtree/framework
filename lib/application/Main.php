@@ -13,6 +13,8 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
 
+require_once 'lib/i18n/I18N.php';
+
 class Main
 {
     /**

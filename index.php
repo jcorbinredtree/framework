@@ -44,10 +44,6 @@ class MySite extends Site
         ));
     }
 }
-Site::set('MySite');
-Site::Site()->doWeb();
-// Site::Site()->doWebLite();
-// Site::Site()->doTests();
-// Site::Site()->doCli();
+Site::doRole('MySite', 'web');
 
 ?>

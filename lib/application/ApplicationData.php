@@ -29,35 +29,30 @@ class ApplicationData
     {
         global $config;
 
-        /*
-         * try to load our data from the session
-         */
-        ApplicationData::$data = Session::get(self::$SessionKey);
-        if (ApplicationData::$data && is_array(ApplicationData::$data)) {
+        // try to load our data from the session
+        self::$data = Session::get(self::$SessionKey);
+        if (self::$data && is_array(self::$data)) {
             return;
         }
 
-        /*
-         * load the data from our application file
-         */
-        $file = ApplicationData::getDataFile();
-        if (!file_exists($file)) {
-            $config->warn('application file not found, rebuilding');
-
-            file_put_contents($file, serialize(array()));
+        // load the data from our application file
+        $file = self::getDataFile();
+        if (file_exists($file)) {
+            self::$data = unserialize(file_get_contents($file));
+        } else {
+            self::$data = array();
+            self::$dirty = true;
         }
-
-        ApplicationData::$data = unserialize(file_get_contents($file));
     }
 
     public static function unintialize()
     {
-        if (!ApplicationData::$dirty) {
+        if (!self::$dirty) {
             return;
         }
 
-        $file = ApplicationData::getDataFile();
-        $data = ApplicationData::$data;
+        $file = self::getDataFile();
+        $data = self::$data;
         $data = serialize($data);
 
         file_put_contents($file, $data);
@@ -93,10 +88,10 @@ class ApplicationData
      */
     public static function set($key, &$d)
     {
-        ApplicationData::$data[$key] = $d;
-        Session::set(self::$SessionKey, ApplicationData::$data);
+        self::$data[$key] = $d;
+        Session::set(self::$SessionKey, self::$data);
 
-        ApplicationData::$dirty = true;
+        self::$dirty = true;
     }
 
     /**
@@ -107,32 +102,32 @@ class ApplicationData
      */
     public static function get($key)
     {
-        if (!ApplicationData::$data) {
+        if (!self::$data) {
             return null;
         }
 
-        if (!array_key_exists($key, ApplicationData::$data)) {
+        if (!array_key_exists($key, self::$data)) {
             return null;
         }
 
-        return ApplicationData::$data[$key];
+        return self::$data[$key];
     }
 
     public static function addClassEntry($className, $file)
     {
-       $map =& ApplicationData::get('applicationclassmap');
+       $map =& self::get('applicationclassmap');
        if (!is_array($map)) {
            $map = array();
        }
 
        $map[$className] = $file;
-       ApplicationData::$data['applicationclassmap'] =& $map;
-       ApplicationData::$dirty = true;
+       self::$data['applicationclassmap'] =& $map;
+       self::$dirty = true;
     }
 
     public static function getClassLocation($className)
     {
-       $map =& ApplicationData::get('applicationclassmap');
+       $map =& self::get('applicationclassmap');
        if (!is_array($map)) {
            $map = array();
        }

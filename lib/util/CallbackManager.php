@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/exceptions/StopException.php';
+
 abstract class CallbackManager
 {
     /**

@@ -74,8 +74,6 @@ class Application
      */
     static public function findClass($file)
     {
-        global $config;
-
         $class = Application::$class;
         if (preg_match("|/$class.php$|", $file)) {
             include_once $file;
@@ -126,7 +124,7 @@ class Application
         $config->warn("$class unknown, looking through the filesystem");
 
         if (!class_exists('File', false)) {
-            include_once "$config->fwAbsPath/lib/util/File.php";
+            include_once 'lib/util/File.php';
         }
 
         // autoload classes at the current->path
@@ -139,28 +137,17 @@ class Application
             }
         }
 
-        $targets = array(
-            // components
-            "$config->absPath/SITE/local/components",
-            "$config->fwAbsPath/components",
-
-            // modules
-            "$config->absPath/SITE/local/modules",
-            "$config->fwAbsPath/modules",
-
-            // lib
-            "$config->absPath/SITE/local/lib",
-            "$config->fwAbsPath/lib",
-
-            // extensions
-            "$config->absPath/SITE/local/extensions",
-            "$config->fwAbsPath/extensions"
-        );
+        $targets = array();
+        foreach (array('lib', 'components', 'modules', 'extensions') as $what) {
+            array_push($targets,
+                SiteLoader::$LocalPath    ."/$what",
+                SiteLoader::$FrameworkPath."/$what"
+            );
+        }
 
         foreach ($targets as $target) {
             $config->debug("examining $target");
-
-            if (!file_exists($target)) {
+            if (! is_dir($target)) {
                 continue;
             }
 

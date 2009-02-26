@@ -307,9 +307,9 @@ class Config
     /**
      * @param Log $log
      */
-    public function setLog (Log &$log)
+    public function setLog (Log $log)
     {
-        $this->log =& $log;
+        $this->log = $log;
     }
 
     /**

@@ -25,6 +25,9 @@
  * @link         http://www.redtreesystems.com
  */
 
+
+require_once 'lib/component/TreeNode.php';
+
 /**
  * NavigatorItem - a small TreeNode class to manage variable-depth items
  *

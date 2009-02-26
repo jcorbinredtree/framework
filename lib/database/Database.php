@@ -1116,7 +1116,7 @@ class Database
             array_push($this->observers, $callable);
         }
 
-        $this->observing = count($this->observers) > 0 ? true : false;
+        $this->observing = (bool) count($this->observers);
 
         return $callable;
     }
@@ -1143,7 +1143,7 @@ class Database
         unset($observer);
 
         $this->observers = $new;
-        $this->observing = count($this->observers) > 0 ? true : false;
+        $this->observing = (bool) count($this->observers);
     }
 
     /**

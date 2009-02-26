@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/component/actions/ActionProvider.php';
+
 /**
  * Sets up the abstract definition of a Component. This is the base class
  * from which all user-defined components are derived.

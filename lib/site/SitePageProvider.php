@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/site/SitePage.php';
+
 abstract class SitePageProvider
 {
     const DECLINE  = null;

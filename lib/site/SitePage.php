@@ -290,9 +290,9 @@ class SitePage extends CallbackManager
                 }
                 return $r;
             } elseif (is_object($item)) {
-                if (is_a($item, 'BufferedObject')) {
+                if ($item instanceof BufferedObject) {
                     return $item->getBuffer();
-                } elseif (is_a($item, 'PHPSTLTemplate')) {
+                } elseif ($item instanceof PHPSTLTemplate) {
                     return $this->renderTemplate($item);
                 } elseif (method_exists($item, '__tostring')) {
                     return (string) $item;

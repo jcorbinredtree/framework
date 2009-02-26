@@ -172,7 +172,7 @@ class UiTag extends Tag
     public function addAssets(DOMElement &$element)
     {
         $this->compiler->write(
-            "<?php if (! is_a(\$page, 'HTMLPage')) {\n".
+            "<?php if (! \$page instanceof HTMLPage) {\n".
             "  throw new RuntimeException('Can only add html assets to an html page');\n".
             '} ?>'
         );

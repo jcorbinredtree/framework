@@ -25,7 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once(dirname(__FILE__).'/HTMLPageAsset.php');
+require_once 'lib/ui/HTMLPageAsset.php';
+require_once 'lib/ui/HTMLPageMeta.php';
 
 /**
  * HTMLPages are SitePages with codified detail needed to coherently build an

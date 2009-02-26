@@ -13,7 +13,7 @@
   <core:set var="exType" value="@{get_class(${this.exception})}" />
   <h1>${=exType}:</h1>
   <h2>${=this.exception.getMessage()}</h2>
-  <core:if test="is_a(${this.exception}, 'PHPSTLNoSuchResource')">
+  <core:if test="${this.exception} instanceof PHPSTLNoSuchResource">
     <h3>Template Providers:</h3>
     <ul>
       <core:forEach list="${this.exception.getPHPSTL().getProviders()}" var="provider">

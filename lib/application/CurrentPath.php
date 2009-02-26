@@ -70,9 +70,9 @@ class CurrentPath
     public static function set($path)
     {
         if (isset($path)) {
-            if (is_string($path) || is_a($path, 'StupidPath')) {
+            if (is_string($path) || $path instanceof StupidPath) {
                 $path = new self($path);
-            } elseif (! is_a($path, 'CurrentPath')) {
+            } elseif (! $path instanceof CurrentPath) {
                 throw new InvalidArgumentException('Invalid path');
             }
         }
@@ -90,7 +90,7 @@ class CurrentPath
      */
     public function __construct($path, $url=null)
     {
-        if (is_a($path, 'StupidPath')) {
+        if ($path instanceof StupidPath) {
             $this->path = $path;
         } else {
             $path = realpath($path);
@@ -103,7 +103,7 @@ class CurrentPath
             $this->path = new StupidPath(explode('/', $path));
         }
 
-        if (is_a($url, 'StupidPath')) {
+        if ($url instanceof StupidPath) {
             $this->url = $url;
         } else {
             if (! isset($url)) {
