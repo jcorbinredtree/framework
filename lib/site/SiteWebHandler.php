@@ -46,7 +46,11 @@ class SiteWebHandler extends SiteHandler
             ' <=='
         );
 
-        new SiteWebHandlerPageProvider($this->site);
+        // TODO do secure checking right
+        global $current;
+        $current->setSecureRequest(Params::request('_se'));
+        $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
+
         $this->site->addCallback('onRequestStart', array($this, 'startRequest'), true);
     }
 
@@ -60,17 +64,6 @@ class SiteWebHandler extends SiteHandler
     public function cleanup()
     {
         Application::end();
-    }
-}
-
-class SiteWebHandlerPageProvider extends SitePageProvider
-{
-    public function loadPage($url)
-    {
-        // TODO implement this in SitePage
-        global $current;
-        $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
-        $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
     }
 }
 

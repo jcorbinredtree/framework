@@ -51,13 +51,6 @@ class AppConstants
     const STAGE_KEY = '_s';
 
     /**
-     * The key used for determining secure requests
-     *
-     * @var string
-     */
-    const SECURE_KEY = '_se';
-
-    /**
      * The key used to store the application data
      */
     const APPLICATION_DATA_KEY = '__application_data';
