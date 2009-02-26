@@ -37,13 +37,6 @@
 class AppConstants
 {
     /**
-     * The key used for passing component back and forth
-     *
-     * @var string
-     */
-    const COMPONENT_KEY = '_c';
-
-    /**
      * The key used for passing action back and forth
      *
      * @var string

@@ -146,7 +146,6 @@ class Current
 
         $options = array_merge($_GET, $_POST);
 
-        unset($options[AppConstants::COMPONENT_KEY]);
         unset($options[AppConstants::ACTION_KEY]);
 
         if ($addOptions) {

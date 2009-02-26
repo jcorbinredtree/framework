@@ -71,13 +71,6 @@ class SiteWebHandlerPageProvider extends SitePageProvider
         global $current;
         $current->setSecureRequest(Params::request(AppConstants::SECURE_KEY));
         $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
-
-        $componentClass = Params::request(AppConstants::COMPONENT_KEY);
-        if (isset($componentClass)) {
-            $page = Component::createComponentPage($componentClass);
-            $current->component = $page->component;
-            return $page;
-        }
     }
 }
 
