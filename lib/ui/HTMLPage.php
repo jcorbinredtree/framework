@@ -84,8 +84,9 @@ class HTMLPage extends SitePage
      * While this is publically accessible for flexibility, this should be
      * sparingly used; you likely meant to call the static method Current.
      *
-     * @param layout string the layout template
-     * if null, Site->setHTMLPageLayout is called to determine the layout
+     * @param layout string the layout name, if non-null, setLayout is called
+     * with this argument. Whether a layout was specified or not,
+     * Site->setHTMLPageLayout will be called after possibly calling setLayout.
      *
      * @param content mixed convenience argument, will be added to the
      * 'content' buffer if a string, the string is treated as a template
@@ -108,7 +109,7 @@ class HTMLPage extends SitePage
      *   'pageTemplate' to the value of the $template property usually provided
      *   for a text/html page, see SitePage for whatever that means,
      *
-     * @see Current, SitePage::$template, SitePage::render,
+     * @see Current, SitePage::$template, SitePage::render, setLayout,
      * Site::setHTMLPageLayout, CoreTag::_extends
      */
     public function __construct($layout=null, $content=null, $data=null)
@@ -119,10 +120,14 @@ class HTMLPage extends SitePage
         $this->meta = new HTMLPageMeta();
         $this->setData('pageTemplate', $this->template);
         if (isset($layout)) {
-            $this->template = $layout;
-        } else {
-            $this->template = Site::Site()->setHTMLPageLayout($this);
+            if (preg_match('/(^\/|^\w:\/|\/(~\w*|\.\.)|(~\w*|\.\.)\/)/', $layout)) {
+                throw new InvalidArgumentException(
+                    "Invalid path components in '$layout'"
+                );
+            }
+            $this->setLayout($layout);
         }
+        Site::Site()->layoutHTMLPage($this);
         if (isset($content)) {
             if (is_string($content)) {
                 $content = TemplateSystem::load($content);
@@ -135,6 +140,41 @@ class HTMLPage extends SitePage
                 $this->setData($n, $v);
             }
         }
+    }
+
+    /**
+     * Sets the page layout
+     *
+     * The value will be set to the 'pageLayout' data item, the $template
+     * property will be set to "layouts/$layout.xml".
+     *
+     * @param layout string
+     * @return void
+     */
+    public function setLayout($layout)
+    {
+        $this->setData('pageLayout', $layout);
+        $this->template = "layouts/$layout.xml";
+    }
+
+    /**
+     * Tests whether the page has a layout set
+     *
+     * @return boolean
+     */
+    public function hasLayout()
+    {
+        return $this->hasData('pageLayout');
+    }
+
+    /**
+     * Returns the layout string
+     *
+     * @return string
+     */
+    public function getLayout()
+    {
+        return $this->getData('pageLayout');
     }
 
     /**
