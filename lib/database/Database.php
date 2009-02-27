@@ -209,8 +209,6 @@ class Database
             return null;
         }
 
-        global $config;
-
         $dsn = new stdClass();
         $matches = array();
 
@@ -224,8 +222,9 @@ class Database
             $dsn->host = $matches[4];
             $dsn->db = $matches[5];
         } else {
-            $config->fatal("Unable to parse the dsn: $this->dsn");
-            die('Unable to parse dsn');
+            throw new InvalidArgumentException(
+                "Unable to parse the dsn: $this->dsn"
+            );
         }
 
         return $dsn;
@@ -239,7 +238,7 @@ class Database
      */
     private function init()
     {
-        $this->parsedDSN = Database::parseDSN($this->dsn);
+        $this->parsedDSN = self::parseDSN($this->dsn);
     }
 
     /**
@@ -249,15 +248,11 @@ class Database
      */
     private function lazyLoad()
     {
-        global $config;
-
         if ($this->pdo) {
             return;
         }
 
         try {
-            $dsn =& $this->parsedDSN;
-
             if (! is_array($this->dbOptions)) {
                 $this->dbOptions = array();
             }
@@ -268,9 +263,13 @@ class Database
             $this->dbOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
 
             $this->pdo = new PDO(
-                "$dsn->driver:host=$dsn->host;dbname=$dsn->db",
-                $dsn->user,
-                $dsn->password,
+                sprintf('%s:host=%s;dbname=%s',
+                    $this->parsedDSN->driver,
+                    $this->parsedDSN->host,
+                    $this->parsedDSN->db
+                ),
+                $this->parsedDSN->user,
+                $this->parsedDSN->password,
                 $this->dbOptions
             );
         } catch (PDOException $e) {
@@ -317,7 +316,7 @@ class Database
      * @param PDOStatement $statement
      * @return PDOStatement
      */
-    public function setStatement(PDOStatement &$statement)
+    public function setStatement(PDOStatement $statement)
     {
         return $this->statement = $statement;
     }
@@ -354,8 +353,6 @@ class Database
      */
     public function getTableFieldDefinition($table, $field)
     {
-        global $config;
-
         $this->lazyLoad();
 
         /*
@@ -475,10 +472,12 @@ class Database
             $tables = array($tables);
         }
 
-        foreach (array('READ' => Database::LOCK_READ, 'WRITE' => Database::LOCK_WRITE) as $op => $mask) {
+        foreach (array(
+            'READ' => Database::LOCK_READ,
+            'WRITE' => Database::LOCK_WRITE
+        ) as $op => $mask) {
             if ($type & $mask) {
                 $sql = 'LOCK TABLES ' . implode(" $op, ", $tables) . " $op";
-
                 if ($this->perform($sql, 'lock') < 0) {
                     return false;
                 }
@@ -512,21 +511,16 @@ class Database
      */
     public function perform($sql, $type='perform')
     {
-        global $config;
-
         $rows = 0;
 
         $this->lazyLoad();
 
         try {
             $this->startTiming();
-
             $rows = $this->pdo->exec($sql);
-
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
-
             $this->errorLog("$type($sql)", $e->getMessage());
             return false;
         }
@@ -547,10 +541,8 @@ class Database
      *
      * @return true upon success
      */
-    public function execute(&$param=null)
+    public function execute($param=null)
     {
-        global $config;
-
         $params = null;
         if ($param) {
             if (is_object($param)) {
@@ -562,12 +554,12 @@ class Database
                     }
                 }
                 unset($val);
-            }
-            else {
+            } else {
                 $params =& $param;
             }
         }
 
+        $what = $this->whatStatement('execute', $params);
         try {
             $this->startTiming();
 
@@ -581,8 +573,6 @@ class Database
 
             if (!$result) {
                 $this->endTiming();
-
-                $what = $this->whatStatement('execute', $params);
                 $this->errorLog($what, $this->error());
                 return false;
             }
@@ -590,14 +580,11 @@ class Database
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
-
-            $what = $this->whatStatement('execute', $params);
             $this->errorLog($what, $e->getMessage());
             return false;
         }
 
         if ($this->log) {
-            $what = $this->whatStatement('execute', $params);
             $this->infoLog($what, $this->count());
         }
 
@@ -623,9 +610,7 @@ class Database
         $logging = $this->log;
         $this->log = false;
 
-        /*
-         * bind function args. if an array was passed, then flatten it
-         */
+        // bind function args. if an array was passed, then flatten it
         {
             $args = array_slice(func_get_args(), 1);
             $index = 1;
@@ -667,21 +652,15 @@ class Database
      */
     public function prepare($sql)
     {
-        global $config;
-
         $this->lazyLoad();
 
+        $what = $this->whatStatement('prepare', $sql);
         try {
             $this->startTiming();
-
             $this->statement = $this->pdo->prepare($sql);
-
             $this->endTiming();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $this->endTiming();
-
-            $what = $this->whatStatement('prepare', $sql);
             $this->errorLog($what, $e->getMessage());
             return false;
         }
@@ -704,21 +683,15 @@ class Database
      */
     public function query($sql)
     {
-        global $config;
-
         $this->lazyLoad();
 
+        $what = $this->whatStatement('query', $sql);
         try {
             $this->startTiming();
-
             $this->statement = $this->pdo->query($sql);
-
             $this->endTiming();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $this->endTiming();
-
-            $what = $this->whatStatement('query', $sql);
             $this->errorLog($what, $e->getMessage());
             return false;
         }
@@ -808,12 +781,10 @@ class Database
             }
 
             $args = $tmp;
-        }
-        else {
+        } else {
             $args = array();
         }
 
-        //global $config; $config->warn("1.) $sql");
         if ($this->executef($sql, $args)) {
            return $this->getResultObjects($type);
         }
@@ -888,8 +859,6 @@ class Database
      */
     public function bindParam($param, &$value)
     {
-        global $config;
-
         if ($this->log) {
             $this->infoLog("bindValue($param=$value)");
         }
@@ -997,8 +966,6 @@ class Database
      */
     public function free()
     {
-        global $config;
-
         $sth = array_pop($this->statementStack);
         $this->statement =& end($this->statementStack);
     }

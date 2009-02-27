@@ -158,8 +158,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             $p = Params::fieldToProperty($key);
             if (property_exists($this, $p) && $this->$p) {
                 $this->id = $this->$p;
-            }
-            else {
+            } else {
                 $this->id = $database->lastInsertId();
             }
         }
