@@ -112,27 +112,25 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
         $this->sqlCache = array();
         $this->customSqlCache = array();
 
-        // Introspect class's members
-        $vars = get_class_vars($class);
+        $refcls = new ReflectionClass($class);
 
-        // Compatability for old subclasses
-        foreach (array('table', 'key') as $prop) {
-            if (array_key_exists($prop, $vars) && isset($vars[$prop])) {
-                $this->$prop = $vars[$prop];
-            }
-            if (! isset($this->$prop)) {
-                $inst = new $class();
-                if (
-                    property_exists($inst, $prop) &&
-                    isset($inst->$prop) &&
-                    !empty($inst->$prop)
-                ) {
-                    $this->$prop = $inst->$prop;
-                    trigger_error(
-                        "Instances of $class carry a $prop property, ".
-                        "this should be static"
-                    );
+        $members = array();
+        // Reflect on the state of things
+        foreach ($refcls->getProperties() as $prop) {
+            $name = $prop->getName();
+            switch ($name) {
+            case 'table':
+            case 'key':
+                if (! $prop->isStatic() && $config->isDebugMode()) {
+                    trigger_error("$class->$name should be $class::\$$name");
                 }
+                $this->$name = $prop->getValue();
+                break;
+            default:
+                if (! $prop->isStatic()) {
+                    array_push($members, $name);
+                }
+                break;
             }
         }
 
@@ -153,7 +151,6 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
         // columnDef, informatino on database field details
         $this->columnDef = array();
 
-        $members = array_keys($vars);
         foreach ($members as $member) {
             if ($member == 'id') {
                 $column = $this->key;
