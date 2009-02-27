@@ -572,9 +572,11 @@ class Database
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
+            $this->free();
             throw new DatabaseException($this, $what, $e->getMessage());
         } catch (Exception $e) {
             $this->endTiming();
+            $this->free();
             throw $e;
         }
 

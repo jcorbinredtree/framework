@@ -156,6 +156,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             } else {
                 $this->id = $database->lastInsertId();
             }
+            $database->free();
         } catch (Exception $e) {
             $database->unlock();
             throw $e;
@@ -176,6 +177,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $sql = $this->meta()->getSQL(DatabaseObject::SQL_SELECT);
         $database->executef($sql, $id);
         if (! $database->count()) {
+            $database->free();
             return false;
         }
 
@@ -206,6 +208,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $values[":$key"] = $this->id;
 
         $database->execute($values);
+        $database->free();
     }
 
     /**
@@ -220,6 +223,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $sql = $this->meta()->getSQL(DatabaseObject::SQL_DELETE);
         $database->executef($sql, $this->id);
         $this->id = -1;
+        $database->free();
     }
 
     /**
