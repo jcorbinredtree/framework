@@ -121,15 +121,11 @@ class Application
      */
     static public function autoLoad($class)
     {
-        global $config, $current;
-
-        if (!$config) { return false; }
+        global $current;
 
         if ($file = Application::includeClass($class)) {
             return $file;
         }
-
-        $config->warn("$class unknown, looking through the filesystem");
 
         if (!class_exists('File', false)) {
             include_once 'lib/util/File.php';
@@ -140,7 +136,6 @@ class Application
             Application::$class = $class;
             File::find(array('Application', 'findClass'), $current->path);
             if ($file = Application::includeClass($class)) {
-                $config->info("$class found in $file");
                 return $file;
             }
         }
@@ -154,7 +149,6 @@ class Application
         }
 
         foreach ($targets as $target) {
-            $config->debug("examining $target");
             if (! is_dir($target)) {
                 continue;
             }
@@ -162,7 +156,6 @@ class Application
             Application::$class = $class;
             File::find(array('Application', 'findClass'), $target);
             if ($file = Application::includeClass($class)) {
-                $config->info("$class found in $file");
                 return $file;
             }
         }
