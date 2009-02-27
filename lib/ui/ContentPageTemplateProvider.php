@@ -172,10 +172,12 @@ class ContentPageTemplateProvider extends PHPSTLTemplateProvider
 
         $gotit = new StopException('catch!');
         try {
-            $r = PHPSTLTemplateProvider::provide($this->providers, "$path.xml");
-            if (isset($r)) {
-                $gotit->template = $r;
-                throw $gotit;
+            if ($path != '') {
+                $r = PHPSTLTemplateProvider::provide($this->providers, "$path.xml");
+                if (isset($r)) {
+                    $gotit->template = $r;
+                    throw $gotit;
+                }
             }
 
             if ($path == '') {
