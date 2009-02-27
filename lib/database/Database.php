@@ -555,6 +555,9 @@ class Database
                 }
                 unset($val);
             } else {
+                if (! is_array($param)) {
+                    throw new InvalidArgumentException('not an array');
+                }
                 $params =& $param;
             }
         }
