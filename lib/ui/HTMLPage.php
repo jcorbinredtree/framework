@@ -287,6 +287,19 @@ class HTMLPage extends SitePage
             return "$siteTitle";
         }
     }
+
+    protected static $exceptionDisplayTemplate = null;
+    protected function handleBufferedItemException($buffer, $item, Exception $e)
+    {
+        if (! isset(self::$exceptionDisplayTemplate)) {
+            $tsys = $this->site->modules->get('TemplateSystem');
+            self::$exceptionDisplayTemplate = $tsys->load('exceptionDisplay.xml');
+        }
+        return self::$exceptionDisplayTemplate->render(array(
+            'exception' => $e,
+            'message' => "Error while processing buffer '$buffer' item"
+        ));
+    }
 }
 
 ?>

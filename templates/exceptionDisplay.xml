@@ -1,0 +1,30 @@
+<template
+  xmlns:core="class://CoreTag"
+  xmlns:ui="class://UiTag">
+
+<core:param name="message" default="Unhandled Exception" />
+<core:param name="exception" required="true" type="Exception" />
+
+<core:set var="exType" value="@{get_class(${exception})}" />
+<h1>${=message}</h1>
+<h2>${=exType}:</h2>
+<h3>${=exception.getMessage()}</h3>
+<core:if test="${exception} instanceof PHPSTLNoSuchResource">
+  <h3>Template Providers:</h3>
+  <ul>
+    <core:forEach list="${exception.getPHPSTL().getProviders()}" var="provider">
+      <li>${=provider}</li>
+    </core:forEach>
+  </ul>
+</core:if>
+<h3>Trace:</h3>
+<ul>
+  <li>${=exception.getFile()} (${=exception.getLine()})</li>
+  <core:forEach list="${exception.getTrace()}" var="frame">
+    <core:if test="@{array_key_exists('file', ${frame})}">
+      <li>${=frame['file']} (${=frame['line']})</li>
+    </core:if>
+  </core:forEach>
+</ul>
+
+</template>

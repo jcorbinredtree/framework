@@ -318,8 +318,33 @@ class SitePage extends CallbackManager
                 return $item;
             }
         } catch (Exception $e) {
-            return (string) $e;
+            return $this->handleBufferedItemException(
+                $this->renderingBuffer, $item, $e
+            );
         };
+    }
+
+    /**
+     * Called by renderBufferedItem if processing an item rasises an exception.
+     *
+     * Subclasses should return a string to represent the exception in the page,
+     * or if the page wants to be intolerant, a subclass can opt to simply throw
+     * the exception.
+     *
+     * The default implementation renders the exception as text only.
+     *
+     * @param buffer string the buffer the item belongs to
+     * @param item mixed the item that failed
+     * @param Exception e raised by the item
+     * @return string
+     */
+    protected function handleBufferedItemException($buffer, $item, Exception $e)
+    {
+        $mess = "Error while processing buffer '$buffer' item:\n";
+        foreach (explode("\n", (string) $e) as $line) {
+            $mess .= "  $line\n";
+        }
+        return $mess;
     }
 
     /**

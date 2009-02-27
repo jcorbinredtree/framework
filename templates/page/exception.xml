@@ -2,6 +2,8 @@
   xmlns:core="class://CoreTag"
   xmlns:ui="class://UiTag">
 
+<core:param name="exception" required="true" type="Exception" />
+
 <core:doctype id="xhtml 1.1" />
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -10,26 +12,9 @@
   <body>
 
 <div id="main">
-  <core:set var="exType" value="@{get_class(${this.exception})}" />
-  <h1>${=exType}:</h1>
-  <h2>${=this.exception.getMessage()}</h2>
-  <core:if test="${this.exception} instanceof PHPSTLNoSuchResource">
-    <h3>Template Providers:</h3>
-    <ul>
-      <core:forEach list="${this.exception.getPHPSTL().getProviders()}" var="provider">
-        <li>${=provider}</li>
-      </core:forEach>
-    </ul>
-  </core:if>
-  <h3>Trace:</h3>
-  <ul>
-    <li>${=this.exception.getFile()} (${=this.exception.getLine()})</li>
-    <core:forEach list="${this.exception.getTrace()}" var="frame">
-      <core:if test="@{array_key_exists('file', ${frame})}">
-        <li>${=frame['file']} (${=frame['line']})</li>
-      </core:if>
-    </core:forEach>
-  </ul>
+  <core:process resource="exceptionDisplay.xml">
+    <arg name="exception" value="${exception}" />
+  </core:process>
 
   <ui:warnings />
   <ui:notices />
