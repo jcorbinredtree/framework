@@ -32,6 +32,19 @@ require_once 'lib/site/SitePageProvider.php';
  */
 class SiteContentPageProvider extends SitePageProvider
 {
+    private static $loadingPage = null;
+
+    /**
+     * Returns the page being currently loaded, this is so that template
+     * providers can poke at it
+     *
+     * @return HTMLPage
+     */
+    public static function getLoadingPage()
+    {
+        return self::$loadingPage;
+    }
+
     /**
      * Loads a content page, currently limited to being "only" an HTMLPage
      * @see SitePageProvider::loadPage
@@ -39,13 +52,19 @@ class SiteContentPageProvider extends SitePageProvider
     public function loadPage($url)
     {
         try {
-            return new HTMLPage(
+            self::$loadingPage = $page = new HTMLPage(
                 null,
                 "pageContent:$url",
                 array('requestUrl' => $url)
             );
+            self::$loadingPage = null;
+            return $page;
         } catch (PHPSTLNoSuchResource $ex) {
+            self::$loadingPage = null;
             return SitePageProvider::DECLINE;
+        } catch (Exception $e) {
+            self::$loadingPage = null;
+            throw $e;
         }
     }
 }
