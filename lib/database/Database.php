@@ -276,6 +276,20 @@ class Database
     }
 
     /**
+     * Returns a string that tryes to be a unique dsn identifier
+     *
+     * @return string
+     */
+    public function dsnId()
+    {
+        return sprintf('%s://%s/%s',
+            $this->parsedDSN->driver,
+            $this->parsedDSN->host,
+            $this->parsedDSN->db
+        );
+    }
+
+    /**
      * Returns the total number of queries executed.
      * Only available if logging was enabled.
      *
