@@ -120,6 +120,12 @@ class HTMLPage extends SitePage
         $this->assets = array();
         $this->meta = new HTMLPageMeta();
         $this->setData('pageTemplate', $this->template);
+        if (isset($data)) {
+            assert(is_array($data));
+            foreach ($data as $n => &$v) {
+                $this->setData($n, $v);
+            }
+        }
         if (isset($layout)) {
             if (preg_match('/(^\/|^\w:\/|\/(~\w*|\.\.)|(~\w*|\.\.)\/)/', $layout)) {
                 throw new InvalidArgumentException(
@@ -134,12 +140,6 @@ class HTMLPage extends SitePage
                 $content = TemplateSystem::load($content);
             }
             $this->addToBuffer('content', $content);
-        }
-        if (isset($data)) {
-            assert(is_array($data));
-            foreach ($data as $n => &$v) {
-                $this->setData($n, $v);
-            }
         }
     }
 
