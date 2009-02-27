@@ -30,6 +30,7 @@ require_once 'lib/util/Params.php';
 require_once 'lib/site/SiteLayout.php';
 require_once 'lib/site/SiteHandler.php';
 require_once 'lib/site/SitePageProvider.php';
+require_once 'lib/site/SiteModuleLoader.php';
 require_once 'Config.php';
 
 // TODO this is just here for the autoloading, which needs to be split into its
@@ -42,6 +43,11 @@ require_once 'lib/application/Application.php';
  *   a database
  *   a configuration
  *   and more
+ *
+ * TODO
+ *   someday a site will only have a configuration, modules after:
+ *   Database and TemplateSystem are transformed into SiteModules
+ *   page logic is pulled out into a SitePageSystem
  *
  * Example usage in inedx.php:
  *   require_once('SITE/framework/SiteLoader.php');
@@ -130,6 +136,20 @@ abstract class Site extends CallbackManager
     }
 
     /**
+     * Get a site module
+     *
+     * @param module string
+     * @return SiteModule
+     */
+    final public static function getModule($module)
+    {
+        assert(is_string($module));
+        $site = self::Site();
+        assert(isset($site->modules));
+        return $site->modules->get($module);
+    }
+
+    /**
      * Returns the current SitePage, convenience for Site::Site()->page
      * @return SitePage
      */
@@ -192,6 +212,11 @@ abstract class Site extends CallbackManager
     public $serverUrl;
 
     /**
+     * @var SiteModuleLoader
+     */
+    public $modules;
+
+    /**
      * Creates a new site:
      *   starts the timing clock (if enabled)
      *   creates the SiteLayout if not set
@@ -205,6 +230,9 @@ abstract class Site extends CallbackManager
         if (! isset($this->layout)) {
             $this->layout = new SiteLayout($this);
         }
+
+        new SiteModuleLoader($this);
+        $this->modules->call('initialize');
 
         $proto = 'http';
         $port = '';
@@ -221,6 +249,8 @@ abstract class Site extends CallbackManager
         global $config; // compatability global
         $config = $this->config = new Config($this);
         $this->onConfig();
+
+        $this->modules->call('onConfig');
 
         $this->timing = $config->isDebugMode();
         if ($this->timing) {
