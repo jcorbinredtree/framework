@@ -312,8 +312,20 @@ class SitePage extends CallbackManager
                     return "[Object of type ".get_class($item)."]";
                 }
             } elseif (is_callable($item)) {
+                ob_start();
                 $ret = call_user_func_array($item, $args);
-                return $this->renderBufferedItem($ret, $args);
+                $l = ob_get_length();
+                $mess = '';
+                if ($l !== false) {
+                    if ($l > 0) {
+                        $mess = ob_get_contents();
+                    }
+                    ob_end_clean();
+                }
+                if (! is_string($ret) || is_callable($ret)) {
+                    $ret = $this->renderBufferedItem($ret, $args);
+                }
+                return $ret.$mess;
             } else {
                 return $item;
             }
