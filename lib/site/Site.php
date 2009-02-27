@@ -344,7 +344,7 @@ abstract class Site extends CallbackManager
             $this->dispatchCallback('onHandlerInitialize', $handler);
             $r = $this->marshallSingleCallback('onResolvePage', $url);
             if (! isset($r) || $r === SitePageProvider::FAIL) {
-                $this->page = new NotFoundPage();
+                $this->page = new NotFoundPage($url);
             } elseif ($r === SitePageProvider::REDIRECT) {
                 $this->dispatchCallback('onRedirect', $this);
             } else {
