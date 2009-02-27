@@ -27,6 +27,14 @@
 
 require_once 'lib/application/CurrentPath.php';
 require_once 'lib/application/ApplicationData.php';
+require_once 'lib/application/Main.php';
+require_once 'lib/component/IRequestObject.php';
+require_once 'lib/component/RequestObject.php';
+require_once 'lib/util/Params.php';
+require_once 'lib/database/Database.php';
+require_once 'lib/database/IDatabaseObject.php';
+require_once 'lib/database/DatabaseObject.php';
+
 
 /**
  * Implements PHP's autoload function in order to
@@ -337,24 +345,8 @@ class Application
         return CurrentPath::set($path);
     }
 
-    private static function requireMinimum()
-    {
-        global $config;
-
-        require_once "$config->fwAbsPath/lib/application/ApplicationData.php";
-        require_once "$config->fwAbsPath/lib/application/Main.php";
-        require_once "$config->fwAbsPath/lib/database/Database.php";
-        require_once "$config->fwAbsPath/lib/util/Params.php";
-        require_once "$config->fwAbsPath/lib/component/IRequestObject.php";
-        require_once "$config->fwAbsPath/lib/component/RequestObject.php";
-        require_once "$config->fwAbsPath/lib/database/IDatabaseObject.php";
-        require_once "$config->fwAbsPath/lib/database/DatabaseObject.php";
-    }
-
     public static function start()
     {
-        Application::requireMinimum();
-
         // load app data
         ApplicationData::initialize();
     }
