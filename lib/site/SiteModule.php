@@ -25,13 +25,15 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/util/CallbackManager.php';
+
 /**
  * A site module is a self contained sub-system, such as a CMS, DMS, login
  * system, etc
  *
  * Incidentally, this has absolutely nothing to do with the Module class
  */
-abstract class SiteModule
+abstract class SiteModule extends CallbackManager
 {
     protected $site;
 
