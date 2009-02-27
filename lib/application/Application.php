@@ -264,9 +264,12 @@ class Application
 
         $current->action =& $action;
 
-        if (null !== ($res = LifeCycleManager::onAction($provider, $action))) {
-            return $res;
-        }
+        /**
+         * TODO re-implement this when we revamp Component
+         * if (null !== ($res = LifeCycleManager::onAction($provider, $action))) {
+         *     return $res;
+         * }
+         */
 
         return $provider->perform($action, $stage);
     }
