@@ -252,30 +252,25 @@ class Database
             return;
         }
 
-        try {
-            if (! is_array($this->dbOptions)) {
-                $this->dbOptions = array();
-            }
-
-            $this->dbOptions[PDO::ATTR_PERSISTENT] = true;
-            $this->dbOptions[PDO::ATTR_CASE] = PDO::CASE_NATURAL;
-            $this->dbOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-            $this->dbOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
-
-            $this->pdo = new PDO(
-                sprintf('%s:host=%s;dbname=%s',
-                    $this->parsedDSN->driver,
-                    $this->parsedDSN->host,
-                    $this->parsedDSN->db
-                ),
-                $this->parsedDSN->user,
-                $this->parsedDSN->password,
-                $this->dbOptions
-            );
-        } catch (PDOException $e) {
-            $config->fatal($e->getMessage());
-            die("Unable to connect to the database");
+        if (! is_array($this->dbOptions)) {
+            $this->dbOptions = array();
         }
+
+        $this->dbOptions[PDO::ATTR_PERSISTENT] = true;
+        $this->dbOptions[PDO::ATTR_CASE] = PDO::CASE_NATURAL;
+        $this->dbOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        $this->dbOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+
+        $this->pdo = new PDO(
+            sprintf('%s:host=%s;dbname=%s',
+                $this->parsedDSN->driver,
+                $this->parsedDSN->host,
+                $this->parsedDSN->db
+            ),
+            $this->parsedDSN->user,
+            $this->parsedDSN->password,
+            $this->dbOptions
+        );
     }
 
     /**
@@ -464,7 +459,7 @@ class Database
      * @param mixed $tables either an array of table names or a single table name to lock
      * @param int $type the type of lock to aquire. You may use the bit masks Database::LOCK_READ,
      * and Database::LOCK_WRITE
-     * @return boolean true if the lock was obtained
+     * @return void
      */
     public function lock($tables, $type=Database::LOCK_READ)
     {
@@ -479,12 +474,12 @@ class Database
             if ($type & $mask) {
                 $sql = 'LOCK TABLES ' . implode(" $op, ", $tables) . " $op";
                 if ($this->perform($sql, 'lock') < 0) {
-                    return false;
+                    throw new DatabaseException($this,
+                        'lock', 'no rows affected'
+                    );
                 }
             }
         }
-
-        return true;
     }
 
     /**
@@ -492,11 +487,11 @@ class Database
      * even if you haven't locked any tables.
      *
      * @access public
-     * @return boolean true upon success; false otherwise
+     * @return void
      */
     public function unlock()
     {
-        return ($this->perform("UNLOCK TABLES", 'unlock') < 0);
+        $this->perform("UNLOCK TABLES", 'unlock');
     }
 
     /**
@@ -521,8 +516,10 @@ class Database
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
-            $this->errorLog("$type($sql)", $e->getMessage());
-            return false;
+            throw new DatabaseException($this, "$type($sql)", $e->getMessage());
+        } catch (Exception $e) {
+            $this->endTiming();
+            throw $e;
         }
 
         if ($this->log) {
@@ -539,7 +536,7 @@ class Database
      * @param mixed $param an object, assoc array mapping to the names of
      * the bound columns, or a normal array containing the values in order
      *
-     * @return true upon success
+     * @return void
      */
     public function execute($param=null)
     {
@@ -565,33 +562,23 @@ class Database
         $what = $this->whatStatement('execute', $params);
         try {
             $this->startTiming();
-
-            $result = false;
-
             if ($params) {
-                $result = $this->statement->execute($params);
+                $this->statement->execute($params);
             } else {
-                $result = $this->statement->execute();
+                $this->statement->execute();
             }
-
-            if (!$result) {
-                $this->endTiming();
-                $this->errorLog($what, $this->error());
-                return false;
-            }
-
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
-            $this->errorLog($what, $e->getMessage());
-            return false;
+            throw new DatabaseException($this, $what, $e->getMessage());
+        } catch (Exception $e) {
+            $this->endTiming();
+            throw $e;
         }
 
         if ($this->log) {
             $this->infoLog($what, $this->count());
         }
-
-        return true;
     }
 
     /**
@@ -605,16 +592,14 @@ class Database
     {
         $this->startTiming();
 
-        if (!$this->prepare($sqlf)) {
-            return false;
-        }
+        try {
+            $this->prepare($sqlf);
 
-        // Temporarily disable logging
-        $logging = $this->log;
-        $this->log = false;
+            // Temporarily disable logging
+            $logging = $this->log;
+            $this->log = false;
 
-        // bind function args. if an array was passed, then flatten it
-        {
+            // bind function args. if an array was passed, then flatten it
             $args = array_slice(func_get_args(), 1);
             $index = 1;
             foreach ($args as &$arg) {
@@ -630,28 +615,27 @@ class Database
                 $this->bindParam($index++, $arg);
             }
             unset($arg);
+
+            $this->execute();
+            $this->endTiming();
+            $this->log = $logging;
+        } catch (Exception $e) {
+            $this->endTiming();
+            $this->log = $logging;
+            throw $e;
         }
-
-        $res = $this->execute();
-
-        $this->endTiming();
-
-        // Restore logging
-        $this->log = $logging;
 
         if ($this->log) {
             $what = $this->whatStatement('executef', $args);
             $this->infoLog($what, $this->count());
         }
-
-        return $res;
     }
 
     /**
      * Prepares the given SQL for db'ing
      *
      * @param string $sql
-     * @return true upon success
+     * @return void
      */
     public function prepare($sql)
     {
@@ -664,8 +648,10 @@ class Database
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
-            $this->errorLog($what, $e->getMessage());
-            return false;
+            throw new DatabaseException($this, $what, $e->getMessage());
+        } catch (Exception $e) {
+            $this->endTiming();
+            throw $e;
         }
 
         if ($this->log) {
@@ -673,8 +659,6 @@ class Database
         }
 
         array_push($this->statementStack, $this->statement);
-
-        return true;
     }
 
     /**
@@ -695,8 +679,10 @@ class Database
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
-            $this->errorLog($what, $e->getMessage());
-            return false;
+            throw new DatabaseException($this, $what, $e->getMessage());
+        } catch (Exception $e) {
+            $this->endTiming();
+            throw $e;
         }
 
         if ($this->log) {
@@ -705,8 +691,6 @@ class Database
         }
 
         array_push($this->statementStack, $this->statement);
-
-        return true;
     }
 
     /**
@@ -1172,42 +1156,6 @@ class Database
         $config->info(
             # Usually looks something like:
             #   Database::action(details), time: n.mmmm seconds, rows: n
-            'Database::'.implode(', ', $parts),
-            4 # try to pin it on Database's consumer
-        );
-    }
-
-    /**
-     * Logs an error message through Config.
-     *
-     * @param what string what the caller did that went badly
-     * @param why string why it didn't work out (optional)
-     */
-    private function errorLog($what, $why=null)
-    {
-        global $config;
-
-        $parts = array($what);
-
-        array_push($parts, "failed: $why");
-
-        if ($this->time && isset($this->lastTimeDelta)) {
-            array_push($parts,
-                sprintf('time: %.4f seconds', $this->lastTimeDelta)
-            );
-        }
-
-        if ($this->observing) {
-            $data = array(
-                'why' => $why,
-                'extra' => array_slice($parts, 1)
-            );
-            $this->notifyObservers(Database::ERROR, $what, $data);
-        }
-
-        $config->error(
-            # Usually looks something like:
-            #   Database::action(details), failed: it didn't work out, time: n.mmmm seconds
             'Database::'.implode(', ', $parts),
             4 # try to pin it on Database's consumer
         );

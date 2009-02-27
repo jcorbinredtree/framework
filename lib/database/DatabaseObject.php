@@ -126,7 +126,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     /**
      * Called to create the object
      *
-     * @return boolean
+     * @return void
      */
     public function create()
     {
@@ -137,23 +137,13 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         $key = $meta->getKey();
 
         $database->lock($table, Database::LOCK_WRITE);
-        {
+        try {
             $meta = $this->meta();
             $sql = $meta->getSQL(DatabaseObject::SQL_INSERT);
 
-            if (!$database->prepare($sql)) {
-                $config->error("could not prepare db object");
-                $database->unlock();
-                return false;
-            }
-
+            $database->prepare($sql);
             $values = $meta->getFieldSetValues($this);
-
-            if (!$database->execute($values)) {
-                $config->error("could not execute insert on db object");
-                $database->unlock();
-                return false;
-            }
+            $database->execute($values);
 
             $p = Params::fieldToProperty($key);
             if (property_exists($this, $p) && $this->$p) {
@@ -161,10 +151,11 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             } else {
                 $this->id = $database->lastInsertId();
             }
+        } catch (Exception $e) {
+            $database->unlock();
+            throw $e;
         }
         $database->unlock();
-
-        return true;
     }
 
     /**
@@ -178,21 +169,21 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         global $database;
 
         $sql = $this->meta()->getSQL(DatabaseObject::SQL_SELECT);
-        if ($database->executef($sql, $id) && $database->count()) {
-            $row = $database->getRow();
-            Params::ArrayToObject($row, $this);
-            $this->id = $id;
-
-            return true;
+        $database->executef($sql, $id);
+        if (! $database->count()) {
+            return false;
         }
 
-        return false;
+        $row = $database->getRow();
+        Params::ArrayToObject($row, $this);
+        $this->id = $id;
+        return true;
     }
 
     /**
      * Updates the current object in the database, based on the properties set
      *
-     * @return boolean
+     * @return void
      */
     public function update()
     {
@@ -204,37 +195,26 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         $sql = $meta->getSQL(DatabaseObject::SQL_UPDATE);
 
-        if (!$database->prepare($sql)) {
-            return false;
-        }
+        $database->prepare($sql);
 
         $values = $meta->getFieldSetValues($this);
         $values[":$key"] = $this->id;
 
-        if (! $database->execute($values)) {
-            return false;
-        }
-
-        return true;
+        $database->execute($values);
     }
 
     /**
      * Removes the current $this->id from the database
      *
-     * @return boolean
+     * @return void
      */
     public function delete()
     {
         global $database;
 
         $sql = $this->meta()->getSQL(DatabaseObject::SQL_DELETE);
-
-        if ($database->executef($sql, $this->id)) {
-            $this->id = -1;
-            return true;
-        }
-
-        return false;
+        $database->executef($sql, $this->id);
+        $this->id = -1;
     }
 
     /**
