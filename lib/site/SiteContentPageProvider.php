@@ -41,7 +41,7 @@ class SiteContentPageProvider extends SitePageProvider
         try {
             return new HTMLPage(
                 null,
-                TemplateSystem::load("pageContent:$url"),
+                "pageContent:$url",
                 array('requestUrl' => $url)
             );
         } catch (PHPSTLNoSuchResource $ex) {
