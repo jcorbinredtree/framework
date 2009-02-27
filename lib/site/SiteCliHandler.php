@@ -45,6 +45,30 @@ class SiteCliHandler extends SiteHandler
 
         Application::start();
         $this->site->getDatabase();
+
+        // TODO once SitePageSystem is implemente, it should provide an off
+        // switch for us
+        $this->site->addCallback('onResolvePage', array($this, 'plugPage'));
+    }
+
+    private $callback;
+
+    public function setArguments($args)
+    {
+        if (count($args) < 1) {
+            throw new RuntimeException('missing cli handler argument');
+        }
+        if (! is_callable($args[0])) {
+            throw new RuntimeException('cli handler argument not callable');
+        }
+        $this->callback = $args[0];
+    }
+
+    public function plugPage($url)
+    {
+        $page = new SitePage('text/plain', false);
+        $page->addToBuffer('content', $this->callback);
+        return $page;
     }
 }
 
