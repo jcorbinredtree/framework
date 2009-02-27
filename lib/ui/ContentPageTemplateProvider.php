@@ -139,6 +139,16 @@ class ContentPageTemplateProvider extends PHPSTLTemplateProvider
         }
     }
 
+    public function addProvider(PHPSTLTemplateProvider $provider, $prepend=false)
+    {
+        if ($prepend) {
+            array_unshift($this->providers, $provider);
+        } else {
+            array_push($this->providers, $provider);
+        }
+        return $provider;
+    }
+
     public function load($resource)
     {
         if (substr($resource, 0, strlen(self::$Prefix)) != self::$Prefix) {
