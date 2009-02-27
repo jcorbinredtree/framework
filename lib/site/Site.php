@@ -60,6 +60,11 @@ abstract class Site extends CallbackManager
 {
     public static $DefaultPageLayout = 'default';
 
+    public static $Modules = array(
+        // TODO move this out into a requirement of forth-coming SitePageSystem
+        'TemplateSystem'
+    );
+
     /**
      * Static management
      */

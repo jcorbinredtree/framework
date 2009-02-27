@@ -163,11 +163,12 @@ class BufferedObject
      */
     public function writeTemplate($template, $arguments=null)
     {
+        $tsys = Site::getModule('TemplateSystem');
         if (is_string($template)) {
-            $template = TemplateSystem::load($name);
+            $template = $tsys->load($name);
         } elseif (
             ! is_object($template) ||
-            ! is_a($template, TemplateSystem::$TemplateClass)
+            ! is_a($template, $tsys->getPHPSTL()->getTemplateClass())
         ) {
             throw new InvalidArgumentException('not a template');
         }

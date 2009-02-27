@@ -91,7 +91,7 @@ class HTMLPage extends SitePage
      *
      * @param content mixed convenience argument, will be added to the
      * 'content' buffer if a string, the string is treated as a template
-     * resource and passed through TemplateSystem::load
+     * resource and passed through TemplateSystem->load
      *
      * @param data mixed null or an array of data items to initially set
      *
@@ -137,7 +137,8 @@ class HTMLPage extends SitePage
         Site::Site()->layoutHTMLPage($this);
         if (isset($content)) {
             if (is_string($content)) {
-                $content = TemplateSystem::load($content);
+                $tsys = Site::getModule('TemplateSystem');
+                $content = $tsys->load($content);
             }
             $this->addToBuffer('content', $content);
         }

@@ -427,7 +427,8 @@ class SitePage extends CallbackManager
     protected function onRender()
     {
         if (isset($this->template)) {
-            return $this->renderTemplate(TemplateSystem::load($this->template));
+            $tsys = Site::getModule('TemplateSystem');
+            return $this->renderTemplate($tsys->load($this->template));
         } else {
             return $this->getBuffer('content');
         }

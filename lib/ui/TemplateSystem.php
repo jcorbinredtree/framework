@@ -26,6 +26,7 @@
  * @link         http://www.redtreesystems.com
  */
 
+require_once 'lib/site/SiteModule.php';
 require_once 'extensions/php-stl/PHPSTL.php';
 require_once 'lib/ui/ContentPageTemplateProvider.php';
 require_once 'lib/ui/CurrentTemplateProvider.php';
@@ -36,66 +37,70 @@ require_once 'lib/ui/tags/UiTag.php';
 /**
  * Singleton php-stl template
  */
-class TemplateSystem
+class TemplateSystem extends SiteModule
 {
     public static $TemplateClass = 'Template';
     public static $CompilerClass = 'FrameworkCompiler';
 
-    private static $pstl;
+    private $pstl;
 
-    public static function instance()
+    public function onConfig()
     {
-        if (! isset(self::$pstl)) {
-            $site = Site::Site();
-            $copt = $site->config->getTemplateOptions();
+        $copt = $this->site->config->getTemplateOptions();
 
-            $inc = array();
-            if (array_key_exists('include_path', $copt)) {
-                $inc = Site::pathArray($copt['include_path']);
-                unset($copt['include_path']);
-            }
-
-            $content = array();
-            if (array_key_exists('contentpage_path', $copt)) {
-                $content = Site::pathArray($copt['contentpage_path']);
-                unset($copt['contentpage_path']);
-            }
-
-            // TODO maybe we shouldn't add local paths here at all, leave that
-            // up to the config
-            array_push($inc, SiteLoader::$LocalPath.'/templates');
-            array_push($inc, SiteLoader::$FrameworkPath.'/templates');
-            array_push($content, SiteLoader::$LocalPath.'/content');
-            $nos = false;
-            if (array_key_exists('contentpage_noshared_content', $copt)) {
-                $nos = (bool) $copt['contentpage_noshared_content'];
-                unset($copt['contentpage_noshared_content']);
-            }
-            if (! $nos) {
-                array_push($content, SiteLoader::$FrameworkPath.'/content');
-            }
-
-            self::$pstl = new PHPSTL(array_merge(array(
-                'contentpage_path'    => $content,
-                'include_path'        => $inc,
-                'template_class'      => self::$TemplateClass,
-                'compiler_class'      => self::$CompilerClass,
-                'diskcache_directory' => $site->layout->getCacheArea('template')
-            ), $copt));
-            self::$pstl->addProvider(new ContentPageTemplateProvider(self::$pstl));
-            self::$pstl->addProvider(new CurrentTemplateProvider(self::$pstl));
+        $inc = array();
+        if (array_key_exists('include_path', $copt)) {
+            $inc = Site::pathArray($copt['include_path']);
+            unset($copt['include_path']);
         }
-        return self::$pstl;
+
+        $content = array();
+        if (array_key_exists('contentpage_path', $copt)) {
+            $content = Site::pathArray($copt['contentpage_path']);
+            unset($copt['contentpage_path']);
+        }
+
+        // TODO maybe we shouldn't add local paths here at all, leave that
+        // up to the config
+        array_push($inc, SiteLoader::$LocalPath.'/templates');
+        array_push($inc, SiteLoader::$FrameworkPath.'/templates');
+        array_push($content, SiteLoader::$LocalPath.'/content');
+        $nos = false;
+        if (array_key_exists('contentpage_noshared_content', $copt)) {
+            $nos = (bool) $copt['contentpage_noshared_content'];
+            unset($copt['contentpage_noshared_content']);
+        }
+        if (! $nos) {
+            array_push($content, SiteLoader::$FrameworkPath.'/content');
+        }
+
+        $this->pstl = new PHPSTL(array_merge(array(
+            'contentpage_path'    => $content,
+            'include_path'        => $inc,
+            'template_class'      => self::$TemplateClass,
+            'compiler_class'      => self::$CompilerClass,
+            'diskcache_directory' => $this->site->layout->getCacheArea('template')
+        ), $copt));
+        $this->pstl->addProvider(new ContentPageTemplateProvider($this->pstl));
+        $this->pstl->addProvider(new CurrentTemplateProvider($this->pstl));
     }
 
-    public static function load($resource)
+    public function getPHPSTL()
     {
-        return self::instance()->load($resource);
+        if (! isset($this->pstl)) {
+            throw new RuntimeException('php-stl not initialized');
+        }
+        return $this->pstl;
     }
 
-    public static function process($resource, $args=null)
+    public function load($resource)
     {
-        return self::instance()->process($resource, $args);
+        return $this->pstl->load($resource);
+    }
+
+    public function process($resource, $args=null)
+    {
+        return $this->pstl->process($resource, $args);
     }
 }
 
