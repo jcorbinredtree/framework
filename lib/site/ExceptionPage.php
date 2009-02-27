@@ -47,16 +47,18 @@ class ExceptionPage extends SitePage
      * While this is publically accessible for flexibility, this should be
      * sparingly used; you likely meant to call the static method Current.
      *
+     * @param site Site
+     * @param ex Exception
+     * @param oldPage SitePage
      * @see Current
      */
-    public function __construct(Exception $ex, $oldPage=null)
+    public function __construct(Site $site, Exception $ex, $oldPage=null)
     {
-        parent::__construct('text/html', 'page/exception.xml');
+        parent::__construct($site, 'text/html', 'page/exception.xml');
 
         if (! isset($oldPage)) {
-            $site = Site::Site();
-            if (isset($site->page) && $site->page !== $this) {
-                $oldPage = $site->page;
+            if (isset($this->site->page) && $this->site->page !== $this) {
+                $oldPage = $this->site->page;
             }
         }
         $this->setData('oldPage', $oldPage);

@@ -95,17 +95,24 @@ class SitePage extends CallbackManager
     private $data;
 
     /**
+     * @var Site
+     */
+    protected $site;
+
+    /**
      * Constructor
      *
      * Creates a new SitePage.
      *
+     * @param site Site
      * @param type string the type of the page, defaults to 'text/plain'
      * @param template the template resource string used to render this page
      * if set to the false value, then the $template property will not be set
      * @see $template
      */
-    public function __construct($type='text/plain', $template=null)
+    public function __construct(Site $site, $type='text/plain', $template=null)
     {
+        $this->site = $site;
         $this->buffers = array();
         $this->data = array();
         $this->type = $type;
@@ -122,6 +129,11 @@ class SitePage extends CallbackManager
         }
         $this->headers = new SitePageHeaders();
         $this->headers->setContentType($this->type);
+    }
+
+    public function getSite()
+    {
+        return $this->site;
     }
 
     /**
@@ -427,7 +439,7 @@ class SitePage extends CallbackManager
     protected function onRender()
     {
         if (isset($this->template)) {
-            $tsys = Site::getModule('TemplateSystem');
+            $tsys = $this->site->modules->get('TemplateSystem');
             return $this->renderTemplate($tsys->load($this->template));
         } else {
             return $this->getBuffer('content');

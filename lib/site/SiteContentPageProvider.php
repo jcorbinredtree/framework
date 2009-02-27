@@ -53,7 +53,7 @@ class SiteContentPageProvider extends SitePageProvider
     {
         try {
             self::$loadingPage = $page = new HTMLPage(
-                null,
+                $this->site, null,
                 "pageContent:$url",
                 array('requestUrl' => $url)
             );

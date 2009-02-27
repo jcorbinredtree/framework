@@ -344,7 +344,7 @@ abstract class Site extends CallbackManager
             $this->dispatchCallback('onHandlerInitialize', $handler);
             $r = $this->marshallSingleCallback('onResolvePage', $url);
             if (! isset($r) || $r === SitePageProvider::FAIL) {
-                $this->page = new NotFoundPage($url);
+                $this->page = new NotFoundPage($this, $url);
             } elseif ($r === SitePageProvider::REDIRECT) {
                 $this->dispatchCallback('onRedirect', $this);
             } else {
@@ -364,7 +364,7 @@ abstract class Site extends CallbackManager
             @ob_end_clean();
             try {
                 @ob_start();
-                $this->page = new ExceptionPage($ex, $this->page);
+                $this->page = new ExceptionPage($this, $ex, $this->page);
                 $this->page->render();
                 @ob_end_flush();
             } catch (Exception $rex) {

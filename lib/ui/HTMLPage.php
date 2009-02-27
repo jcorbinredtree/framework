@@ -85,6 +85,8 @@ class HTMLPage extends SitePage
      * While this is publically accessible for flexibility, this should be
      * sparingly used; you likely meant to call the static method Current.
      *
+     * @param site Site
+     *
      * @param layout string the layout name, if non-null, setLayout is called
      * with this argument. Whether a layout was specified or not,
      * Site->setHTMLPageLayout will be called after possibly calling setLayout.
@@ -113,9 +115,9 @@ class HTMLPage extends SitePage
      * @see Current, SitePage::$template, SitePage::render, setLayout,
      * Site::setHTMLPageLayout, CoreTag::_extends
      */
-    public function __construct($layout=null, $content=null, $data=null)
+    public function __construct(Site $site, $layout=null, $content=null, $data=null)
     {
-        parent::__construct('text/html');
+        parent::__construct($site, 'text/html');
         $this->headers->setContentTypeCharset('utf-8');
         $this->assets = array();
         $this->meta = new HTMLPageMeta();
@@ -134,10 +136,10 @@ class HTMLPage extends SitePage
             }
             $this->setLayout($layout);
         }
-        Site::Site()->layoutHTMLPage($this);
+        $this->site->layoutHTMLPage($this);
         if (isset($content)) {
             if (is_string($content)) {
-                $tsys = Site::getModule('TemplateSystem');
+                $tsys = $this->site->modules->get('TemplateSystem');
                 $content = $tsys->load($content);
             }
             $this->addToBuffer('content', $content);
@@ -266,17 +268,16 @@ class HTMLPage extends SitePage
      */
     public function formatTitle()
     {
-        $site = Site::Site();
         if (
-            property_exists($site, 'title') &&
-            isset($site->title)
+            property_exists($this->site, 'title') &&
+            isset($this->site->title)
         ) {
-            $siteTitle = $site->title;
+            $siteTitle = $this->site->title;
         } elseif (
-            property_exists($site->config, 'title') &&
-            isset($site->config->title)
+            property_exists($this->site->config, 'title') &&
+            isset($this->site->config->title)
         ) {
-            $siteTitle = $site->config->title;
+            $siteTitle = $this->site->config->title;
         } else {
             return $this->title;
         }

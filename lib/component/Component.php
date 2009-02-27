@@ -83,7 +83,7 @@ abstract class Component extends ActionProvider
         $config = Site::getConfig();
         $component = self::getInstance($class);
 
-        $page = new HTMLPage();
+        $page = new HTMLPage(Site::Site());
         $page->component = $component;
         return $page;
     }
