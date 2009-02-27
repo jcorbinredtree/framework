@@ -538,7 +538,7 @@ class Database
      * @param mixed $param an object, assoc array mapping to the names of
      * the bound columns, or a normal array containing the values in order
      *
-     * @return void
+     * @return PDOStatement
      */
     public function execute($param=null)
     {
@@ -583,6 +583,8 @@ class Database
         if ($this->log) {
             $this->infoLog($what, $this->count());
         }
+
+        return $this->statement;
     }
 
     /**
@@ -590,7 +592,7 @@ class Database
      *
      * @param string $sqlf a SQL string, with positional(?) based preparation
      * @param arglist ... variable arguments representing the prepared args
-     * @return unknown
+     * @return PDOStatement
      */
     public function executef($sqlf)
     {
@@ -633,13 +635,15 @@ class Database
             $what = $this->whatStatement('executef', $args);
             $this->infoLog($what, $this->count());
         }
+
+        return $this->statement;
     }
 
     /**
      * Prepares the given SQL for db'ing
      *
      * @param string $sql
-     * @return void
+     * @return PDOStatement
      */
     public function prepare($sql)
     {
@@ -648,8 +652,9 @@ class Database
         $what = $this->whatStatement('prepare', $sql);
         try {
             $this->startTiming();
-            $this->statement = $this->pdo->prepare($sql);
+            $sth = $this->pdo->prepare($sql);
             $this->endTiming();
+            $this->statement = $sth;
         } catch (PDOException $e) {
             $this->endTiming();
             throw new DatabaseException($this, $what, $e->getMessage());
@@ -663,6 +668,8 @@ class Database
         }
 
         array_push($this->statementStack, $this->statement);
+
+        return $this->statement;
     }
 
     /**
@@ -748,7 +755,7 @@ class Database
      * @param string $sql the SQL for your query
      * @param string $type the type of objects to be returned
      * @param arglist ... variable arguments representing the prepared args
-     * @return array an array of object rows, or null on error
+     * @return array an array of object rows
      */
     public function queryForResultObjects($sql, $type='stdClass')
     {
