@@ -271,6 +271,8 @@ class Database
             $this->parsedDSN->password,
             $this->dbOptions
         );
+
+        register_shutdown_function(array($this, 'unlock'));
     }
 
     /**
