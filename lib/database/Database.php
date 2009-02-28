@@ -551,7 +551,7 @@ class Database
                     }
                 }
                 unset($val);
-            } else {
+            } elseif (isset($param)) {
                 if (! is_array($param)) {
                     throw new InvalidArgumentException('not an array');
                 }
