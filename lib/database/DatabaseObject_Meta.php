@@ -96,6 +96,7 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
     private $customSqlCache;
 
     // Static definiton collections
+    private $manualColumns;
     private $customSQL;
 
     /**
@@ -129,6 +130,7 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
                 }
                 $this->$name = $prop->getValue();
                 break;
+            case 'ManualColumns':
             case 'CustomSQL':
                 $m = strtolower($name[0]).substr($name, 1);
                 $this->$m = self::collectStaticArray($refcls, $name);
@@ -222,6 +224,13 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
         }
     }
 
+    public function isManualColumn($column)
+    {
+        return
+            isset($this->manualColumns) &&
+            in_array($column, $this->manualColumns);
+    }
+
     /**
      * Builds SQL statements
      *
@@ -313,6 +322,12 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
             if ($column == $key) {
                 continue;
             }
+            if (
+                isset($this->manualColumns) &&
+                in_array($column, $this->manualColumns)
+            ) {
+                continue;
+            }
 
             $def = $this->getColumnDefinition($column);
             switch (strtolower(Params::generic($def, 'native_type'))) {
@@ -356,6 +371,12 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
 
         foreach ($fields as $property => $column) {
             if ($property == 'id' || $column == $key) {
+                continue;
+            }
+            if (
+                isset($this->manualColumns) &&
+                in_array($column, $this->manualColumns)
+            ) {
                 continue;
             }
 
