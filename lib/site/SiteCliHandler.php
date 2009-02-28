@@ -66,7 +66,7 @@ class SiteCliHandler extends SiteHandler
 
     public function plugPage($url)
     {
-        $page = new SitePage('text/plain', false);
+        $page = new SitePage($this->site, 'text/plain', false);
         $page->addToBuffer('content', $this->callback);
         return $page;
     }
