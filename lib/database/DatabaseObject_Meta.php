@@ -95,6 +95,9 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
     private $sqlCache;
     private $customSqlCache;
 
+    // Static definiton collections
+    private $customSQL;
+
     /**
      * Constructor
      *
@@ -125,6 +128,10 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
                     trigger_error("$class->$name should be $class::\$$name");
                 }
                 $this->$name = $prop->getValue();
+                break;
+            case 'CustomSQL':
+                $m = strtolower($name[0]).substr($name, 1);
+                $this->$m = self::collectStaticArray($refcls, $name);
                 break;
             default:
                 if (! $prop->isStatic()) {
@@ -431,31 +438,66 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
      *   };
      *
      * @see DatabaseObject_Meta::getCustomSQL
-     * @param code int code representing this statement
+     * @param code mixed a key for customSqlCache
      * @param sql string the statement
      *
-     * @return void
+     * @return string $sql for convenience
      */
     public function setCustomSQL($code, $sql)
     {
-        $this->sqlCache[$code] = $sql;
+        $sql = str_replace('{table}', $this->table, $sql);
+        $sql = str_replace('{key}', "`$this->key`", $sql);
+        return $this->sqlCache[$code] = $sql;
     }
 
     /**
      * Retrieves a cusotm sql statement stored by setCustomSQL
      *
      * @see setCustomSQL
-     * @param code int as in setCustomSQL
+     * @param code mixed a key for customSqlCache
      * @return mixed if the code exists, the stored string is returned, otherwise
      *   the false value.
      */
     public function getCustomSQL($code)
     {
         if (! array_key_exists($code, $this->customSqlCache)) {
+            // Subclass statically defines sql strings
+            if (
+                isset($this->customSQL) &&
+                array_key_exists($code, $this->customSQL)
+            ) {
+                return $this->setCustomSQL($code, $this->customSQL[$code]);
+            }
             return false;
         } else {
             return $this->customSqlCache[$code];
         }
+    }
+
+    /**
+     * Priavte utility, go away
+     */
+    static private function collectStaticArray(ReflectionClass $class, $name) {
+        $a=array();
+        while ($class) {
+            if ($class->hasProperty($name)) {
+                $prop = $class->getProperty($name);
+                if (! $prop->isStatic()) {
+                    throw new RuntimeException(
+                        "$class->name::\$$name isn't static"
+                    );
+                }
+                $v = $prop->getValue();
+                if (! is_array($v)) {
+                    throw new RuntimeException(
+                        "$class->name::\$$name isn't an array"
+                    );
+                }
+                $a = array_unique(array_merge($a, $v));
+            }
+            $class = $class->getParentClass();
+        }
+        return $a;
     }
 }
 
