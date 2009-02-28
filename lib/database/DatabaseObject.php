@@ -277,6 +277,38 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      * }
      */
 
+    public function serialize()
+    {
+        $meta = $this->meta();
+        $data = array();
+        foreach ($meta->getColumnMap() as $property => $column) {
+            if ($meta->isManualColumn($column)) {
+                continue;
+            }
+            $data[$column] = $this->$property;
+        }
+        return $data;
+    }
+
+    public function unserialize($data, $save=true)
+    {
+        assert(is_array($data));
+        $meta = $this->meta();
+        foreach ($meta->getColumnMap() as $property => $column) {
+            if ($meta->isManualColumn($column)) {
+                continue;
+            }
+            $this->$property = $data[$column];
+        }
+
+        if ($save) {
+            if (isset($this->id)) {
+                $this->update();
+            } else {
+                $this->create();
+            }
+        }
+    }
 
     /**
      * Returns a value list for executing a prepared sql statement containing
