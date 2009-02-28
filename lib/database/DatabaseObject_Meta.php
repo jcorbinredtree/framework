@@ -388,36 +388,6 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
     }
 
     /**
-     * Returns a value list for executing a prepared sql statement containing
-     * the fragment returned by getFieldSetSQL.
-     *
-     * @param object DatabaseObject the object whose propertise to bind
-     * @param byName boolean whether to return an associative array suitable for use
-     * with a sql fragment with named parameters, true by default.
-     *
-     * @return array value list
-     */
-    public function getFieldSetValues($object, $byName=true)
-    {
-        $key = $this->getKey();
-        $fields = $this->getColumnMap();
-        $values = array();
-
-        foreach ($fields as $property => $column) {
-            if ($property == 'id' || $column == $key) {
-                continue;
-            }
-            if ($byName) {
-                $values[":$column"] =& $object->$property;
-            } else {
-                array_push($values, &$object->$property);
-            }
-        }
-
-        return $values;
-    }
-
-    /**
      * Stores a custom sql statement
      *
      * Subclasses should use this when they build a custom database query, example:

@@ -151,7 +151,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             $sql = $meta->getSQL(DatabaseObject::SQL_INSERT);
 
             $database->prepare($sql);
-            $values = $meta->getFieldSetValues($this);
+            $values = $this->getFieldSetValues();
             $database->execute($values);
 
             $p = Params::fieldToProperty($key);
@@ -208,7 +208,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         $database->prepare($sql);
 
-        $values = $meta->getFieldSetValues($this);
+        $values = $this->getFieldSetValues();
         $values[":$key"] = $this->id;
 
         $database->execute($values);
@@ -277,6 +277,39 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      * }
      */
 
+
+    /**
+     * Returns a value list for executing a prepared sql statement containing
+     * the fragment returned by meta()->getFieldSetSQL.
+     *
+     * @param byName boolean whether to return an associative array suitable for use
+     * with a sql fragment with named parameters, true by default.
+     *
+     * @return array value list
+     */
+    public function getFieldSetValues($byName=true)
+    {
+        $meta = $this->meta();
+        $key = $meta->getKey();
+        $fields = $meta->getColumnMap();
+        $values = array();
+
+        foreach ($fields as $property => $column) {
+            if ($property == 'id' || $column == $key) {
+                continue;
+            }
+            if ($meta->isManualColumn($column)) {
+                continue;
+            }
+            if ($byName) {
+                $values[":$column"] =& $this->$property;
+            } else {
+                array_push($values, &$this->$property);
+            }
+        }
+
+        return $values;
+    }
 
     /**
      * Logs an error message through Config.
