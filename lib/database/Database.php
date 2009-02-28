@@ -772,11 +772,8 @@ class Database
             $args = array();
         }
 
-        if ($this->executef($sql, $args)) {
-           return $this->getResultObjects($type);
-        }
-
-        return null;
+        $this->executef($sql, $args);
+        return $this->getResultObjects($type);
     }
 
     /**

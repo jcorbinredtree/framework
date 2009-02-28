@@ -25,6 +25,8 @@
  * @link             http://framework.redtreesystems.com
  */
 
+require_once 'lib/component/IRequestObject.php';
+
 /**
  * This is an abstract class to ease parameter handling. It is
  * somewhere between a data access object and a form object.

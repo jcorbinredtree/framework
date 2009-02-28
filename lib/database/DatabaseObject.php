@@ -24,6 +24,11 @@
  * @link         http://framework.redtreesystems.com
  */
 
+// TODO part ways with this
+require_once 'lib/component/RequestObject.php';
+
+require_once 'lib/database/IDatabaseObject.php';
+require_once 'lib/database/DatabaseObject_Meta.php';
 
 /**
  * Simple ORM object base class
@@ -250,11 +255,20 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      *
      * @return object DatabaseObject_Meta
      */
-    public function &meta()
+    public function meta()
     {
-        $meta = DatabaseObject_Meta::forClass(get_class($this));
-        return $meta;
+        return DatabaseObject_Meta::forClass(get_class($this));
     }
+
+    /*
+     * 5.3.0 someday, the magic of late static binding:
+     *
+     * public static function staticMeta()
+     * {
+     *     return DatabaseObject_Meta::forClass(get_called_class());
+     * }
+     */
+
 
     /**
      * Logs an error message through Config.

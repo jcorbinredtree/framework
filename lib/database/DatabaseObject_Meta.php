@@ -28,6 +28,8 @@
  * @see DatabaseObject::meta
  */
 
+require_once 'lib/database/IDatabaseObject_Meta.php';
+
 class DatabaseObject_Meta implements IDatabaseObject_Meta
 {
     /**
@@ -89,7 +91,7 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
     private $columnMap; // Holds member <-> column map
     private $columnDef; // Holds database field definitions
 
-    # Holds sql strings
+    // Holds sql strings
     private $sqlCache;
     private $customSqlCache;
 
@@ -176,7 +178,7 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
     }
 
     /**
-     * Returns an associative array mapping member namse to database columns
+     * Returns an associative array mapping member names to database columns
      *
      * @return array
      */
@@ -349,14 +351,14 @@ class DatabaseObject_Meta implements IDatabaseObject_Meta
         $set = array();
 
         foreach ($fields as $property => $column) {
+            if ($property == 'id' || $column == $key) {
+                continue;
+            }
+
             if ($bindByName) {
                 $value = ":$column";
             } else {
                 $value = '?';
-            }
-
-            if ($property == 'id' || $column == $key) {
-                continue;
             }
 
             $def = $this->getColumnDefinition($column);

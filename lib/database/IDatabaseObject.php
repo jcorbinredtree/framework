@@ -36,7 +36,7 @@ interface IDatabaseObject {
     public function fetch($id);
     public function update();
     public function delete();
-    public function &meta();
+    public function meta();
 }
 
 ?>
