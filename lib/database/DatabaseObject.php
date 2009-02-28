@@ -91,6 +91,10 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      */
     protected $memo = array();
 
+    public function __construct()
+    {
+    }
+
     /**
      * Determines if this key exists in the memoization
      *
