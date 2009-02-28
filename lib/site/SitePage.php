@@ -63,7 +63,7 @@ class SitePage extends CallbackManager
     /**
      * The template resource sting to use to render this page
      *
-     * The default implementation defaults to "page/type.xml" where the "type"
+     * The default implementation defaults to "page/type" where the "type"
      * portion is the $type property with all '/'s replaced with '_'s.
      *
      * This can be null if a subclass does not wish to use a template-based
@@ -123,7 +123,7 @@ class SitePage extends CallbackManager
                 $this->template = $template;
             }
         } else {
-            $this->template = sprintf('page/%s.xml',
+            $this->template = sprintf('page/%s',
                 preg_replace('/\//', '_', $this->type)
             );
         }

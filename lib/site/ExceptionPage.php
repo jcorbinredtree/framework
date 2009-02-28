@@ -54,7 +54,7 @@ class ExceptionPage extends SitePage
      */
     public function __construct(Site $site, Exception $ex, $oldPage=null)
     {
-        parent::__construct($site, 'text/html', 'page/exception.xml');
+        parent::__construct($site, 'text/html', 'page/exception');
 
         if (! isset($oldPage)) {
             if (isset($this->site->page) && $this->site->page !== $this) {

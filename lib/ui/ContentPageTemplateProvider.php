@@ -173,7 +173,7 @@ class ContentPageTemplateProvider extends PHPSTLTemplateProvider
         $gotit = new StopException('catch!');
         try {
             if ($path != '') {
-                $r = PHPSTLTemplateProvider::provide($this->providers, "$path.xml");
+                $r = PHPSTLTemplateProvider::provide($this->providers, $path);
                 if (isset($r)) {
                     $gotit->template = $r;
                     throw $gotit;
@@ -185,7 +185,7 @@ class ContentPageTemplateProvider extends PHPSTLTemplateProvider
             } else {
                 $path = "$path/$this->indexFile";
             }
-            $r = PHPSTLTemplateProvider::provide($this->providers, "$path.xml");
+            $r = PHPSTLTemplateProvider::provide($this->providers, $path);
             if (isset($r)) {
                 $gotit->template = $r;
                 throw $gotit;

@@ -12,7 +12,7 @@
   <body>
 
 <div id="main">
-  <core:process resource="exceptionDisplay.xml">
+  <core:process resource="exceptionDisplay">
     <arg name="exception" value="${exception}" />
   </core:process>
 

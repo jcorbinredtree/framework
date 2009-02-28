@@ -32,7 +32,7 @@ class NotFoundPage extends HTMLPage
         if (! isset($url)) {
             $url = Params::server('REQUEST_URI');
         }
-        parent::__construct($site, null, 'page/nopage.xml', array(
+        parent::__construct($site, null, 'page/nopage', array(
             'status'     => '404 Not Found',
             'requestUrl' => $url
         ));

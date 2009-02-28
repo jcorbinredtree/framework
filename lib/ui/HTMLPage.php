@@ -150,7 +150,7 @@ class HTMLPage extends SitePage
      * Sets the page layout
      *
      * The value will be set to the 'pageLayout' data item, the $template
-     * property will be set to "layouts/$layout.xml".
+     * property will be set to "layouts/$layout".
      *
      * @param layout string
      * @return void
@@ -158,7 +158,7 @@ class HTMLPage extends SitePage
     public function setLayout($layout)
     {
         $this->setData('pageLayout', $layout);
-        $this->template = "layouts/$layout.xml";
+        $this->template = "layouts/$layout";
     }
 
     /**
@@ -293,7 +293,7 @@ class HTMLPage extends SitePage
     {
         if (! isset(self::$exceptionDisplayTemplate)) {
             $tsys = $this->site->modules->get('TemplateSystem');
-            self::$exceptionDisplayTemplate = $tsys->load('exceptionDisplay.xml');
+            self::$exceptionDisplayTemplate = $tsys->load('exceptionDisplay');
         }
         return self::$exceptionDisplayTemplate->render(array(
             'exception' => $e,
