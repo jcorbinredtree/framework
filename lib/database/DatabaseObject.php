@@ -186,7 +186,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         }
 
         $row = $database->getRow();
-        Params::ArrayToObject($row, $this);
+        $this->unserialize($row, false);
         $this->id = $id;
         return true;
     }
