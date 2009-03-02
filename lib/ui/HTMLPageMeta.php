@@ -54,6 +54,14 @@ class HTMLPageMeta
         }
     }
 
+    public function setArray($data)
+    {
+        assert(is_array($data));
+        foreach ($data as $n => $v) {
+            $this->set($n, $v);
+        }
+    }
+
     public function add($name, $value)
     {
         if (! array_key_exists($name, $this->data)) {
