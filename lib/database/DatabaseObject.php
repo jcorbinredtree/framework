@@ -251,7 +251,41 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      * }
      */
 
-    public function serialize()
+    /**
+     * Set to true while serialize calls selfToData.
+     *
+     * @var boolean;
+     */
+    protected $serializing = false;
+
+    /**
+     * Set to true while unserialize calls dataToSelf.
+     *
+     * @var boolean;
+     */
+    protected $unserializing = false;
+
+    /**
+     * Serializes this DatabaseObject to a named array.
+     *
+     * @return array
+     */
+    final public function serialize()
+    {
+        $this->serializing = true;
+        $data = $this->selfToData();
+        $this->serializing = false;
+        assert(is_array($data));
+        return $data;
+    }
+
+    /**
+     * Does the actual work for serialize, subclasses should override this to
+     * save their data
+     *
+     * @return array
+     */
+    protected function selfToData()
     {
         $meta = $this->meta();
         $data = array();
@@ -264,7 +298,35 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
         return $data;
     }
 
-    public function unserialize($data, $save=true)
+    /**
+     * Unserializes this DatabaseObject from a named array
+     *
+     * @param data array
+     * @param save boolean whether the newly restored self should be saved to
+     * the database
+     * @return void
+     * @see dataToSelf
+     */
+    final public function unserialize($data, $save=true)
+    {
+        if (! is_array($data)) {
+            throw new InvalidArgumentException('not an array');
+        }
+        $this->unserializing = true;
+        $this->dataToSelf($data, $save);
+        $this->unserializing = false;
+    }
+
+    /**
+     * Does the actual work for unserialize, subclasses should override this to
+     * restore their data
+     *
+     * @param data array
+     * @param save boolean
+     * @return void
+     * @see unserialize
+     */
+    protected function dataToSelf($data, $save)
     {
         assert(is_array($data));
         $meta = $this->meta();
@@ -272,7 +334,11 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             if ($meta->isManualColumn($column)) {
                 continue;
             }
-            $this->$property = $data[$column];
+            if (array_key_exists($column, $data)) {
+                $this->$property = $data[$column];
+            } else {
+                $this->$property = null;
+            }
         }
 
         if ($save) {
