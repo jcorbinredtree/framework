@@ -43,7 +43,7 @@ class HTMLPageMeta
         }
     }
 
-    public function set($name, $Value)
+    public function set($name, $value)
     {
         if (! isset($value)) {
             if (array_key_exists($name, $this->data)) {
@@ -54,7 +54,7 @@ class HTMLPageMeta
         }
     }
 
-    public function add($name, $Value)
+    public function add($name, $value)
     {
         if (! array_key_exists($name, $this->data)) {
             $this->data[$name] = array();
