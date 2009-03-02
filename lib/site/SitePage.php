@@ -379,6 +379,19 @@ class SitePage extends CallbackManager
     }
 
     /**
+     * Sets multiple data items on one go
+     *
+     * @param data array
+     * @return void
+     */
+    public function setDataArray($data)
+    {
+        foreach ($data as $n => &$v) {
+            $this->setData($n, $v);
+        }
+    }
+
+    /**
      * Adds a data item to the page
      * Similar in spirit to addToBuffer but with less semantics
      *

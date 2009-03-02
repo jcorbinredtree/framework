@@ -125,9 +125,7 @@ class HTMLPage extends SitePage
         $this->setData('pageTemplate', $this->template);
         if (isset($data)) {
             assert(is_array($data));
-            foreach ($data as $n => &$v) {
-                $this->setData($n, $v);
-            }
+            $this->setDataArray($data);
         }
         if (isset($layout)) {
             if (preg_match('/(^\/|^\w:\/|\/(~\w*|\.\.)|(~\w*|\.\.)\/)/', $layout)) {
