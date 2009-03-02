@@ -29,6 +29,11 @@ class HTMLPageMeta
 {
     private $data = array();
 
+    public function keys()
+    {
+        return array_keyS($this->data);
+    }
+
     public function has($name)
     {
         return array_key_exists($name, $this->data);
