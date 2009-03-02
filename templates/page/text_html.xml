@@ -17,7 +17,9 @@
     <core:forEach list="${page.getAssets()}" var="asset">
       <core:out escapeXml="false" value="${asset}" />
     </core:forEach>
-    <!-- FIXME meta -->
+    <core:forEach list="${page.meta.keys()}" var="n">
+      <meta name="${=n}" content="${=page.meta.get($n)}" />
+    </core:forEach>
   </head>
   <body>
     ${=content}
