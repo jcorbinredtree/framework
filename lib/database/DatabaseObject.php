@@ -231,32 +231,6 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     }
 
     /**
-     * DEPRECATED
-     */
-    public function getColumnsSQL($prefix='')
-    {
-        global $config;
-        $config->deprecatedComplain(
-            'DatabaseObject->getColumnsSQL()',
-            'DatabaseObject->meta()->getColumnsSQL()'
-        );
-        return $this->meta()->getColumnsSQL($prefix='');
-    }
-
-    /**
-     * DEPRECATED
-     */
-    public function getFields()
-    {
-        global $config;
-        $config->deprecatedComplain(
-            'DatabaseObject->getFields',
-            'DatabaseObject->meta()->getColumnMap()'
-        );
-        return $this->meta()->getColumnMap();
-    }
-
-    /**
      * Returns the meta object for this DatabaseObject's class
      *
      * @see DatabaseObject_Meta
