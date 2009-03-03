@@ -114,7 +114,7 @@ class DatabaseObject_Test extends FrameworkTestCase
     public function testDummy()
     {
         { // Test meta object
-            $meta = DatabaseObject_Meta::forClass('DBODummy');
+            $meta = DatabaseObjectMeta::forClass('DBODummy');
             $table = $meta->getTable();
             $key = $meta->getKey();
 

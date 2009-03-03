@@ -28,7 +28,7 @@
 require_once 'lib/component/RequestObject.php';
 
 require_once 'lib/database/IDatabaseObject.php';
-require_once 'lib/database/DatabaseObject_Meta.php';
+require_once 'lib/database/DatabaseObjectMeta.php';
 
 /**
  * Simple ORM object base class
@@ -77,7 +77,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     static public $key = null;
 
     /**
-     * Statement type constantes used by DatabaseObject_Meta::getSQL
+     * Statement type constantes used by DatabaseObjectMeta::getSQL
      */
     const SQL_SELECT=0;
     const SQL_INSERT=1;
@@ -233,13 +233,13 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     /**
      * Returns the meta object for this DatabaseObject's class
      *
-     * @see DatabaseObject_Meta
+     * @see DatabaseObjectMeta
      *
-     * @return object DatabaseObject_Meta
+     * @return object DatabaseObjectMeta
      */
     public function meta()
     {
-        return DatabaseObject_Meta::forClass(get_class($this));
+        return DatabaseObjectMeta::forClass(get_class($this));
     }
 
     /*
@@ -247,7 +247,7 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      *
      * public static function staticMeta()
      * {
-     *     return DatabaseObject_Meta::forClass(get_called_class());
+     *     return DatabaseObjectMeta::forClass(get_called_class());
      * }
      */
 

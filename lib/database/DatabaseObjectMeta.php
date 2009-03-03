@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database Object Meta class definition
+ * DatabaseObjectMeta class definition
  *
  * PHP version 5
  *
@@ -29,7 +29,7 @@
  */
 
 
-class DatabaseObject_Meta
+class DatabaseObjectMeta
 {
     /**
      * Static storage for meta objects
@@ -427,7 +427,7 @@ class DatabaseObject_Meta
      *     ...
      *   };
      *
-     * @see DatabaseObject_Meta::getCustomSQL
+     * @see DatabaseObjectMeta::getCustomSQL
      * @param code mixed a key for customSqlCache
      * @param sql string the statement
      *

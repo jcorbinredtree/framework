@@ -950,7 +950,7 @@ class Database
         $obj = new $type();
 
         if ($row = $this->getRow(PDO::FETCH_ASSOC, false)) {
-            $meta = new DatabaseObject_Meta($type);
+            $meta = new DatabaseObjectMeta($type);
             if (($obj instanceof IDatabaseObject) && (isset($row[$meta->getKey()]))) {
                 $row['id'] = $row[$meta->getKey()];
             }
