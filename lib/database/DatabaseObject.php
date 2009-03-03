@@ -73,10 +73,22 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
             throw new InvalidArgumentException("invalid class $class");
         }
 
-        // TODO relpace fetch with a sane loading system such that there is ever
-        // only one instance per id
-        $o = new $class();
-        $o->fetch($id);
+        $refcls = new ReflectionClass($class);
+        try {
+            $factory = $refcls->getMethod('factory');
+            if ($factory->isStatic()) {
+                $o = call_user_func(array($class, 'factory'), $id);
+            } else {
+                $factory = null;
+            }
+        } catch (ReflectionException $e) {
+        }
+        if (! isset($factory)) {
+            // TODO relpace fetch with a sane loading system such that there is ever
+            // only one instance per id
+            $o = new $class();
+            $o->fetch($id);
+        }
         return $o;
     }
 
