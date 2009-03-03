@@ -57,6 +57,15 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 {
     static function load($class, $id)
     {
+        if (! is_int($id)) {
+            if (is_numeric($id)) {
+                $id = (int) $id;
+            }
+            if (! is_int($id) || $id == 0) {
+                throw new InvalidArgumentException('invalid id');
+            }
+        }
+
         if (
             ! class_exists($class) ||
             ! is_subclass_of($class, 'DatabaseObject')
