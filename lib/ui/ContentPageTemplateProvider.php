@@ -49,8 +49,6 @@
  * the top level; this is a known issue and will be addressed in the future.
  */
 
-require_once 'lib/ui/HTMLPage.php';
-
 class ContentPageTemplateProvider extends PHPSTLTemplateProvider
 {
     public static $Prefix = 'pageContent:';

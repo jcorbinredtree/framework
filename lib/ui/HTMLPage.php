@@ -25,6 +25,7 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/site/SitePage.php';
 require_once 'lib/ui/HTMLPageAsset.php';
 require_once 'lib/ui/HTMLPageMeta.php';
 
