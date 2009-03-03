@@ -479,16 +479,12 @@ class Database
      */
     public function lock($tables, $type=Database::LOCK_READ)
     {
-        if (!is_array($tables)) {
-            $tables = array($tables);
-        }
-
         foreach (array(
             'READ' => Database::LOCK_READ,
             'WRITE' => Database::LOCK_WRITE
         ) as $op => $mask) {
             if ($type & $mask) {
-                $sql = 'LOCK TABLES ' . implode(" $op, ", $tables) . " $op";
+                $sql = 'LOCK TABLES '.implode(" $op, ", (array) $tables)." $op";
                 if ($this->perform($sql, 'lock') < 0) {
                     throw new DatabaseException($this,
                         'lock', 'no rows affected'
