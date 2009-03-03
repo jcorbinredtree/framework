@@ -55,6 +55,22 @@ require_once 'lib/database/DatabaseObjectMeta.php';
  */
 abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 {
+    static function load($class, $id)
+    {
+        if (
+            ! class_exists($class) ||
+            ! is_subclass_of($class, 'DatabaseObject')
+        ) {
+            throw new InvalidArgumentException("invalid class $class");
+        }
+
+        // TODO relpace fetch with a sane loading system such that there is ever
+        // only one instance per id
+        $o = new $class();
+        $o->fetch($id);
+        return $o;
+    }
+
     /**
      * This field will serve as the primary key's id.
      *
