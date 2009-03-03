@@ -146,7 +146,7 @@ class DatabaseObject_Test extends FrameworkTestCase
                 "$pfx`mess` AS `mess`"
             )));
 
-            $colSQL = $meta->getColumnsSQL(null);
+            $colSQL = $meta->getColumnsSQL(null, null);
             $this->assertEqual($colSQL, implode(', ', array(
                 "UNIX_TIMESTAMP(`a_date`) AS `a_date`",
                 "UNIX_TIMESTAMP(`a_date_time`) AS `a_date_time`",

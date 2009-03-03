@@ -95,10 +95,10 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     /**
      * Statement type constantes used by DatabaseObjectMeta::getSQL
      */
-    const SQL_SELECT=0;
-    const SQL_INSERT=1;
-    const SQL_UPDATE=2;
-    const SQL_DELETE=3;
+    const SQL_SELECT='dbo_select';
+    const SQL_INSERT='dbo_insert';
+    const SQL_UPDATE='dbo_update';
+    const SQL_DELETE='dbo_delete';
 
     /**
      * A simple property to track memoization
@@ -379,13 +379,9 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     {
         $meta = $this->meta();
         $key = $meta->getKey();
-        $fields = $meta->getColumnMap();
-        $values = array();
 
-        foreach ($fields as $property => $column) {
-            if ($property == 'id' || $column == $key) {
-                continue;
-            }
+        $values = array();
+        foreach ($meta->getColumnMap() as $property => $column) {
             if ($meta->isManualColumn($column)) {
                 continue;
             }
