@@ -12,9 +12,9 @@
   <body>
 
 <div id="main">
-  <core:process resource="exceptionDisplay">
+  <core:render resource="exceptionDisplay">
     <arg name="exception" value="${exception}" />
-  </core:process>
+  </core:render>
 
   <ui:warnings />
   <ui:notices />
