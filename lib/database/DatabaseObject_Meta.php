@@ -28,9 +28,8 @@
  * @see DatabaseObject::meta
  */
 
-require_once 'lib/database/IDatabaseObject_Meta.php';
 
-class DatabaseObject_Meta implements IDatabaseObject_Meta
+class DatabaseObject_Meta
 {
     /**
      * Static storage for meta objects
