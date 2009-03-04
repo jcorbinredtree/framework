@@ -187,12 +187,7 @@ class DatabaseObject_Test extends FrameworkTestCase
             $this->expectExact('lastInsertId', 1); // The table is virgin
             $this->expectExact('unlock', 'UNLOCK TABLES');
 
-            if (! $dummy->create()) {
-                $this->fail("Failed to create dummy");
-                return;
-            } elseif ($this->verbose) {
-                print "Dummy $dummy->id updated\n";
-            }
+            $dummy->create();
         }
 
         { // Change the dummy and save
@@ -208,12 +203,7 @@ class DatabaseObject_Test extends FrameworkTestCase
                 ":dbodummy_id" => $dummy->id
             )));
 
-            if (! $dummy->update()) {
-                $this->fail("Failed to update dummy");
-                return;
-            } elseif ($this->verbose) {
-                print "Dummy $dummy->id updated\n";
-            }
+            $dummy->update();
         }
 
         { // Fetch a dummy
@@ -231,12 +221,8 @@ class DatabaseObject_Test extends FrameworkTestCase
             );
             $this->expectExact('executef', json_encode(array($dummyId)));
 
-            $dummy = new $table();
-            if (! $dummy->fetch($dummyId)) {
-                $this->fail("Failed to load dummy");
-            } elseif ($this->verbose) {
-                print "Loaded dummy $dummyId";
-            }
+            $dummy = new DBODummy();
+            $dummy->fetch($dummyId);
 
             $this->assertEqual($dummyId, $dummy->id);
             $this->assertEqual($dummyData[0], $dummy->aDate);
@@ -251,11 +237,7 @@ class DatabaseObject_Test extends FrameworkTestCase
             );
             $this->expectExact('executef', json_encode(array($dummyId)));
 
-            if (! $dummy->delete()) {
-                $this->fail("Failed to delete dummy");
-            } elseif ($this->verbose) {
-                print "Deleted dummy $dummyId\n";
-            }
+            $dummy->delete();
 
             $this->assertEqual(-1, $dummy->id);
 
