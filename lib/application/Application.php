@@ -32,7 +32,6 @@ require_once 'lib/component/IRequestObject.php';
 require_once 'lib/component/RequestObject.php';
 require_once 'lib/util/Params.php';
 require_once 'lib/database/Database.php';
-require_once 'lib/database/IDatabaseObject.php';
 require_once 'lib/database/DatabaseObject.php';
 
 
