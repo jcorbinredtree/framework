@@ -182,12 +182,7 @@ abstract class DatabaseObject extends RequestObject
             $values = $this->getInsertValues();
             $database->prepare($sql);
             $database->execute($values);
-            $p = Params::fieldToProperty($key);
-            if (property_exists($this, $p) && $this->$p) {
-                $this->id = $this->$p;
-            } else {
-                $this->id = $database->lastInsertId();
-            }
+            $this->id = $database->lastInsertId();
             $database->free();
         } catch (Exception $e) {
             $this->id = null;
