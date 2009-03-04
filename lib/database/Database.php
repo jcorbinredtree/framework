@@ -275,6 +275,7 @@ class Database
         register_shutdown_function(array($this, 'unlock'));
     }
 
+    private $dsnId;
     /**
      * Returns a string that tryes to be a unique dsn identifier
      *
@@ -282,11 +283,14 @@ class Database
      */
     public function dsnId()
     {
-        return sprintf('%s://%s/%s',
-            $this->parsedDSN->driver,
-            $this->parsedDSN->host,
-            $this->parsedDSN->db
-        );
+        if (! isset($this->dsnId)) {
+            $this->dsnId = sprintf('%s://%s/%s',
+                $this->parsedDSN->driver,
+                $this->parsedDSN->host,
+                $this->parsedDSN->db
+            );
+        }
+        return $this->dsnId;
     }
 
     /**
