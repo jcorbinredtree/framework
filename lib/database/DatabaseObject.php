@@ -95,7 +95,7 @@ abstract class DatabaseObject extends RequestObject
      *
      * @var int
      */
-    public $id = -1;
+    public $id = null;
 
     /**
      * The subject table
@@ -166,6 +166,10 @@ abstract class DatabaseObject extends RequestObject
      */
     public function create()
     {
+        if (isset($this->id)) {
+            throw new RuntimeException('already created');
+        }
+
         global $database, $config;
 
         $meta = $this->meta();
@@ -186,6 +190,7 @@ abstract class DatabaseObject extends RequestObject
             }
             $database->free();
         } catch (Exception $e) {
+            $this->id = null;
             $database->unlock();
             throw $e;
         }
@@ -201,6 +206,13 @@ abstract class DatabaseObject extends RequestObject
      */
     protected function fetch($id)
     {
+        assert(is_int($id));
+        if (isset($this->id)) {
+            throw new RuntimeException(
+                "id already set in fetch, misbehaved subclass?"
+            );
+        }
+
         $meta = $this->meta();
         assert(is_int($id));
         global $database;
@@ -223,6 +235,10 @@ abstract class DatabaseObject extends RequestObject
      */
     public function update()
     {
+        if (! isset($this->id)) {
+            throw new RuntimeException('not created');
+        }
+
         global $database;
         $meta = $this->meta();
         $table = $meta->getTable();
@@ -245,8 +261,8 @@ abstract class DatabaseObject extends RequestObject
         global $database;
         $sql = $meta->getSQL('dbo_delete');
         $database->executef($sql, $this->id);
-        $this->id = -1;
         $database->free();
+        $this->id = null;
     }
 
     /**
