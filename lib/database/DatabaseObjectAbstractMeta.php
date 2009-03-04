@@ -63,21 +63,35 @@ abstract class DatabaseObjectAbstractMeta
         // columnDef, information on database field details
         $this->columnDef = array();
 
-        global $database;
         foreach ($members as $member) {
             $column = $this->columnName($member);
-            $def = $database->getTableFieldDefinition($this->table, $column);
-            if (! $def) {
-                continue;
-            } else {
-                $this->columnDef[$column] = $def[0];
+            if ($this->inspectColumn($column)) {
+                $this->columnMap[$member] = $column;
             }
-
-            $this->columnMap[$member] = $column;
         }
-
-        ksort($this->columnDef);
         ksort($this->columnMap);
+
+        if (isset($this->manualColumns)) {
+            foreach ($this->manualColumns as $col) {
+                $this->inspectColumn($col);
+            }
+        }
+    }
+
+    protected function inspectColumn($column)
+    {
+        if (array_key_exists($column, $this->columnDef)) {
+            return true;
+        }
+        global $database;
+        $def = $database->getTableFieldDefinition($this->table, $column);
+        if (! $def) {
+            return false;
+        } else {
+            $this->columnDef[$column] = $def[0];
+            ksort($this->columnDef);
+            return true;
+        }
     }
 
     public function isManualColumn($column)
