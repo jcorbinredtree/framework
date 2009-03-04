@@ -175,7 +175,7 @@ abstract class DatabaseObject extends RequestObject
         $database->lock($table, Database::LOCK_WRITE);
         try {
             $sql = $meta->getSQL('dbo_insert');
-            $values = $this->getFieldSetValues();
+            $values = $this->getInsertValues();
             $database->prepare($sql);
             $database->execute($values);
             $p = Params::fieldToProperty($key);
@@ -226,8 +226,7 @@ abstract class DatabaseObject extends RequestObject
         $table = $meta->getTable();
         $key = $meta->getKey();
         $sql = $meta->getSQL('dbo_update');
-        $values = $this->getFieldSetValues();
-        $values[":$key"] = $this->id;
+        $values = $this->getUpdateValues();
         $database->prepare($sql);
         $database->execute($values);
         $database->free();
@@ -366,6 +365,28 @@ abstract class DatabaseObject extends RequestObject
                 $this->create();
             }
         }
+    }
+
+    /**
+     * Builds the named value array for create
+     *
+     * @return array
+     */
+    protected function getInsertValues()
+    {
+        return $this->getFieldSetValues();
+    }
+
+    /**
+     * Builds the named value array for update
+     *
+     * @return array
+     */
+    protected function getUpdateValues()
+    {
+        $values = $this->getFieldSetValues();
+        $values[":$key"] = $this->id;
+        return $values;
     }
 
     /**
