@@ -193,14 +193,16 @@ abstract class DatabaseObject extends RequestObject
     }
 
     /**
-     * Fetches the given $id into the current object. IT'S NOT A STATIC METHOD.
+     * Fetches the given $id into the current object.
+     * This isn't what you want to call, you should be calling DatabaseObject::load
      *
      * @param mixed $id
      * @return boolean
      */
-    public function fetch($id)
+    protected function fetch($id)
     {
         $meta = $this->meta();
+        assert(is_int($id));
         global $database;
         $sql = $meta->getSQL('dbo_select');
         $database->executef($sql, $id);

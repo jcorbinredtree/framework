@@ -221,8 +221,7 @@ class DatabaseObject_Test extends FrameworkTestCase
             );
             $this->expectExact('executef', json_encode(array($dummyId)));
 
-            $dummy = new DBODummy();
-            $dummy->fetch($dummyId);
+            $dummy = DatabaseObject::load('DBODummy', $dummyId);
 
             $this->assertEqual($dummyId, $dummy->id);
             $this->assertEqual($dummyData[0], $dummy->aDate);
