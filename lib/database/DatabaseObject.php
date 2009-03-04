@@ -112,14 +112,6 @@ abstract class DatabaseObject extends RequestObject
     static public $key = null;
 
     /**
-     * Statement type constantes used by DatabaseObjectMeta::getSQL
-     */
-    const SQL_SELECT='dbo_select';
-    const SQL_INSERT='dbo_insert';
-    const SQL_UPDATE='dbo_update';
-    const SQL_DELETE='dbo_delete';
-
-    /**
      * A simple property to track memoization
      *
      * @var array
@@ -182,7 +174,7 @@ abstract class DatabaseObject extends RequestObject
 
         $database->lock($table, Database::LOCK_WRITE);
         try {
-            $sql = $meta->getSQL(DatabaseObject::SQL_INSERT);
+            $sql = $meta->getSQL('dbo_insert');
             $values = $this->getFieldSetValues();
             $database->prepare($sql);
             $database->execute($values);
@@ -210,7 +202,7 @@ abstract class DatabaseObject extends RequestObject
     {
         $meta = $this->meta();
         global $database;
-        $sql = $meta->getSQL(DatabaseObject::SQL_SELECT);
+        $sql = $meta->getSQL('dbo_select');
         $database->executef($sql, $id);
         if (! $database->count()) {
             $database->free();
@@ -233,7 +225,7 @@ abstract class DatabaseObject extends RequestObject
         $meta = $this->meta();
         $table = $meta->getTable();
         $key = $meta->getKey();
-        $sql = $meta->getSQL(DatabaseObject::SQL_UPDATE);
+        $sql = $meta->getSQL('dbo_update');
         $values = $this->getFieldSetValues();
         $values[":$key"] = $this->id;
         $database->prepare($sql);
@@ -250,7 +242,7 @@ abstract class DatabaseObject extends RequestObject
     {
         $meta = $this->meta();
         global $database;
-        $sql = $meta->getSQL(DatabaseObject::SQL_DELETE);
+        $sql = $meta->getSQL('dbo_delete');
         $database->executef($sql, $this->id);
         $this->id = -1;
         $database->free();

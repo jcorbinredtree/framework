@@ -64,13 +64,13 @@ class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
     protected $key=null;
 
     protected $queries = array(
-        DatabaseObject::SQL_SELECT =>
+        'dbo_select' =>
             'SELECT {colspec} FROM {table} WHERE {key}=? LIMIT 1',
-        DatabaseObject::SQL_INSERT =>
+        'dbo_insert' =>
             'INSERT INTO {table} SET {fieldset}',
-        DatabaseObject::SQL_UPDATE =>
+        'dbo_update' =>
             'UPDATE {table} SET {fieldset} WHERE {key}={keybind} LIMIT 1',
-        DatabaseObject::SQL_DELETE =>
+        'dbo_delete' =>
             'DELETE FROM {table} WHERE {key}=?'
     );
 
