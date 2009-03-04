@@ -27,7 +27,6 @@
 // TODO part ways with this
 require_once 'lib/component/RequestObject.php';
 
-require_once 'lib/database/IDatabaseObject.php';
 require_once 'lib/database/DatabaseObjectMeta.php';
 
 /**
@@ -48,12 +47,12 @@ require_once 'lib/database/DatabaseObjectMeta.php';
  * 4.) Define public static $key to the name of your primary key field
  *
  * Relationships are generally up to you, but it's often enough to
- * just override the methods of IDatabaseObject as appropriate.
+ * just override the methods of DatabaseObject as appropriate.
  *
  * @category     Database
  * @package      Core
  */
-abstract class DatabaseObject extends RequestObject implements IDatabaseObject
+abstract class DatabaseObject extends RequestObject
 {
     static function load($class, $id)
     {

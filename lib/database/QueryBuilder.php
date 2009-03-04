@@ -18,7 +18,7 @@ class QueryBuilder
     /**
      * Our base database object
      *
-     * @var IDatabaseObject
+     * @var DatabaseObject
      */
     private $dbo;
 
@@ -37,18 +37,18 @@ class QueryBuilder
      */
     private $pager = null;
 
-    public function __construct(IDatabaseObject &$dbo, $type='SELECT')
+    public function __construct(DatabaseObject $dbo, $type='SELECT')
     {
         $this->dbo = $dbo;
         $this->type = $type;
     }
 
-    public function join(IDatabaseObject &$dboB, $keyA=null, $keyB=null)
+    public function join(DatabaseObject $dboB, $keyA=null, $keyB=null)
     {
         return $this->joinObject($this->dbo, $dboB, $keyA, $keyB);
     }
 
-    public function joinObject(IDatabaseObject &$dboA, IDatabaseObject &$dboB, $keyA=null, $keyB=null)
+    public function joinObject(DatabaseObject $dboA, DatabaseObject $dboB, $keyA=null, $keyB=null)
     {
         $metaA = $dboA->meta();
         $metaB = $dboB->meta();
