@@ -46,18 +46,13 @@ class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
      *
      * @return DatabaseObject_meta
      */
-    static public function &forClass($class)
+    static public function forClass($class)
     {
         if (! array_key_exists($class, self::$ClassMeta)) {
-            if (! is_subclass_of($class, 'DatabaseObject')) {
-                throw new InvalidArgumentException(
-                    "$class is not a DatabaseObject subclass"
-                );
-            }
-
-            self::$ClassMeta[$class] =& new self($class);
+            assert(class_exists($class));
+            assert(is_subclass_of($class, 'DatabaseObject'));
+            self::$ClassMeta[$class] = new self($class);
         }
-
         return self::$ClassMeta[$class];
     }
 

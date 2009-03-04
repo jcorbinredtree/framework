@@ -45,15 +45,10 @@ class DatabaseObjectLinkMeta extends DatabaseObjectAbstractMeta
     static public function forClass($class)
     {
         if (! array_key_exists($class, self::$ClassMeta)) {
-            if (! is_subclass_of($class, 'DatabaseObjectLink')) {
-                throw new InvalidArgumentException(
-                    "$class is not a DatabaseObjectLink subclass"
-                );
-            }
-
-            self::$ClassMeta[$class] =& new self($class);
+            assert(class_exists($class));
+            assert(is_subclass_of($class, 'DatabaseObjectLink'));
+            self::$ClassMeta[$class] = new self($class);
         }
-
         return self::$ClassMeta[$class];
     }
 
