@@ -65,7 +65,6 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
                 throw new InvalidArgumentException('invalid id');
             }
         }
-
         if (
             ! class_exists($class) ||
             ! is_subclass_of($class, 'DatabaseObject')
@@ -184,13 +183,10 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
 
         $database->lock($table, Database::LOCK_WRITE);
         try {
-            $meta = $this->meta();
             $sql = $meta->getSQL(DatabaseObject::SQL_INSERT);
-
-            $database->prepare($sql);
             $values = $this->getFieldSetValues();
+            $database->prepare($sql);
             $database->execute($values);
-
             $p = Params::fieldToProperty($key);
             if (property_exists($this, $p) && $this->$p) {
                 $this->id = $this->$p;
@@ -213,15 +209,14 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      */
     public function fetch($id)
     {
+        $meta = $this->meta();
         global $database;
-
-        $sql = $this->meta()->getSQL(DatabaseObject::SQL_SELECT);
+        $sql = $meta->getSQL(DatabaseObject::SQL_SELECT);
         $database->executef($sql, $id);
         if (! $database->count()) {
             $database->free();
             return false;
         }
-
         $row = $database->getRow();
         $this->unserialize($row, false);
         $this->id = $id;
@@ -236,18 +231,13 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
     public function update()
     {
         global $database;
-
         $meta = $this->meta();
         $table = $meta->getTable();
         $key = $meta->getKey();
-
         $sql = $meta->getSQL(DatabaseObject::SQL_UPDATE);
-
-        $database->prepare($sql);
-
         $values = $this->getFieldSetValues();
         $values[":$key"] = $this->id;
-
+        $database->prepare($sql);
         $database->execute($values);
         $database->free();
     }
@@ -259,9 +249,9 @@ abstract class DatabaseObject extends RequestObject implements IDatabaseObject
      */
     public function delete()
     {
+        $meta = $this->meta();
         global $database;
-
-        $sql = $this->meta()->getSQL(DatabaseObject::SQL_DELETE);
+        $sql = $meta->getSQL(DatabaseObject::SQL_DELETE);
         $database->executef($sql, $this->id);
         $this->id = -1;
         $database->free();

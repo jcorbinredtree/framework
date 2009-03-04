@@ -33,6 +33,14 @@ abstract class DatabaseObjectAbstractMeta
     protected $columnDef; // Holds database field definitions
     protected $sqlCache;  // Holds sql strings
     protected $manualColumns;
+
+    /**
+     * Contains custom sql quieres defined by the DatabaseObject subclass(es);
+     * this array will be built by array_merge'ing each subclass's version of
+     * this array if it exists in super to sub order.
+     *
+     * @var array
+     */
     protected $customSQL;
 
     /**
