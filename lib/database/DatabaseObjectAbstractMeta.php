@@ -44,8 +44,10 @@ abstract class DatabaseObjectAbstractMeta
     protected $customSQL;
 
     /**
-     * meta implementations should define their bulitin queries here, entries in
-     * this array cannot be overridden by customSQL
+     * meta implementations should define their bulitin queries here,
+     * subclasses can supercede these using customSQL
+     *
+     * @var array
      */
     protected $queries = array();
 
@@ -205,11 +207,10 @@ abstract class DatabaseObjectAbstractMeta
      */
     public function buildSQL($op)
     {
-        if (array_key_exists($op, $this->queries)) {
-            return $this->expandSQL($this->queries[$op]);
-        }
         if (array_key_exists($op, $this->customSQL)) {
             return $this->expandSQL($this->customSQL[$op]);
+        } elseif (array_key_exists($op, $this->queries)) {
+            return $this->expandSQL($this->queries[$op]);
         }
         throw new RuntimeException("Invalid sql operation $op for $this->class");
     }
