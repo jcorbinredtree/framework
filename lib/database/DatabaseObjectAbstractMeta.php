@@ -74,6 +74,9 @@ abstract class DatabaseObjectAbstractMeta
         $this->columnDef = array();
 
         foreach ($members as $member) {
+            if ($member[0] == '_') {
+                continue;
+            }
             $column = $this->columnName($member);
             if ($this->inspectColumn($column)) {
                 $this->columnMap[$member] = $column;
