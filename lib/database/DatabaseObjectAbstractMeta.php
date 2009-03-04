@@ -179,8 +179,11 @@ abstract class DatabaseObjectAbstractMeta
     }
 
     /**
-     * @param op string
+     * Returns a sql query string
+     *
+     * @param op string the name of the operation
      * @return string
+     * @see buildSQL
      */
     public function getSQL($op)
     {
@@ -191,10 +194,16 @@ abstract class DatabaseObjectAbstractMeta
     }
 
     /**
-     * Called by buildSQL to expand SQL statements
+     * Called by buildSQL to expand SQL statement clauses
+     *
+     * Clauses defined here:
+     *   {table}     - the $table property, sql quoted
+     *   {colspec}   - getColumnSQL for all auto columns
+     *   {filedset}  - getFieldSetSQL for all auto columns
      *
      * @param sql string
      * @return string
+     * @see $table, getColumnsSQL, getFieldSetSQL
      */
     protected function expandSQL($sql)
     {
@@ -205,8 +214,11 @@ abstract class DatabaseObjectAbstractMeta
     }
 
     /**
-     * @param op string
+     * Builds a sql query string
+     *
+     * @param op string operation name, key into $queries or $customSQL
      * @return string
+     * @see expandSQL
      */
     public function buildSQL($op)
     {

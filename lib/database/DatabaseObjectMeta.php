@@ -127,7 +127,17 @@ class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
         return $this->key;
     }
 
-
+    /**
+     * Expands a SQL string
+     *
+     * Clauses defined here:
+     *   {key}      - the $key property, sql quoted
+     *   {keybind}  - a string like ":table_id" for use as a named placeholder
+     *
+     * @param sql string
+     * @return string
+     * @see $key, DatabaseObjectAbstractMeta::expandSQL
+     */
     protected function expandSQL($sql)
     {
         $sql = parent::expandSQL($sql);

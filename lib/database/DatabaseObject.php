@@ -37,14 +37,41 @@ require_once 'lib/database/DatabaseObjectMeta.php';
  * those methods as well.
  *
  * Usage:
- * 1.) Extend this class
- * 2.) Add public properties to your class definition that map to your
- * field names, replacing _[a-z] with [A-Z]. Thus, user_name in your db
- * becomes public $userName, this_other_field becomes public $thisOtherField,
- * and so on. It's likely that you have public properties that don't map to
- * field names, and that's not a problem.
- * 3.) Define public static $table to the appropriate table
- * 4.) Define public static $key to the name of your primary key field
+ * 1) Extend this class
+ * 2) Add properties to your class definition that map to your column names;
+ *    property namse should be camelCased and column names should be
+ *    under_scored. Properties beginning with a '_' will be ignored. Properties
+ *    that do not correspnod to a column at runtime will be ignored.
+ * 3) Define various static fields to control things
+ *
+ * Example:
+ *   class MyDBO extends DatabaseObject
+ *   {
+ *     // Convenience call to DatabaseObject::load until php supports late static
+ *     // binding in 5.3.0
+ *     public static function load($id)
+ *     {
+ *         return DatabaseObject::load(__CLASS__, $id);
+ *     }
+ *
+ *     public static $table = 'my_table';  // required
+ *     public static $key = 'my_table_id'; // required, "table_id" is customary
+ *
+ *     // All are optional
+ *     public static $CustomSQL = array(
+ *       'name' => 'SELECT bla FROM {table} WHERE bla'
+ *       // see DatabaseObjectMeta::expandSQL for details on expansion strings
+ *       // like {table}
+ *     );
+ *     public static $ManualColumns = array(
+ *       // declares that this subclass will handle thees columns, they
+ *       // shouldn't be touched by the default create/update/fetch logic
+ *       'some_col'
+ *     );
+ *
+ *     public $myProp;         // will be column my_prop
+ *     protected $anotherProp; // doesn't have to be public
+ *   }
  *
  * Relationships are generally up to you, but it's often enough to
  * just override the methods of DatabaseObject as appropriate.
