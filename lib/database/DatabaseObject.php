@@ -54,7 +54,23 @@ require_once 'lib/database/DatabaseObjectMeta.php';
  */
 abstract class DatabaseObject extends RequestObject
 {
-    static function load($class, $id)
+    static protected $ObjectCache = array();
+
+    static protected function cacheKey(DatabaseObjectMeta $meta, $id)
+    {
+        global $database;
+        return $database->dsnId().'/'.$meta->getTable()."/$id";
+    }
+
+    /**
+     * Loads an existing DatabaseObject, caches the result so that there is ever
+     * only one instance
+     *
+     * @param class string the class to load
+     * @param id int the object id
+     * @return DatabaseObject
+     */
+    static public function load($class, $id)
     {
         if (! is_int($id)) {
             if (is_numeric($id)) {
@@ -71,24 +87,31 @@ abstract class DatabaseObject extends RequestObject
             throw new InvalidArgumentException("invalid class $class");
         }
 
-        $refcls = new ReflectionClass($class);
-        try {
-            $factory = $refcls->getMethod('factory');
-            if ($factory->isStatic()) {
-                $o = call_user_func(array($class, 'factory'), $id);
-            } else {
-                $factory = null;
+        $cacheKey = self::cacheKey(DatabaseObjectMeta::forClass($class), $id);
+        if (! array_key_exists($cacheKey, self::$ObjectCache)) {
+            $refcls = new ReflectionClass($class);
+            try {
+                $factory = $refcls->getMethod('factory');
+                if ($factory->isStatic()) {
+                    $o = call_user_func(array($class, 'factory'), $id);
+                } else {
+                    $factory = null;
+                }
+            } catch (ReflectionException $e) {
             }
-        } catch (ReflectionException $e) {
-        }
-        if (! isset($factory)) {
-            // TODO relpace fetch with a sane loading system such that there is ever
-            // only one instance per id
-            $o = new $class();
+            if (! isset($factory)) {
+                $o = new $class();
+            }
             $o->fetch($id);
+            self::$ObjectCache[$cacheKey] = $o;
         }
-        return $o;
+        return self::$ObjectCache[$cacheKey];
     }
+
+    /**
+     * Key into $ObjectCache
+     */
+    private $_cacheKey;
 
     /**
      * This field will serve as the primary key's id.
@@ -169,6 +192,7 @@ abstract class DatabaseObject extends RequestObject
         if (isset($this->id)) {
             throw new RuntimeException('already created');
         }
+        assert(! isset($this->_cacheKey));
 
         global $database, $config;
 
@@ -176,19 +200,30 @@ abstract class DatabaseObject extends RequestObject
         $table = $meta->getTable();
         $key = $meta->getKey();
 
+        $database->transaction();
         $database->lock($table, Database::LOCK_WRITE);
         try {
             $sql = $meta->getSQL('dbo_insert');
             $values = $this->getInsertValues();
             $database->prepare($sql);
             $database->execute($values);
-            $this->id = $database->lastInsertId();
+            $this->id = (int) $database->lastInsertId();
             $database->free();
+
+            $cacheKey = self::cacheKey($meta, $this->id);
+            assert(
+                ! array_key_exists($cacheKey, self::$ObjectCache) ||
+                self::$ObjectCache[$cacheKey] === $this
+            );
+            self::$ObjectCache[$cacheKey] = $this;
+            $this->_cacheKey = $cacheKey;
         } catch (Exception $e) {
             $this->id = null;
+            $database->rollback();
             $database->unlock();
             throw $e;
         }
+        $database->commit();
         $database->unlock();
     }
 
@@ -209,7 +244,12 @@ abstract class DatabaseObject extends RequestObject
         }
 
         $meta = $this->meta();
-        assert(is_int($id));
+        $cacheKey = self::cacheKey($meta, $id);
+        assert(
+            ! array_key_exists($cacheKey, self::$ObjectCache) ||
+            self::$ObjectCache[$cacheKey] === $this
+        );
+
         global $database;
         $sql = $meta->getSQL('dbo_select');
         $database->executef($sql, $id);
@@ -220,6 +260,7 @@ abstract class DatabaseObject extends RequestObject
         $row = $database->getRow();
         $this->unserialize($row, false);
         $this->id = $id;
+        $this->_cacheKey = $cacheKey;
         return true;
     }
 
@@ -233,6 +274,9 @@ abstract class DatabaseObject extends RequestObject
         if (! isset($this->id)) {
             throw new RuntimeException('not created');
         }
+        assert(isset($this->_cacheKey));
+        assert(array_key_exists($this->_cacheKey, self::$ObjectCache));
+        assert(self::$ObjectCache[$this->_cacheKey] === $this);
 
         global $database;
         $meta = $this->meta();
@@ -253,11 +297,17 @@ abstract class DatabaseObject extends RequestObject
     public function delete()
     {
         $meta = $this->meta();
+        assert(isset($this->_cacheKey));
+        assert(array_key_exists($this->_cacheKey, self::$ObjectCache));
+        assert(self::$ObjectCache[$this->_cacheKey] === $this);
+
         global $database;
         $sql = $meta->getSQL('dbo_delete');
         $database->executef($sql, $this->id);
         $database->free();
         $this->id = null;
+        $this->_cacheKey = null;
+        unset(self::$ObjectCache[$this->_cacheKey]);
     }
 
     /**
