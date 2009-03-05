@@ -187,28 +187,6 @@ class Config
         }
         $this->site = $site;
     }
-
-    /**
-     * Gets a PHPMailer instance, configured for this
-     * environment.
-     *
-     * @access public
-     * @return PHPMailer a PHPMailer instance, already configured
-     */
-    public function getMailer()
-    {
-        $mailerPath = SiteLoader::$Base."/extensions/phpmailer";
-        include_once "$mailerPath/class.phpmailer.php";
-
-        $mail = ($this->test ? new PhonyMailer() : new PHPMailer());
-        $mail->PluginDir = "$mailerPath/";
-
-        foreach ($this->mailerOptions as $key => $val) {
-            $mail->$key = $this->mailerOptions[$key];
-        }
-
-        return $mail;
-    }
 }
 
 ?>

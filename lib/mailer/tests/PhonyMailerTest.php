@@ -19,9 +19,7 @@ class PhonyMailerTest extends FrameworkTestCase
 {
 	public function testSend()
 	{
-		global $config;
-
-		$mailer = $config->getMailer();
+		$mailer = Site::getModule('MailModule')->getMailer();
 		$mailer->Subject = 'Unit Test';
 		$mailer->Body = 'Unit Test';
 		$mailer->AddAddress('webmaster@redtreesystems.com');
