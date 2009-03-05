@@ -229,13 +229,6 @@ class Config
     private $log = false;
 
     /**
-     * True if we are running as cli
-     *
-     * @var boolean
-     */
-    private $cli = false;
-
-    /**
      * The framework version
      *
      * @var string
@@ -479,7 +472,6 @@ class Config
         }
         $this->site = $site;
 
-        $this->cli = SiteLoader::$IsCli;
         $this->fwAbsPath = SiteLoader::$FrameworkPath;
         $this->absPath = SiteLoader::$Base;
         $this->absUriPath = SiteLoader::$UrlBase;
