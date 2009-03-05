@@ -24,8 +24,7 @@ class Main
      */
     public static function startSession()
     {
-
-        $path = SiteLoader::$UrlBase;
+        $path = Site::Site()->url;
         $path = (preg_match('/\/$/', $path) ? $path : "$path/");
 
         global $config;

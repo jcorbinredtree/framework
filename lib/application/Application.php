@@ -241,7 +241,8 @@ class Application
         }
 
         if (! $uri) {
-            $uri = Site::Site()->serverUrl.SiteLoader::$UrlBase;
+            $site = Site::Site();
+            $uri = $site->serverUrl.$site->url;
         }
 
         session_write_close();

@@ -36,7 +36,7 @@ class SiteCliHandler extends SiteHandler
      */
     public function initialize()
     {
-        $_SERVER['REQUEST_URI'] = SiteLoader::$UrlBase;
+        $_SERVER['REQUEST_URI'] = $this->site->url;
         $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
         parent::initialize();
 

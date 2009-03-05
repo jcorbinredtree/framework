@@ -212,9 +212,19 @@ abstract class Site extends CallbackManager
     public $page;
 
     /**
-     * Absolute url for how the client got to the server
+     * Absolute url for how the client got to the server, has no path
+     * component, only protocol, host, and port
+     *
+     * @var string
      */
     public $serverUrl;
+
+    /**
+     * Base url path for where the site lives on $sereverUrl
+     *
+     * @var string
+     */
+    public $url;
 
     /**
      * @var SiteModuleLoader
@@ -231,6 +241,13 @@ abstract class Site extends CallbackManager
     {
         $start = array(microtime(true), 'start');
         $this->timePoint('start');
+
+        if (! isset($this->url)) {
+            $this->url = dirname($_SERVER['PHP_SELF']);
+            if ($this->url == '/') {
+                $this->url = '';
+            }
+        }
 
         if (! isset($this->layout)) {
             $this->layout = new SiteLayout($this);
@@ -329,7 +346,7 @@ abstract class Site extends CallbackManager
     {
         $args = array_slice(func_get_args(), 1);
         try {
-            $urlPat = quoteMeta(SiteLoader::$UrlBase);
+            $urlPat = quoteMeta($this->url);
             $urlPat = "~^$urlPat(?:/(.*))?\$~";
             $url = Params::server('REQUEST_URI');
             $matches = array();

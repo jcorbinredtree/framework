@@ -476,8 +476,7 @@ class Config
         $this->absPath = SiteLoader::$Base;
         $this->absUriPath = SiteLoader::$UrlBase;
 
-        $this->absUri = $this->site->serverUrl.$this->absUriPath;
-
+        $this->absUri = $this->site->serverUrl.$this->site->url;
         $this->log =& Log::singleton('null');
     }
 

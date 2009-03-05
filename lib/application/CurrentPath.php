@@ -115,6 +115,7 @@ class CurrentPath
                 $url = substr($url, $bl);
                 $url = explode('/', $url);
 
+                // TODO SiteLayout should tell us about this, not be hardcoded here
                 if (count($url) >= 1 && $url[0] == 'SITE') {
                     $url = array_slice($url, 2);
                 } elseif (count($url) >= 2 && $url[0] == '' && $url[1] == 'SITE') {
@@ -125,7 +126,7 @@ class CurrentPath
                     array_shift($url);
                 }
                 $this->url = new StupidPath(array_merge(
-                    explode('/', SiteLoader::$UrlBase),
+                    explode('/', Site::Site()->url),
                     $url
                 ));
             }
