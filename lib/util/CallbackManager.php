@@ -53,7 +53,7 @@ abstract class CallbackManager
      * @return mixed if a StopException is raised, it is returned, null otherwise
      * @see addCallback
      */
-    final protected function dispatchCallback($name)
+    final public function dispatchCallback($name)
     {
         if (! array_key_exists($name, $this->callbacks)) {
             return;
@@ -76,7 +76,7 @@ abstract class CallbackManager
      * @return mixed StopException as in dispatchCallback, array otherwise
      * @see dispatchCallback
      */
-    final protected function marshallCallback($name)
+    final public function marshallCallback($name)
     {
         if (! array_key_exists($name, $this->callbacks)) {
             return;
@@ -104,7 +104,7 @@ abstract class CallbackManager
      * @return mixed StopException as in dispatchCallback, mixed otherwise
      * @see dispatchCallback
      */
-    final protected function marshallSingleCallback($name)
+    final public function marshallSingleCallback($name)
     {
         if (! array_key_exists($name, $this->callbacks)) {
             return;
