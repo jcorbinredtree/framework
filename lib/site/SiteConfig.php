@@ -617,4 +617,5 @@ class SiteConfigParseException extends RuntimeException
     }
 }
 
+# vim:set sw=4 ts=4 expandtab:
 ?>
