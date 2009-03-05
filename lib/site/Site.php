@@ -274,6 +274,9 @@ abstract class Site extends CallbackManager
 
         $this->modules->call('onConfig');
 
+        // Configuration is done
+        $this->dispatchCallback('onPostConfig');
+
         $this->timing = $config->isDebugMode();
         if ($this->timing) {
             array_push($this->timePoints, $start);
