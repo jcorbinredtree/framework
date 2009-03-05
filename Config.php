@@ -430,33 +430,6 @@ class Config
      */
     public $absUri = null;
 
-    /**
-     * DEPRECATED
-     * use SiteLoader::$Base instead
-     *
-     * @access public
-     * @var string
-     */
-    public $absPath = null;
-
-    /**
-     * DEPRECATED
-     * use SiteLoader::$FrameworkPath instead
-     *
-     * @var string
-     */
-    public $fwAbsPath = null;
-
-    /**
-     * The absolute uri path, such as /full/path/to/app. This value is
-     * calculated as dirname( $_SERVER[ 'PHP_SELF' ] ), but could be
-     * wrong if you're using SEF links.
-     *
-     * @access public
-     * @var string
-     */
-    public $absUriPath = null;
-
     private $site;
 
     /**
@@ -471,11 +444,6 @@ class Config
             $site = Site::Site();
         }
         $this->site = $site;
-
-        $this->fwAbsPath = SiteLoader::$FrameworkPath;
-        $this->absPath = SiteLoader::$Base;
-        $this->absUriPath = SiteLoader::$UrlBase;
-
         $this->absUri = $this->site->serverUrl.$this->site->url;
         $this->log =& Log::singleton('null');
     }
