@@ -216,21 +216,19 @@ abstract class TreeNode
      */
     public function addMembers(&$members)
     {
-        global $config;
-
-        /*
-         * mmmmmmmmm, inefficent!
-         */
+        // mmmmmmmmm, inefficent!
         for ($i = 0; $i < count($members); $i++) {
             for ($x = $i; $x < count($members); $x++) {
-                if (!($members[$x] instanceof TreeNode)) {
-                    $config->fatal("member $x is not a TreeNode!");
-                    die("[an error has occurred]");
+                if (! $members[$x] instanceof TreeNode) {
+                    throw new InvalidArgumentException(
+                        "member $x is not a TreeNode!"
+                    );
                 }
 
-                if (!($members[$i] instanceof TreeNode)) {
-                    $config->fatal("member $i is not a TreeNode!");
-                    die("[an error has occurred]");
+                if (! $members[$i] instanceof TreeNode) {
+                    throw new InvalidArgumentException(
+                        "member $i is not a TreeNode!"
+                    );
                 }
 
                 if ($members[$x]->parentId == $members[$i]->id) {
