@@ -243,13 +243,6 @@ class Config
     private $version = "3.0";
 
     /**
-     * The default or "home page" action
-     *
-     * @var String
-     */
-    private $defaultAction = 'home';
-
-    /**
      * Holds the user configuration values
      *
      * @var array
@@ -277,22 +270,6 @@ class Config
     public function get($key)
     {
         return $this->userConfig[$key];
-    }
-
-    /**
-     * @return String
-     */
-    public function getDefaultAction ()
-    {
-        return $this->defaultAction;
-    }
-
-    /**
-     * @param String $defaultAction
-     */
-    public function setDefaultAction ($defaultAction)
-    {
-        $this->defaultAction = $defaultAction;
     }
 
     /**
