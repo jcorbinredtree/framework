@@ -196,22 +196,6 @@ class Config
     );
 
     /**
-     * Determines if we are in debug mode or not
-     *
-     * @access protected
-     * @var boolean
-     */
-    private $debug = false;
-
-    /**
-     * Determines if we are in test mode or not
-     *
-     * @access protected
-     * @var boolean
-     */
-    private $test = false;
-
-    /**
      * Holds the user configuration values
      *
      * @var array
@@ -279,27 +263,6 @@ class Config
 
 
     /**
-     * Sets the test mode.
-     *
-     * @param boolean $val
-     * @return void
-     */
-    public function setTestMode($val)
-    {
-        $this->test = (bool) $val;
-    }
-
-    /**
-     * Determines the test mode
-     *
-     * @return boolean
-     */
-    public function isTestMode()
-    {
-        return $this->test;
-    }
-
-    /**
      * Gets the session expiration time
      *
      * @return int
@@ -317,27 +280,6 @@ class Config
     public function setSessionExpireTime($n)
     {
         $this->sessionExpireTime = $n;
-    }
-
-    /**
-     * Determines if we are in debug mode or not
-     *
-     * @return boolean true if we're in debug mode
-     */
-    public function isDebugMode()
-    {
-        return $this->debug;
-    }
-
-    /**
-     * Sets if we are in debug mode or not
-     *
-     * @param boolean $val true if we're in debug mode
-     * @return void
-     */
-    public function setDebugMode($val)
-    {
-        $this->debug = (bool) $val;
     }
 
     /**

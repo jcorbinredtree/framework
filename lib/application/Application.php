@@ -232,16 +232,16 @@ class Application
      */
     static public function forward($uri=null)
     {
+        $site = Site::Site();
+
         // TODO this should go away, replaced by the location header provision
         // in SitePageHeaders
-        global $config;
 
-        if ($config->isTestMode()) {
+        if ($site->isTestMode()) {
             return;
         }
 
         if (! $uri) {
-            $site = Site::Site();
             $uri = $site->serverUrl.$site->url;
         }
 

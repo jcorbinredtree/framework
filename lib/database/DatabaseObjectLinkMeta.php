@@ -87,7 +87,7 @@ class DatabaseObjectLinkMeta extends DatabaseObjectAbstractMeta
             case 'ToClass':
             case 'LinkOrderClause':
             case 'AdditionalKey':
-                if (! $prop->isStatic() && $config->isDebugMode()) {
+                if (! $prop->isStatic() && Site::Site()->isDebugMode()) {
                     throw new RuntimeException(
                         "$class->$name should be $class::\$$name"
                     );

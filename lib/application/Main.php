@@ -83,9 +83,9 @@ class Main
     public static function restoreRequest()
     {
         if ($request = Application::popSavedRequest()) {
-            global $current, $config;
+            global $current;
 
-            if ($config->isDebugMode()) {
+            if (Site::Site()->isDebugMode()) {
                 Site::getLog()->debug("restoring saved request: " . print_r($request, true));
             }
 

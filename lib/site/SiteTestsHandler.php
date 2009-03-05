@@ -37,8 +37,6 @@ class SiteTestsHandler extends SiteCliHandler
      */
     public function sendResponse()
     {
-        $this->site->config->setTestMode(true);
-
         if (! class_exists('UnitTestCase')) {
             require_once SiteLoader::$FrameworkPath.
                 '/extensions/simpletest/autorun.php';

@@ -83,12 +83,12 @@ class SiteLog
         if (! isset($this->log)) {
             $logDir = $this->site->layout->setupLogDir();
             $logFile = strftime('%F.log');
-            if ($this->site->config->isTestMode()) {
+            if ($this->site->isTestMode()) {
                 $logFile = "test_$logFile";
             }
             $logFile = "$logDir/$logFile";
 
-            if ($this->site->config->isDebugMode()) {
+            if ($this->site->isDebugMode()) {
                 $logLevel = PEAR_LOG_DEBUG;
             } else {
                 $logLevel = PEAR_LOG_WARNING;
@@ -284,7 +284,7 @@ class SiteLog
      */
     public function deprecatedComplain($old, $new=null, $from=null, $at=null)
     {
-        if (! $this->site->config->isDebugMode()) {
+        if (! $this->site->isDebugMode()) {
             return;
         }
 
@@ -314,7 +314,7 @@ class SiteLog
     private function cleanMess(&$message)
     {
         $len = strlen($message);
-        if (! $this->site->config->isDebugMode() && $len > 1024) {
+        if (! $this->site->isDebugMode() && $len > 1024) {
             $message = substr($message, 0, 1024);
         }
         $len = strlen($message);

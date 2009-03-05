@@ -29,12 +29,13 @@ require_once('SITE/framework/SiteLoader.php');
 
 class MySite extends Site
 {
+    protected $mode = /* Site::TEST_MODE | */ Site::DEBUG_MODE;
+
     public function onConfig()
     {
         // This site was developed against this version of the framework
         $this->config->setTargetVersion("3.1");
 
-        $this->config->setDebugMode(true);
         $this->config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
         $this->config->addMailerOptions(array(
             'From'      => 'client@example.com',

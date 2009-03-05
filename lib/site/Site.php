@@ -214,6 +214,24 @@ abstract class Site extends CallbackManager
      */
 
     /**
+     * Mode flags
+     */
+    const MODE_DEBUG = 0x01;
+    const MODE_TEST  = 0x02;
+    const MODE_MAINT = 0x04;
+
+    /**
+     * Site mode flags
+     *
+     * The default is production mode, i.e. not test, not debug, not maint
+     *
+     * This is an immutable property, it can only be set from the constructor
+     *
+     * @var int
+     */
+    protected $mode=0;
+
+    /**
      * @var Config
      */
     public $config;
@@ -303,10 +321,52 @@ abstract class Site extends CallbackManager
         // Configuration is done
         $this->dispatchCallback('onPostConfig');
 
-        $this->timing = $config->isDebugMode();
+        $this->timing = $this->isDebugMode();
         if ($this->timing) {
             array_push($this->timePoints, $start);
         }
+    }
+
+    /**
+     * Tests whether the MODE_TEST flag is set
+     *
+     * @return boolean
+     */
+    public function isTestMode()
+    {
+        return (bool) $this->mode & self::MODE_TEST;
+    }
+
+    /**
+     * Tests whether the MODE_DEBUG flag is set
+     *
+     * @return boolean
+     */
+    public function isDebugMode()
+    {
+        return (bool) $this->mode & self::MODE_DEBUG;
+    }
+
+    /**
+     * Tests whether the MODE_MAINT flag is set
+     *
+     * @return boolean
+     */
+    public function isMaintMode()
+    {
+        return (bool) $this->mode & self::MODE_MAINT;
+    }
+
+    /**
+     * Tests whether the given mode flag is set
+     *
+     * @param int $flag
+     * @return boolean
+     */
+    public function isMode($flag)
+    {
+        assert(is_int($flag));
+        return (bool) $this->mode & $flag;
     }
 
     /**
@@ -507,7 +567,7 @@ abstract class Site extends CallbackManager
         global $database;
         if (!isset($database)) {
             $database = new Database();
-            $database->log = $database->time = $this->config->isDebugMode();
+            $database->log = $database->time = $this->isDebugMode();
         }
         return $database;
     }

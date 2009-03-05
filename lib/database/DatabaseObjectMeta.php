@@ -87,7 +87,7 @@ class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
             switch ($name) {
             case 'table':
             case 'key':
-                if (! $prop->isStatic() && $config->isDebugMode()) {
+                if (! $prop->isStatic() && Site::Site()->isDebugMode()) {
                     trigger_error("$class->$name should be $class::\$$name");
                 }
                 $this->$name = $prop->getValue();
