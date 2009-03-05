@@ -299,34 +299,6 @@ class Params
         return Params::Generic($_REQUEST, $name, $default);
     }
 
-    /**
-     * Safely gets a $_SESSION variable. If $name does not exist,
-     * $default is provided.
-     *
-     * @param string $name the array key
-     * @param mixed $default the default value to supply if $name
-     * does not exist in the array. defaults to null
-     * @return mixed the value for key $name
-     */
-    static public function session($name, $default=null)
-    {
-        return (isset($_SESSION[$name]) ? $_SESSION[$name] : $default);
-    }
-
-    /**
-     * Safely gets a $_SERVER variable. If $name does not exist,
-     * $default is provided.
-     *
-     * @param string $name the array key
-     * @param mixed $default the default value to supply if $name
-     * does not exist in the array. defaults to null
-     * @return mixed the value for key $name
-     */
-    static public function server($name, $default=null)
-    {
-        return (isset($_SERVER[$name]) ? $_SERVER[$name] : $default);
-    }
-
      /**
      * Safely gets a $_COOKIE variable. If $name does not exist,
      * $default is provided.

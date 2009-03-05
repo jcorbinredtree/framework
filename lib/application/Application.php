@@ -212,14 +212,12 @@ class Application
      */
     static public function popSavedRequest()
     {
-        if (Params::session(self::$RequestSaveKey)) {
-            $request = Params::session(self::$RequestSaveKey);
-            unset($_SESSION[self::$RequestSaveKey]);
-
-            return unserialize($request);
+        $request = Session::get(self::$RequestSaveKey);
+        if (isset($request)) {
+            Session::set(self::$RequestSaveKey, null);
+            $request =  unserialize($request);
         }
-
-        return null;
+        return $request;
     }
 
     /**

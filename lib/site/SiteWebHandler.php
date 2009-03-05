@@ -26,6 +26,7 @@
  */
 
 require_once 'lib/application/Application.php';
+require_once 'lib/site/Session.php';
 require_once 'lib/site/SiteContentPageProvider.php';
 
 /**
@@ -37,7 +38,10 @@ class SiteWebHandler extends SiteHandler
     {
         parent::initialize();
         Application::start();
-        Main::startSession();
+
+        Session::start($this->site);
+        Session::check($this->site);
+
         $this->site->getDatabase();
 
         $this->site->log->info(
@@ -59,7 +63,6 @@ class SiteWebHandler extends SiteHandler
 
     public function startRequest()
     {
-        Main::sessionTimeout(); // Has session timed out? (only for timed-sessions)
         Main::restoreRequest(); // Restore any previously saved requests
         Main::setLanguage();
     }

@@ -141,14 +141,6 @@ class Config
      */
     private $dbOptions = null;
 
-    /**
-     * Specifies the lifetime (timeout) of a session in seconds.
-     * Set to 0 to mean until the user logs out or the the browser is closed.
-     *
-     * @var int
-     */
-    private $sessionExpireTime = 0;
-
     private $templateOptions = array(
         // Extra places to look for templates, entries relative to SiteLoader::$Base
         // 'include_path' => "path,path,..." -or- array('path','path',...)
@@ -259,27 +251,6 @@ class Config
     public function setDatabaseInfo($dsn)
     {
         $this->dsn = $dsn;
-    }
-
-
-    /**
-     * Gets the session expiration time
-     *
-     * @return int
-     */
-    public function getSessionExpireTime()
-    {
-        return $this->sessionExpireTime;
-    }
-
-    /**
-     * Sets the session expiration time
-     *
-     * @return void
-     */
-    public function setSessionExpireTime($n)
-    {
-        $this->sessionExpireTime = $n;
     }
 
     /**

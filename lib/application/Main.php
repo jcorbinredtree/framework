@@ -18,23 +18,6 @@ require_once 'lib/i18n/I18N.php';
 class Main
 {
     /**
-     * Starts a session.
-     *
-     * @return void
-     */
-    public static function startSession()
-    {
-        $path = Site::Site()->url;
-        if ($path[strlen($path)-1] != '/') {
-            $path .= '/';
-        }
-
-        global $config;
-        session_set_cookie_params($config->getSessionExpireTime(), $path);
-        session_start();
-    }
-
-    /**
      * Requires the -secure requests be secured via https by forwarding the request
      * to the https equivalent
      *
@@ -48,30 +31,6 @@ class Main
             $uri = $current->getCurrentRequest(array('-textalize' => true));
 
             Application::Forward($uri);
-        }
-    }
-
-    /**
-     * Enforces session timeouts
-     *
-     * @return void
-     */
-    public static function sessionTimeout()
-    {
-        // TODO modularize session handling
-        $time_key = '__time';
-        global $config, $current;
-
-        if ($config->getSessionExpireTime() && Params::session('user_id')
-            && (((time() - Session::get($time_key)) >= $config->sessionExpireTime)))
-        {
-            $_SESSION = array();
-            Application::saveRequest();
-
-            $current->addNotice("Your session has timed-out, please log in again");
-        }
-        elseif ($config->getSessionExpireTime()) {
-            Session::set($time_key, time());
         }
     }
 
