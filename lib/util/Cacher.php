@@ -279,7 +279,9 @@ return false;
 
         // TODO $params .= ($current->user ? $current->user->id : -1);
 
-        $path = $config->absPath . "/cache/objects/" . md5($params);
+        $site = Site::Site();
+        $cacheDir = $site->layout->getCacheArea('objects');
+        $path = "$cacheDir/objects/".md5($params);
         if (!file_exists($path)) {
             if (!mkdir($path, 0775, true)) {
                 $config->error("unable to make dir $path");
