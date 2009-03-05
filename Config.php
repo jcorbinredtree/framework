@@ -421,15 +421,6 @@ class Config
         return $this->mailerOptions;
     }
 
-    /**
-     * The absolute uri, such as http://place.com/full/path/to/app.
-     * This value is calculated in the constructor.
-     *
-     * @access public
-     * @var string
-     */
-    public $absUri = null;
-
     private $site;
 
     /**
@@ -444,7 +435,6 @@ class Config
             $site = Site::Site();
         }
         $this->site = $site;
-        $this->absUri = $this->site->serverUrl.$this->site->url;
         $this->log =& Log::singleton('null');
     }
 

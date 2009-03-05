@@ -67,8 +67,6 @@ class FrameworkTag extends Tag
 
     public function href(DOMElement &$element)
     {
-        global $config;
-
         $sefLink = $this->getUnquotedAttr($element, 'sefLink');
         $component = $this->getAttr($element, 'component');
         $action = $this->getAttr($element, 'action');
@@ -78,7 +76,9 @@ class FrameworkTag extends Tag
 
         $href = '';
         if ($sefLink) {
-            $href = "'$config->absUri/$sefLink'";
+            $site = Site::Site();
+            $absurl = $site->serverUrl.$site->url;
+            $href = "'$absurl/$sefLink'";
         }
         else {
             $href = '$this->href(' . "$component,$action,";
@@ -112,7 +112,9 @@ class FrameworkTag extends Tag
 
         $href = '';
         if ($sefLink) {
-            $href = "'$config->absUri/content/$sefLink'";
+            $site = Site::Site();
+            $absurl = $site->serverUrl.$site->url;
+            $href = "'$absurl/content/$sefLink'";
         }
         else {
             $href = '<?php echo $this->href(' . "$component,$action,";

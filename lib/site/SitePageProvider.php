@@ -49,7 +49,7 @@ abstract class SitePageProvider
     /**
      * Called by Site::handle to ask the provider for a page
      *
-     * @param url string, the url being served, relative to $site->config->absUri
+     * @param url string, the url being served, relative to $site->url
      * @return mixed one of:
      *   DECLINE          - declines to serve the page
      *   FAIL             - the requested url should be error'd as not found
@@ -69,8 +69,7 @@ abstract class SitePageProvider
      * it'll do something like:
      *   return $this->redirect('some/page');
      *
-     * @param to string the url, if not absolute, will be relative to
-     * $site->Config->absUri
+     * @param to string the url, if not absolute, will be relative to $site->url
      *
      * @return REDIRECT
      */

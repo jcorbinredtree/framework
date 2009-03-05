@@ -179,12 +179,10 @@ abstract class Component extends ActionProvider
         }
 
         // TODO this is a historical conversion, it won't work at all currently
-        //
-        $config = Site::getConfig();
-
         $component = urlencode(get_class($this));
 
-        $link = $config->absUri;
+        $site = Site::Site();
+        $link = $site->serverUrl.$site->url;
 
         // The Action Rule:
         // if the action linked to requires ssl, then set the link to https

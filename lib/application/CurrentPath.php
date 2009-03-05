@@ -34,7 +34,7 @@
  * Example:
  *   $path = CurrentPath::set('bla/foo')
  * same as:
- *   $path = CurrentPath::set($config->absUri.'/bla/foo')
+ *   $path = CurrentPath::set(SiteLoader::$Base.'/bla/foo')
  *
  * echo $path; // prints /path/to/site/bla/foo
  * echo $path->up(); // prints /path/to/site/bla

@@ -469,7 +469,7 @@ abstract class Site extends CallbackManager
         if (strlen($url) > 0 && $url[0] == '/') {
             return $this->serverUrl.$url;
         } elseif (! preg_match('~^\w+://~', $url)) {
-            return $this->config->absUri.'/'.$url;
+            return $this->serverUrl.$this->url.'/'.$url;
         } else {
             return $url;
         }
