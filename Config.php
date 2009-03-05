@@ -137,13 +137,6 @@ class Config
     private $dsn = 'mysql://root:@localhost/framework';
 
     /**
-     * This is the test connection information, in a MDB2 DSN format
-     *
-     * @var string
-     */
-    private $testDsn = 'mysql://root:@localhost/framework';
-
-    /**
      * Databse options, as specified by PDO
      *
      * @var string
@@ -301,16 +294,6 @@ class Config
     }
 
     /**
-     * Gets the current dsn
-     *
-     * @return string
-     */
-    public function getDatabaseInfo()
-    {
-        return ($this->test ? $this->testDsn : $this->dsn);
-    }
-
-    /**
      * Set database info
      * @param $dsn the dsn
      * @return string
@@ -320,15 +303,6 @@ class Config
         $this->dsn = $dsn;
     }
 
-    /**
-     * Set test info
-     * @param $dsn the dsn
-     * @return string
-     */
-    public function setDatabaseTestInfo($dsn)
-    {
-        $this->testDsn = $dsn;
-    }
 
     /**
      * Sets the test mode.

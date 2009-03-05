@@ -36,7 +36,6 @@ class MySite extends Site
 
         $this->config->setDebugMode(true);
         $this->config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
-        $this->config->setDatabaseTestInfo('mysql://name:pass@localhost/dbname_test');
         $this->config->addMailerOptions(array(
             'From'      => 'client@example.com',
             'FromName'  => 'Mr Person',
