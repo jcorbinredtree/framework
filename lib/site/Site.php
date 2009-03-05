@@ -346,6 +346,37 @@ abstract class Site extends CallbackManager
     }
 
     /**
+     * Sites can override this if they need to do wild things with path
+     * translation
+     *
+     * @param string $requrl the requested url, like $_SERVER['REQUEST_URI']
+     * @return string the url that should be resolved to a page
+     * @see handle
+     */
+    protected function parseUrl($requrl)
+    {
+        $base = $this->url;
+        $baselen = strlen($base);
+        $reqlen = strlen($requrl);
+        $url = null;
+
+        if ($reqlen >= $baselen && substr($requrl, 0, $baselen) == $base) {
+            if ($reqlen == $baselen) {
+                $url = '';
+            } elseif ($requrl[$baselen] == '/') {
+                $url = substr($requrl, $baselen+1);
+            }
+        }
+        if (! isset($url)) {
+            throw new RuntimeException(
+                "invalid requset url '$requrl', expecting something under $base"
+            );
+        }
+
+        return $url;
+    }
+
+    /**
      * Handles a site request for a given role by delegating to SiteRoleHandler
      *
      * Calls the handle method on the handler instance with any additional
@@ -369,19 +400,13 @@ abstract class Site extends CallbackManager
      *
      * @param role string
      * @return void
-     * @see loadHandler
+     * @see loadHandler, parseUrl
      */
     final public function handle($role)
     {
         $args = array_slice(func_get_args(), 1);
         try {
-            $urlPat = quoteMeta($this->url);
-            $urlPat = "~^$urlPat(?:/(.*))?\$~";
-            $url = Params::server('REQUEST_URI');
-            $matches = array();
-            if (preg_match($urlPat, $url, $matches)) {
-                $url = $matches[1];
-            }
+            $url = $this->parseUrl(Params::server('REQUEST_URI'));
 
             @ob_start();
             $handler = $this->loadHandler($role);
