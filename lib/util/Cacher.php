@@ -61,8 +61,7 @@ class Cacher
      */
     public static function writeCache(ICacheable &$obj, &$data)
     {
-        global $config;
-return false;
+        return false;
         if (!$obj->isCacheable()) {
             return false;
         }
@@ -75,11 +74,11 @@ return false;
         $file = "$path/cache";
 
         if (!file_put_contents($file, serialize($data))) {
-            $config->error("couldn't create file $file");
+            Site::getLog()->error("couldn't create file $file");
             return false;
         }
 
-        $config->info("wrote cache for $file");
+        Site::getLog()->info("wrote cache for $file");
 
         return true;
     }
@@ -94,7 +93,7 @@ return false;
      */
     public static function isCached(ICacheable &$obj)
     {
-        global $config; return false;
+        return false;
 
         if (!$obj->isCacheable()) {
             return false;
@@ -120,7 +119,7 @@ return false;
      */
     public static function useCache(ICacheable &$obj)
     {
-        global $config;        return false;
+        return false;
 
         if (!($cacheModifiedTime = Cacher::isCached($obj))) {
             return false;
@@ -135,7 +134,7 @@ return false;
             return false;
         }
 
-        $config->info("using cache for $path");
+        Site::getLog()->info("using cache for $path");
 
         return $buffer;
     }
@@ -267,7 +266,7 @@ return false;
      */
     private static function getCacheDirectory(ICacheable &$obj)
     {
-        global $config, $current;
+        global $current;
 
         $params = get_class($obj);
         $request = array_merge($_GET, $_POST);
@@ -282,9 +281,9 @@ return false;
         $site = Site::Site();
         $cacheDir = $site->layout->getCacheArea('objects');
         $path = "$cacheDir/objects/".md5($params);
-        if (!file_exists($path)) {
-            if (!mkdir($path, 0775, true)) {
-                $config->error("unable to make dir $path");
+        if (! file_exists($path)) {
+            if (! @mkdir($path, 0775, true)) {
+                Site::getLog()->error("unable to make dir $path");
                 return false;
             }
         }

@@ -28,6 +28,7 @@
 require_once 'lib/util/CallbackManager.php';
 require_once 'lib/util/Params.php';
 require_once 'lib/site/SiteLayout.php';
+require_once 'lib/site/SiteLog.php';
 require_once 'lib/site/SiteHandler.php';
 require_once 'lib/site/SitePageProvider.php';
 require_once 'lib/site/SiteModuleLoader.php';
@@ -125,6 +126,20 @@ abstract class Site extends CallbackManager
         self::Site();
         $args = array_slice(func_get_args(), 1);
         call_user_func_array(array(self::$TheSite, 'handle'), $args);
+    }
+
+    /**
+     * Returns thi site log, convenience for Site::Site()->log
+     *
+     * @return SiteLog
+     */
+    final public static function getLog()
+    {
+        $site = self::Site();
+        if (! isset($site->log)) {
+            throw new RuntimeException('no site log');
+        }
+        return $site->log;
     }
 
     /**
@@ -232,6 +247,11 @@ abstract class Site extends CallbackManager
     public $modules;
 
     /**
+     * @var SiteLog
+     */
+    public $log;
+
+    /**
      * Creates a new site:
      *   starts the timing clock (if enabled)
      *   creates the SiteLayout if not set
@@ -248,6 +268,12 @@ abstract class Site extends CallbackManager
                 $this->url = '';
             }
         }
+
+        // The log starts off in an unconfigured state where it accumulates
+        // messages until configuration is done and it's told what to do with
+        // them; however if something goes wrong early on, it dumps all logged
+        // messages
+        $this->log = new SiteLog($this);
 
         if (! isset($this->layout)) {
             $this->layout = new SiteLayout($this);
@@ -441,7 +467,7 @@ abstract class Site extends CallbackManager
         }
         $message .= ' <==';
 
-        $this->config->info($message);
+        $this->log->info($message);
     }
 
     abstract public function onConfig();

@@ -25,8 +25,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'Log.php';
-
 /**
  * Contains configuration information
  *
@@ -214,14 +212,6 @@ class Config
     private $test = false;
 
     /**
-     * The logger object
-     *
-     * @access protected
-     * @var Log
-     */
-    private $log = false;
-
-    /**
      * Holds the user configuration values
      *
      * @var array
@@ -249,22 +239,6 @@ class Config
     public function get($key)
     {
         return $this->userConfig[$key];
-    }
-
-    /**
-     * @return Log
-     */
-    public function getLog ()
-    {
-        return $this->log;
-    }
-
-    /**
-     * @param Log $log
-     */
-    public function setLog (Log $log)
-    {
-        $this->log = $log;
     }
 
     /**
@@ -313,7 +287,6 @@ class Config
     public function setTestMode($val)
     {
         $this->test = (bool) $val;
-        $this->site->layout->setupLog();
     }
 
     /**
@@ -365,7 +338,6 @@ class Config
     public function setDebugMode($val)
     {
         $this->debug = (bool) $val;
-        $this->site->layout->setupLog();
     }
 
     /**
@@ -392,7 +364,6 @@ class Config
             $site = Site::Site();
         }
         $this->site = $site;
-        $this->log =& Log::singleton('null');
     }
 
     /**
@@ -415,194 +386,6 @@ class Config
         }
 
         return $mail;
-    }
-
-    /**
-     * Writes a debug message to the log
-     *
-     * @param string $message the message you want
-     * to write to the log
-     * @return void
-     */
-    public function debug($message, $frame=2)
-    {
-        if (PEAR_LOG_DEBUG <= $this->log->getMask()) {
-            $this->log->log($this->callingFrame($frame) . $this->binSafe($message), PEAR_LOG_DEBUG);
-        }
-    }
-
-    /**
-     * Writes a message to the log
-     *
-     * @param string $message the message you want
-     * to write to the log
-     * @return void
-     */
-    public function log($message, $frame=2)
-    {
-        $this->info($message, $frame+1);
-    }
-
-    /**
-     * Writes an info message to the log
-     *
-     * @param string $message the message you want
-     * to write to the log
-     * @return void
-     */
-    public function info($message, $frame=2)
-    {
-        if (PEAR_LOG_INFO <= $this->log->getMask()) {
-            $this->log->log($this->callingFrame($frame) . $this->binSafe($message), PEAR_LOG_INFO);
-        }
-    }
-
-    /**
-     * Writes a notice message to the log
-     *
-     * @param string $message the message you want
-     * to write to the log
-     * @return void
-     */
-    public function notice($message, $frame=2)
-    {
-        if (PEAR_LOG_NOTICE <= $this->log->getMask()) {
-            $this->log->log($this->callingFrame($frame) . $this->binSafe($message), PEAR_LOG_NOTICE);
-        }
-    }
-
-    /**
-     * Writes a warning message to the log
-     *
-     * @param string $message the message you want
-     * to write to the log
-     * @return void
-     */
-    public function warn($message, $frame=2)
-    {
-        if (PEAR_LOG_WARNING <= $this->log->getMask()) {
-            $this->log->log($this->callingFrame($frame) . $this->binSafe($message), PEAR_LOG_WARNING);
-        }
-    }
-
-    /**
-     * Writes an error message to the log
-     *
-     * @param string $message the message you want
-     * to write to the log
-     * @return void
-     */
-    public function error($message, $frame=2)
-    {
-        if (PEAR_LOG_ERR <= $this->log->getMask()) {
-            $this->log->log($this->callingFrame($frame) . $this->binSafe($message), PEAR_LOG_ERR);
-        }
-    }
-
-    /**
-     * Writes an alert message to the log
-     * @TODO: should this send an email?
-     *
-     * @param string $message the message you want
-     * to write to the log
-     * @return void
-     */
-    public function alert($message, $frame=2)
-    {
-        if (PEAR_LOG_ALERT <= $this->log->getMask()) {
-            $this->log->log($this->callingFrame($frame) . $this->binSafe($message), PEAR_LOG_ALERT);
-        }
-    }
-
-    /**
-     * Writes a fatal message to the log
-     *
-     * @param string $message the message you want
-     * to write to the log
-     * @return void
-     */
-    public function fatal($message, $frame=2)
-    {
-        if (PEAR_LOG_EMERG <= $this->log->getMask()) {
-            $this->log->log($this->callingFrame($frame) . $this->binSafe($message), PEAR_LOG_EMERG);
-        }
-    }
-
-    /**
-     * Returns the calling frames $frame frame, formatted properly.
-     *
-     * @return string a string representing the callers frame
-     */
-    public function callingFrame($frame=2)
-    {
-        global $__start;
-
-        $trace = debug_backtrace();
-
-        $function = (isset($trace[$frame]['function']) ? $trace[$frame]['function'] : '');
-        $line     = (isset($trace[$frame]['line'])     ? $trace[$frame]['line']     : '');
-        $type     = (isset($trace[$frame]['type'])     ? $trace[$frame]['type']     : '');
-
-        $out = sprintf('[%.4f] %s', (microtime(true) - $__start), $function);
-
-        if ($line) {
-            $out .= " ($line): ";
-        }
-
-        $out .= "${type}";
-
-        return $out;
-    }
-
-    private function binSafe(&$message)
-    {
-        $out = array();
-        $msgLen = strlen($message);
-        $len = ($this->isDebugMode() ? $msgLen : (($msgLen >= 1024) ? 1024 : $msgLen));
-        for ($i = 0; $i < $len; $i++) {
-            $chr = ord($message[$i]);
-            $out[$i] = (($chr != 10) && ((($chr < 32) || ($chr > 127))) ? '?' : $message[$i]);
-        }
-
-        return implode('', $out);
-    }
-
-    /**
-     * If debugging is on, files a complaint through php's error handling about
-     * use of a deprecated interface with optional advice on what to do instead.
-     *
-     * @param old string describing the old interface
-     * @param new string describing the new interface (optional)
-     *
-     * @return void
-     */
-    public function deprecatedComplain($old, $new=null, $from=null, $at=null)
-    {
-        if (! $this->debug) {
-            return;
-        }
-
-        if (! isset($from) || ! isset($at)) {
-            $trace = debug_backtrace();
-            if (! isset($from)) {
-                $from = $trace[2]['class'].$trace[2]['type'].$trace[2]['function'];
-            }
-            if (! isset($at)) {
-                $at = $trace[1]['file'].':'.$trace[1]['line'];
-            }
-        }
-
-        $mess = "Call to deprecated $old from $from at $at";
-        if (isset($new)) {
-            $mess .= ", use $new instead";
-        }
-
-        global $current;
-        if (isset($current)) {
-            $current->addNotice($mess);
-        } else {
-            trigger_error($mess);
-        }
     }
 }
 

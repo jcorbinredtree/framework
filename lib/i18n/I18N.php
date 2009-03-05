@@ -102,14 +102,17 @@ class I18N
      */
     static public function Set($lang)
     {
-        global $config, $database;
-
         $lcLang = strtolower($lang);
         $ucLang = strtoupper($lang);
         I18N::$lang = $lcLang;
 
         if (!I18N::GetLangPack($lcLang, $ucLang)) {
-            $config->fatal("Problem loading language pack '$lang'. Does it exist? Is it in the right place?");
+            Site::getLog()->fatal(
+                "Problem loading language pack '$lang'. ".
+                "Does it exist? ".
+                "Is it in the right place? ".
+                "Does its class named correctly?"
+            );
             exit(1);
         }
 

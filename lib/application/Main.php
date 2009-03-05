@@ -84,7 +84,7 @@ class Main
             global $current, $config;
 
             if ($config->isDebugMode()) {
-                $config->debug("restoring saved request: " . print_r($request, true));
+                Site::getLog()->debug("restoring saved request: " . print_r($request, true));
             }
 
             $_GET = $request->get;

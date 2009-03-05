@@ -56,15 +56,13 @@ class DatabaseException extends RuntimeException
             );
         }
 
-        global $config;
-        $config->error(
+        Site::getLog()->error(
             # Usually looks something like:
             #   Database::action(details), failed: it didn't work out, time: n.mmmm seconds
             'Database::'.implode(', ', $parts),
             4 # try to pin it on Database's consumer
         );
     }
-
 }
 
 ?>

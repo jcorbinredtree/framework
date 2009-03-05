@@ -183,7 +183,7 @@ class Application
      */
     static public function saveRequest()
     {
-        global $current, $config;
+        global $current;
 
         $obj = new stdClass();
         $obj->get = $_GET;
@@ -191,7 +191,7 @@ class Application
         $obj->request = $_REQUEST;
         $obj->component = $current->component;
 
-        $config->info("saving request");
+        Site::getLog()->info("saving request");
 
         $_SESSION[self::$RequestSaveKey] = serialize($obj);
     }
@@ -336,8 +336,7 @@ class Application
      */
     public static function setPath($path)
     {
-        global $config;
-        $config->deprecatedComplain(
+        Site::getLog()->deprecatedComplain(
             'Application::setPath', 'CurrentPath::set'
         );
         return CurrentPath::set($path);

@@ -1153,8 +1153,6 @@ class Database
      */
     private function infoLog($what, $rows=null)
     {
-        global $config;
-
         $this->totalQueries++;
 
         $parts = array($what);
@@ -1176,7 +1174,7 @@ class Database
             $this->notifyObservers(Database::INFO, $what, $data);
         }
 
-        $config->info(
+        Site::getLog()->info(
             # Usually looks something like:
             #   Database::action(details), time: n.mmmm seconds, rows: n
             'Database::'.implode(', ', $parts),

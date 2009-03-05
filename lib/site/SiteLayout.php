@@ -113,24 +113,12 @@ class SiteLayout
         return $this->cacheAreas[$area];
     }
 
-    public function setupLog()
+    public function setupLogDir()
     {
         $this->checkWritable();
         $this->_mkdir($this->logDir);
         $this->_writable($this->logDir);
-
-        $log = Log::singleton('file',
-            sprintf('%s/%s%s.log',
-                $this->logDir,
-                date('Y-m-d'),
-                ($this->site->config->isTestMode() ? '.test' : '')
-            ),
-            null,
-            $this->site->config->isDebugMode()
-                ? PEAR_LOG_DEBUG
-                : PEAR_LOG_WARNING
-        );
-        $this->site->config->setLog($log);
+        return $this->logDir;
     }
 }
 
