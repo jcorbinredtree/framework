@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<template xmlns:f = "class://FrameworkTag">
-    <p>This is some static content in a module</p>
-    
-    <p>[this file is at /modules/StaticContentModule/view/content.xml]</p>
-</template>
