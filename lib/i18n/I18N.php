@@ -80,18 +80,16 @@ class I18N
      */
     static private function GetLangPack($lcLang, $ucLang)
     {
-        global $config;
-
-        $path = $config->fwAbsPath . "/languages/langpack.$lcLang.php";
-
-        if (!file_exists($path)) {
-            return false;
-        }
-
-        include_once $path;
+        $path = "languages/langpack.$lcLang.php";
         $class = "I18N_$ucLang";
 
-        return I18N::$pack = new $class();
+        @include_once $path;
+
+        if (class_exists($class)) {
+            return I18N::$pack = new $class();
+        } else {
+            return null;
+        }
     }
 
     /**

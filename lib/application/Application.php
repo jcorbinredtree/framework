@@ -232,6 +232,8 @@ class Application
      */
     static public function forward($uri=null)
     {
+        // TODO this should go away, replaced by the location header provision
+        // in SitePageHeaders
         global $config;
 
         if ($config->isTestMode()) {
@@ -239,7 +241,7 @@ class Application
         }
 
         if (! $uri) {
-            $uri = $config->absUri;
+            $uri = Site::Site()->serverUrl.SiteLoader::$UrlBase;
         }
 
         session_write_close();

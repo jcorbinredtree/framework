@@ -24,11 +24,11 @@ class Main
      */
     public static function startSession()
     {
-        global $config;
 
-        $path = $config->absUriPath;
+        $path = SiteLoader::$UrlBase;
         $path = (preg_match('/\/$/', $path) ? $path : "$path/");
 
+        global $config;
         session_set_cookie_params($config->getSessionExpireTime(), $path);
         session_start();
     }

@@ -56,22 +56,24 @@ class PayPalPayment extends Payment {
   public function purchase() {
     global $current;
 
-    set_include_path("$config->absPath/extensions/:" . get_include_path());
-    require_once "$config->absPath/extensions/PayPal.php";
-    require_once "$config->absPath/extensions/PayPal/Profile/Handler/Array.php";
-    require_once "$config->absPath/extensions/PayPal/Profile/API.php";
-    require_once "$config->absPath/extensions/PayPal/Type/DoDirectPaymentRequestType.php";
-    require_once "$config->absPath/extensions/PayPal/Type/DoDirectPaymentRequestDetailsType.php";
-    require_once "$config->absPath/extensions/PayPal/Type/DoDirectPaymentResponseType.php";
+    // Note, we used to add extensions/ to include_path here, that should either
+    // be standardized in SiteLoader or we need to load more files here to make
+    // up for whatever the PayPal code would otherwise try to load
+    require_once 'extensions/PayPal.php';
+    require_once 'extensions/PayPal/Profile/Handler/Array.php';
+    require_once 'extensions/PayPal/Profile/API.php';
+    require_once 'extensions/PayPal/Type/DoDirectPaymentRequestType.php';
+    require_once 'extensions/PayPal/Type/DoDirectPaymentRequestDetailsType.php';
+    require_once 'extensions/PayPal/Type/DoDirectPaymentResponseType.php';
 
     //  Add all of the types
-    require_once "$config->absPath/extensions/PayPal/Type/BasicAmountType.php";
-    require_once "$config->absPath/extensions/PayPal/Type/PaymentDetailsType.php";
-    require_once "$config->absPath/extensions/PayPal/Type/AddressType.php";
-    require_once "$config->absPath/extensions/PayPal/Type/CreditCardDetailsType.php";
-    require_once "$config->absPath/extensions/PayPal/Type/PayerInfoType.php";
-    require_once "$config->absPath/extensions/PayPal/Type/PersonNameType.php";
-    require_once "$config->absPath/extensions/PayPal/CallerServices.php";
+    require_once 'extensions/PayPal/Type/BasicAmountType.php';
+    require_once 'extensions/PayPal/Type/PaymentDetailsType.php';
+    require_once 'extensions/PayPal/Type/AddressType.php';
+    require_once 'extensions/PayPal/Type/CreditCardDetailsType.php';
+    require_once 'extensions/PayPal/Type/PayerInfoType.php';
+    require_once 'extensions/PayPal/Type/PersonNameType.php';
+    require_once 'extensions/PayPal/CallerServices.php';
 
     $environment = ( $this->live ? 'live' : 'sandbox' );
 
