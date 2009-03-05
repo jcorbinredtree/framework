@@ -25,7 +25,9 @@ class Main
     public static function startSession()
     {
         $path = Site::Site()->url;
-        $path = (preg_match('/\/$/', $path) ? $path : "$path/");
+        if ($path[strlen($path)-1] != '/') {
+            $path .= '/';
+        }
 
         global $config;
         session_set_cookie_params($config->getSessionExpireTime(), $path);
