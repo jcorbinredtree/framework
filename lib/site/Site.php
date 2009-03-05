@@ -137,7 +137,7 @@ abstract class Site extends CallbackManager
         if (! isset($site->config)) {
             throw new RuntimeException('no site config');
         }
-        return $site->page;
+        return $site->config;
     }
 
     /**
