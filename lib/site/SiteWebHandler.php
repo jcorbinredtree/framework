@@ -41,7 +41,7 @@ class SiteWebHandler extends SiteHandler
         $this->site->getDatabase();
 
         $this->site->config->info(
-            "==> Framework v".$this->site->config->getVersion().
+            "==> Framework v".Config::$FrameworkVersion.
             ": New Request from ".Params::server('REMOTE_ADDR').
             ' - ' . Params::server('REQUEST_URI').
             ' <=='

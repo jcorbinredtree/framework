@@ -229,13 +229,6 @@ class Config
     private $log = false;
 
     /**
-     * The framework version
-     *
-     * @var string
-     */
-    private $version = "3.0";
-
-    /**
      * Holds the user configuration values
      *
      * @var array
@@ -399,16 +392,6 @@ class Config
     {
         $this->debug = (bool) $val;
         $this->site->layout->setupLog();
-    }
-
-    /**
-     * Gets the current framework version
-     *
-     * @return string
-     */
-    public function getVersion()
-    {
-        $this->version;
     }
 
     /**
