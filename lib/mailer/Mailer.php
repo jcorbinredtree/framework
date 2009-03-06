@@ -35,6 +35,8 @@ class Mailer extends SiteModule
     {
         $this->path = $this->moduleDir.'/phpmailer';
         require_once "$this->path/class.phpmailer.php";
+
+        $this->site->config->addFile($this->moduleDir.'/defaults.ini');
     }
 
     public function getMailer()
@@ -47,7 +49,7 @@ class Mailer extends SiteModule
 
         $mail->PluginDir = "$this->path/";
 
-        $opt = $this->site->config->getMailerOptions();
+        $opt = $this->site->config->getGroup('mailer')->toArray();
         foreach ($opt as $key => $val) {
             $mail->$key = $opt[$key];
         }
