@@ -73,12 +73,12 @@ abstract class DatabaseObjectLink
         if (is_a($for, $meta->getFromClass())) {
             $ok = true;
             $sql = $meta->getSQL('link_delete_from');
-            $database->executef($sql, $for->id);
+            $database->execute($sql, $for->id);
         }
         if (is_a($for, $meta->getToClass())) {
             $ok = true;
             $sql = $meta->getSQL('link_delete_to');
-            $database->executef($sql, $for->id);
+            $database->execute($sql, $for->id);
         }
         if (! $ok) {
             throw new InvalidArgumentException(
@@ -121,7 +121,7 @@ abstract class DatabaseObjectLink
         }
 
         $otherId = null;
-        $list = $database->executef($sql, $for->id);
+        $list = $database->execute($sql, $for->id);
 
         $list->bindColumn(1, $otherId);
         $i = 1;

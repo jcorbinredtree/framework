@@ -349,7 +349,7 @@ class Database
      * @param arglist ... variable arguments representing the prepared args
      * @return PDOStatement
      */
-    public function executef($sqlf)
+    public function execute($sqlf)
     {
         $this->startTiming();
 

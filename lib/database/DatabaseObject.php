@@ -276,7 +276,7 @@ abstract class DatabaseObject extends RequestObject
 
         global $database;
         $sql = $meta->getSQL('dbo_select');
-        $sth = $database->executef($sql, $id);
+        $sth = $database->execute($sql, $id);
         $row = $sth->fetch(PDO::FETCH_ASSOC);
         if ($row === false) {
             return false;
@@ -323,7 +323,7 @@ abstract class DatabaseObject extends RequestObject
 
         global $database;
         $sql = $meta->getSQL('dbo_delete');
-        $database->executef($sql, $this->id);
+        $database->execute($sql, $this->id);
         $this->id = null;
         $this->_cacheKey = null;
         unset(self::$ObjectCache[$this->_cacheKey]);
