@@ -320,11 +320,11 @@ class Database
     {
         $rows = 0;
 
-        $this->getPDO();
+        $pdo = $this->getPDO();
 
         try {
             $this->startTiming();
-            $rows = $this->pdo->exec($sql);
+            $rows = $pdo->exec($sql);
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
@@ -402,12 +402,12 @@ class Database
      */
     public function prepare($sql)
     {
-        $this->getPDO();
+        $pdo = $this->getPDO();
 
         $what = $this->whatStatement('prepare', $sql);
         try {
             $this->startTiming();
-            $sth = $this->pdo->prepare($sql);
+            $sth = $pdo->prepare($sql);
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
@@ -433,12 +433,12 @@ class Database
      */
     public function query($sql)
     {
-        $this->getPDO();
+        $pdo = $this->getPDO();
 
         $what = $this->whatStatement('query', $sql);
         try {
             $this->startTiming();
-            $sth = $this->pdo->query($sql);
+            $sth = $pdo->query($sql);
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
@@ -506,9 +506,9 @@ class Database
      */
     public function lastInsertId()
     {
-        $this->getPDO();
+        $pdo = $this->getPDO();
 
-        $id = $this->pdo->lastInsertId();
+        $id = $pdo->lastInsertId();
 
         if ($this->log) {
             $this->infoLog("lastInsertId($id)");
@@ -568,12 +568,9 @@ class Database
             return;
         }
 
-        $this->getPDO();
-
+        $pdo = $this->getPDO();
         $this->startTiming();
-
-        $ret = $this->pdo->beginTransaction();
-
+        $ret = $pdo->beginTransaction();
         $this->endTiming();
 
         if ($this->log) {
@@ -596,12 +593,9 @@ class Database
             return;
         }
 
-        $this->getPDO();
-
+        $pdo = $this->getPDO();
         $this->startTiming();
-
-        $ret = $this->pdo->rollBack();
-
+        $ret = $pdo->rollBack();
         $this->endTiming();
 
         if ($this->log) {
@@ -624,12 +618,9 @@ class Database
             return;
         }
 
-        $this->getPDO();
-
+        $pdo = $this->getPDO();
         $this->startTiming();
-
-        $ret = $this->pdo->commit();
-
+        $ret = $pdo->commit();
         $this->endTiming();
 
         if ($this->log) {
