@@ -37,7 +37,6 @@ class SiteWebHandler extends SiteHandler
     public function initialize()
     {
         parent::initialize();
-        Application::start();
 
         Session::start($this->site);
         Session::check($this->site);
@@ -65,11 +64,6 @@ class SiteWebHandler extends SiteHandler
     {
         Main::restoreRequest(); // Restore any previously saved requests
         Main::setLanguage();
-    }
-
-    public function cleanup()
-    {
-        Application::end();
     }
 }
 

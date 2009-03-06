@@ -43,7 +43,6 @@ class SiteCliHandler extends SiteHandler
         global $_SESSION;
         $_SESSION = array();
 
-        Application::start();
         $this->site->getDatabase();
 
         // TODO once SitePageSystem is implemente, it should provide an off

@@ -26,7 +26,6 @@
  */
 
 require_once 'lib/application/CurrentPath.php';
-require_once 'lib/application/ApplicationData.php';
 require_once 'lib/application/Main.php';
 require_once 'lib/component/IRequestObject.php';
 require_once 'lib/component/RequestObject.php';
@@ -34,19 +33,6 @@ require_once 'lib/util/Params.php';
 require_once 'lib/database/Database.php';
 require_once 'lib/database/DatabaseObject.php';
 
-
-/**
- * Implements PHP's autoload function in order to
- * load required classed.
- *
- * @see the php docs
- * @param string $class a class name
- * @return void
- */
-function __autoload($class)
-{
-    Application::autoLoad($class);
-}
 
 /**
  * Application specific actions
@@ -69,97 +55,6 @@ class Application
      */
     private function __construct()
     {
-    }
-
-    /**
-     * Call back for File::find. Finds file
-     * names consisting of <class>.php, and
-     * includes them into global space.
-     *
-     * @param string $file the current file name
-     * @return void
-     */
-    static public function findClass($file)
-    {
-        $class = Application::$class;
-        if (preg_match("|/$class.php$|", $file)) {
-            include_once $file;
-
-            ApplicationData::addClassEntry($class, $file);
-        }
-    }
-
-    /**
-     * Determines if a class has been mapped, and tried to load it.
-     * If so, this method will return the path to the file where the class is defined.
-     *
-     * @param string $class a class name to test
-     * @return string a file path if found, false otherwise
-     */
-    static public function includeClass($class)
-    {
-        $file = ApplicationData::getClassLocation($class);
-        if (!$file) {
-            return false;
-        }
-
-        if (!file_exists($file)) {
-            throw new Exception("The location for $class is missing");
-        }
-
-        require_once $file;
-        return $file;
-    }
-
-    /**
-     * Loads classes based on class names
-     *
-     * @see the php docs
-     * @param string $class a class name
-     * @return boolean true if $class was included
-     */
-    static public function autoLoad($class)
-    {
-        global $current;
-
-        if ($file = Application::includeClass($class)) {
-            return $file;
-        }
-
-        if (!class_exists('File', false)) {
-            include_once 'lib/util/File.php';
-        }
-
-        // autoload classes at the current->path
-        if ($current) {
-            Application::$class = $class;
-            File::find(array('Application', 'findClass'), $current->path);
-            if ($file = Application::includeClass($class)) {
-                return $file;
-            }
-        }
-
-        $targets = array();
-        foreach (array('lib', 'components', 'modules', 'extensions') as $what) {
-            array_push($targets,
-                Loader::$LocalPath    ."/$what",
-                Loader::$FrameworkPath."/$what"
-            );
-        }
-
-        foreach ($targets as $target) {
-            if (! is_dir($target)) {
-                continue;
-            }
-
-            Application::$class = $class;
-            File::find(array('Application', 'findClass'), $target);
-            if ($file = Application::includeClass($class)) {
-                return $file;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -338,17 +233,6 @@ class Application
             'Application::setPath', 'CurrentPath::set'
         );
         return CurrentPath::set($path);
-    }
-
-    public static function start()
-    {
-        // load app data
-        ApplicationData::initialize();
-    }
-
-    public static function end()
-    {
-        ApplicationData::unintialize();
     }
 }
 
