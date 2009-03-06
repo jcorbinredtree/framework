@@ -23,18 +23,14 @@ class Session
 
     public static function configure(Site $site)
     {
-        // TODO tie into site config
+        $lifetime = $site->config->get('session.expire', 0);
+        $path = $site->config->get('session.path', $site->url);
 
-        list($lifetime, $path, $domain, $secure) = session_get_cookie_params();
-
-        $lifetime = 0;
-
-        $path = $site->url;
         if ($path[strlen($path)-1] != '/') {
             $path .= '/';
         }
 
-        session_set_cookie_params($lifetime, $path, $domain, $secure);
+        session_set_cookie_params($lifetime, $path);
     }
 
     public static function start(Site $site)
@@ -52,7 +48,7 @@ class Session
 
     public static function check(Site $site)
     {
-        list($lifetime) = session_get_cookie_params();
+        $lifetime = $site->config->get('session.expire', 0);
         if (
             $lifetime > 0 &&
             time() - self::get(self::$TimeKey) >= $lifetime
