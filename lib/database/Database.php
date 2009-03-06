@@ -709,26 +709,6 @@ class Database
     }
 
     /**
-     * Binds a value to a corresponding named or question mark placeholder in the SQL statement
-     * that was used to prepare the statement.
-     *
-     * @see http://www.php.net/manual/en/function.PDOStatement-bindValue.php
-     * @param int|string $param Parameter identifier. For a prepared statement using named placeholders,
-     * this will be a parameter name of the form :name. For a prepared statement using
-     * question mark placeholders, this will be the 1-indexed position of the parameter.
-     * @param $value The value to bind to the parameter.
-     * @return void
-     */
-    public function bindValue($param, &$value)
-    {
-        $this->statement->bindValue($param, $value);
-
-        if ($this->log) {
-            $this->infoLog("bindValue($param=$value)");
-        }
-    }
-
-    /**
      * Fetch one row from the last result set.
      *
      * @access public
