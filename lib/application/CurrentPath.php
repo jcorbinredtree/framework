@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/util/StupidPath.php';
+
 /**
  * Represents the current path
  *

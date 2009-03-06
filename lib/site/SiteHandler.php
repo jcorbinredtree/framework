@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/application/Current.php';
+
 /**
  * Abstract base class for site request handlers
  * Handler stages:
