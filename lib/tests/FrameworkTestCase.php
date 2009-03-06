@@ -23,7 +23,7 @@ class FrameworkTestCase extends ASyncUnitTest
      */
     protected function truncate($tables)
     {
-        global $database;
+        $database = Site::getModule('Database');
 
         if (!is_array($tables)) {
             $tables = array($tables);
@@ -42,8 +42,6 @@ class FrameworkTestCase extends ASyncUnitTest
      */
     protected function populate(DatabaseObject &$obj)
     {
-        global $database;
-
         $meta = $obj->meta();
         $key = $meta->getKey();
         $fields = $meta->getColumnMap();

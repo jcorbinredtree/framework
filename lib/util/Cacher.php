@@ -192,7 +192,7 @@ class Cacher
      */
     public static function tableUpdateDate($table)
     {
-        global $database;
+        $database = Site::getModule('Database');
 
         // @WARNING: This is mysql-specific
         $sth = $database->query('SHOW TABLE STATUS');
@@ -222,7 +222,7 @@ class Cacher
      */
     public static function tablesModifiedSince($tables, $time)
     {
-        global $database;
+        $database = Site::getModule('Database');
 
         if (!is_array($tables)) {
             $tables = array($tables);
