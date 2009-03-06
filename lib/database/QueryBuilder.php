@@ -156,7 +156,7 @@ class QueryBuilder
         }
 
         if ($this->pager && (null === $this->pager->results)) {
-            global $database;
+            $database = Site::getModule('Database');
 
             $lsql = "SELECT COUNT(*) $meat";
             $sth = $database->query($lsql);

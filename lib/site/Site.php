@@ -45,13 +45,11 @@ require_once 'lib/application/Application.php';
 /**
  * A site has:
  *   pages
- *   a database
  *   a configuration
  *   and more
  *
  * TODO
  *   someday a site will only have a configuration, modules after:
- *   Database and TemplateSystem are transformed into SiteModules
  *   page logic is pulled out into a SitePageSystem
  *
  * Example usage in inedx.php:
@@ -469,7 +467,8 @@ abstract class Site extends CallbackManager
      *   handler->sendResponse                   handler stage
      *   dispatch: onRequestSent                 callback
      *   dispatch: onHandlerCleanup              callback
-     *   $andler->cleanup                        handler stage
+     *   $handler->cleanup                       handler stage
+     *   dispatch: onCleanup
      *
      * @param role string
      * @return void
@@ -503,6 +502,7 @@ abstract class Site extends CallbackManager
             }
             $this->dispatchCallback('onHandlerCleanup', $handler);
             $handler->cleanup();
+            $this->dispatchCallback('onCleanup');
             @ob_end_flush();
         } catch (Exception $ex) {
             @ob_end_clean();
@@ -542,6 +542,7 @@ abstract class Site extends CallbackManager
      */
     public function timingReport()
     {
+        // TODO fully report on all time points
         if (! $this->timing) {
             return;
         }
@@ -549,38 +550,10 @@ abstract class Site extends CallbackManager
 
         $start = $this->timePoints[0];
         $end = $this->timePoints[count($this->timePoints)-1];
-        $pageTime = $end[0] - $start[0];
-        $message = sprintf('==> Request Served in %.4f seconds; ', $pageTime);
-
-        global $database;
-        if (isset($database)) {
-            // TODO Let Database generate its own statistic info
-            $databaseTime = $database->getTotalTime();
-            $databaseQueries = $database->getTotalQueries();
-            $message .= sprintf('%d queries executed in %.4f seconds, %.2f%% of total time',
-                $database->getTotalQueries(),
-                $database->getTotalTime(),
-                $databaseTime / $pageTime * 100
-            );
-        }
-        $message .= ' <==';
-
-        $this->log->info($message);
-    }
-
-    /**
-     * Returns the database interface for the site
-     */
-    public function getDatabase()
-    {
-        // TODO move away from using a global, this should be consumed
-        // through the Site singleton
-        global $database;
-        if (!isset($database)) {
-            $database = new Database();
-            $database->log = $database->time = $this->isDebugMode();
-        }
-        return $database;
+        $this->log->info(sprintf(
+            '==> Request Served in %.4f seconds <==',
+            $end[0] - $start[0]
+        ));
     }
 
     /**

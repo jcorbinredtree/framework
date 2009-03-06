@@ -43,8 +43,6 @@ class SiteCliHandler extends SiteHandler
         global $_SESSION;
         $_SESSION = array();
 
-        $this->site->getDatabase();
-
         // TODO once SitePageSystem is implemente, it should provide an off
         // switch for us
         $this->site->addCallback('onResolvePage', array($this, 'plugPage'));

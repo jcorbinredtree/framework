@@ -41,8 +41,6 @@ class SiteWebHandler extends SiteHandler
         Session::start($this->site);
         Session::check($this->site);
 
-        $this->site->getDatabase();
-
         $this->site->log->info(
             "==> Framework v".Loader::$FrameworkVersion.
             ": New Request from ".Params::server('REMOTE_ADDR').

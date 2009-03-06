@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DatabaseObject_Test class definition
+ * DatabaseObjectTest class definition
  *
  * PHP version 5
  *
@@ -36,7 +36,7 @@ if (realpath($_SERVER['SCRIPT_FILENAME']) == __FILE__) {
  * DatabaseObject should be demonstrated here in some way.
  */
 
-class DatabaseObject_Test extends FrameworkTestCase
+class DatabaseObjectTest extends FrameworkTestCase
 {
     private $dbObserverHandle;
     private $db = null;
@@ -44,9 +44,7 @@ class DatabaseObject_Test extends FrameworkTestCase
 
     public function setUp()
     {
-        // stash a ref to the global for flexibility and convenience
-        global $database;
-        $this->db =& $database;
+        $this->db = Site::getModule('Database');
 
         // hook database events
         $this->dbObserverHandle =& $this->db->observe(

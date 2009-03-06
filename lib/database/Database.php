@@ -25,17 +25,14 @@
  * @link         http://framework.redtreesystems.com
  */
 
-/**
- * Simplification class for PDO
- *
- * There should be only one instance of this class throughout the platform,
- * but is not made into a singleton class for flexibility reasons.
- *
- * @category     Database
- * @package      Core
- */
+require_once 'lib/site/SiteModule.php';
 
-class Database
+/**
+ * Database site module
+ *
+ * This provides a connection manager and an ORM
+ */
+class Database extends SiteModule
 {
     /**
      * Utility to format a time string from a number of seconds
@@ -66,23 +63,7 @@ class Database
      * @access public
      * @var boolean
      */
-    public $log = false;
-
-    /**
-     * The dsn used for connecting
-     *
-     * @access public
-     * @var boolean
-     */
-    public $dsn = false;
-
-    /**
-     * DB options used to connect
-     *
-     * @access public
-     * @var array
-     */
-    public $dbOptions = null;
+    protected $log = false;
 
     /**
      * If set to true, then all SQL statements will be timed as [info] messages.
@@ -90,14 +71,7 @@ class Database
      * @access public
      * @var boolean
      */
-    public $time = false;
-
-    /**
-     * The parsed DSN
-     *
-     * @var string
-     */
-    private $parsedDSN = '';
+    protected $time = false;
 
     /**
      * If timing is enabled, this tracks the total time queries
@@ -122,84 +96,116 @@ class Database
     private $transactionLevel = 0;
 
     /**
-     * Constructor; Allows for DSN and configuration options.
+     * The name of the currently selected database
      *
-     * @access public
-     * @param string $dsn a dsn connection, default null
-     * @param string $options connection options, default null
-     * @return void
+     * @var string
      */
-    public function __construct($dsn=null, $options=null)
+    private $db;
+
+    /**
+     * Named database handle cache
+     *
+     * @var array
+     */
+    private $handles = array();
+    private $dsnStrings = array();
+
+    public function initialize()
     {
-        global $config;
+        parent::initialize();
 
-        if (isset($dsn)) {
-            $this->dsn = $dsn;
-        } else {
-            $this->dsn = $config->getDatabaseInfo();
+        require_once "$this->moduleDir/DatabaseObject.php";
+        require_once "$this->moduleDir/DatabaseObjectLink.php";
+
+        $this->site->addCallback('onPostConfig', array($this, 'onPostConfig'));
+    }
+
+    public function onPostConfig()
+    {
+        $this->log = $this->site->config->get(
+            'database.logging', $this->site->isDebugMode()
+        );
+        $this->time = $this->site->config->get(
+            'database.timing', $this->site->isDebugMode()
+        );
+
+        if ($this->time) {
+            $this->site->addCallback('onCLeanup', array($this, 'timingReport'));
         }
 
-        if (isset($options)) {
-            $this->dbOptions = $options;
-        } else {
-            $this->dbOptions = $config->getDatabaseOptions();
-        }
+        $db = $this->site->config->get('database.default');
+        $def = $this->definitions();
 
-        $this->init();
+        if (isset($db)) {
+            $this->select($db);
+        } else {
+            if ($this->site->isTestMode() && $def->has('test')) {
+                $this->select('test');
+            } else {
+                $this->select('default');
+            }
+        }
     }
 
     /**
-     * Parses a DSN string
-     *
-     * Expects a string formated like:
-     *   driver://user:password@host/db
-     * and returns an object with the following fields defined:
-     *   driver
-     *   user
-     *   password
-     *   host
-     *   db
-     * with the obvious correspondence with the string
-     *
-     * @param sDsn string, the dsn string
-     *
-     * @return Object the parsed dsn
+     * Logs the timing report
      */
-    public static function parseDSN($sDsn) {
-        if (! isset($sDsn) || ! $sDsn) {
-            return null;
-        }
+    public function timingReport()
+    {
+        $this->Site->log->info(sprintf(
+            '==> Database: %d queries executed in %.4f seconds <==',
+            $this->getTotalQueries(),
+            $this->getTotalTime()
+        ));
+    }
 
-        $dsn = new stdClass();
-        $matches = array();
-
-        /*
-         * parse the dsn
-         */
-        if (preg_match('|^(.+?)://(.+?):(.*?)@(.+)/(.+)|', $sDsn, $matches)) {
-            $dsn->driver = $matches[1];
-            $dsn->user = $matches[2];
-            $dsn->password = $matches[3];
-            $dsn->host = $matches[4];
-            $dsn->db = $matches[5];
-        } else {
-            throw new InvalidArgumentException(
-                "Unable to parse the dsn: $this->dsn"
-            );
-        }
-
-        return $dsn;
+    // just a shortcut to get the [database.def] config group
+    protected function definitions()
+    {
+        return $this->site->config->getGroup('database.def');
     }
 
     /**
-     * A method for initializing the class
+     * Selects the named database
      *
-     * @access private
-     * @return void
+     * Expects that a config group exists that looks like this:
+     *   [database.def.{dbname}]
+     *   ; spcify this
+     *   dsn=PDO DSN here
+     *   ; or specify these three
+     *   driver=mysql
+     *   host=localhost
+     *   db=database
+     *   ; these two are optional
+     *   user=redtreedev
+     *   pass=redtreesystems
+     *   ; defaults to true
+     *   persistent=false
      */
-    private function init()
+    public function select($dbname)
     {
-        $this->parsedDSN = self::parseDSN($this->dsn);
+        if (! array_key_exists($dbname, $this->handles)) {
+            $def = $this->definitions();
+            $cfg = $def->get("$dbname");
+            if (! isset($cfg)) {
+                throw new InvalidArgumentException(
+                    "No ".$def->getPath().".$dbname configuration group defined"
+                );
+            } elseif (! $cfg instanceof SiteConfigGroup) {
+                $cfg = null;
+                throw new RuntimeException(
+                    "Config value ".$def->getPath().".$dbname should be a group"
+                );
+            }
+        }
+        $this->db = $dbname;
+    }
+
+    private $unlockRegistered = false;
+
+    public function getSelected()
+    {
+        return $this->db;
     }
 
     /**
@@ -209,51 +215,47 @@ class Database
      */
     public function getPDO()
     {
-        if ($this->pdo) {
-            return $this->pdo;
+        if (array_key_exists($this->db, $this->handles)) {
+            return $this->handles[$this->db];
         }
 
-        if (! is_array($this->dbOptions)) {
-            $this->dbOptions = array();
+        $def = $this->definitions();
+        $cfg = $def->get($this->db);
+
+        if ($cfg->has('dsn')) {
+            $dsn = $cfg->get('dsn');
+        } else {
+            $dsn = sprintf('%s:host=%s;dbname=%s',
+                $cfg->getRequired('driver'),
+                $cfg->getRequired('host'),
+                $cfg->getRequired('db')
+            );
         }
 
-        $this->dbOptions[PDO::ATTR_PERSISTENT] = true;
-        $this->dbOptions[PDO::ATTR_CASE] = PDO::CASE_NATURAL;
-        $this->dbOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        $this->dbOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+        $opt = array();
+        $opt[PDO::ATTR_PERSISTENT] = $cfg->get('persistent', true);
+        $opt[PDO::ATTR_CASE] = PDO::CASE_NATURAL;
+        $opt[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        $opt[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+        $dbh = new PDO($dsn, $cfg->get('user'), $cfg->get('pass'), $opt);
 
-        $this->pdo = new PDO(
-            sprintf('%s:host=%s;dbname=%s',
-                $this->parsedDSN->driver,
-                $this->parsedDSN->host,
-                $this->parsedDSN->db
-            ),
-            $this->parsedDSN->user,
-            $this->parsedDSN->password,
-            $this->dbOptions
-        );
+        if (! $this->unlockRegistered) {
+            register_shutdown_function(array($this, 'unlockAll'));
+            $this->unlockRegistered = true;
+        }
 
-        register_shutdown_function(array($this, 'unlock'));
-
-        return $this->pdo;
+        $this->dsnStrings[$this->db] = $dsn;
+        return $this->handles[$this->db] = $dbh;
     }
 
-    private $dsnId;
     /**
      * Returns a string that tryes to be a unique dsn identifier
      *
      * @return string
      */
-    public function dsnId()
+    public function getDSN()
     {
-        if (! isset($this->dsnId)) {
-            $this->dsnId = sprintf('%s://%s/%s',
-                $this->parsedDSN->driver,
-                $this->parsedDSN->host,
-                $this->parsedDSN->db
-            );
-        }
-        return $this->dsnId;
+        return $this->dsnStrings[$this->db];
     }
 
     /**
@@ -544,6 +546,16 @@ class Database
     }
 
     /**
+     * Calls unlock for each database, called at shutdown
+     */
+    public function unlockAll()
+    {
+        foreach ($this->handles as $db => $dbh) {
+            $dbh->exec('UNLOCK TABLES');
+        }
+    }
+
+    /**
      * Unlocks any tables previousy locked. It's assumed to be safe to call this
      * even if you haven't locked any tables.
      *
@@ -702,7 +714,7 @@ class Database
      *   {
      *     public function foo()
      *     {
-     *       global $database;
+     *       $database = Site::getModule('Database');
      *       $obsh = $database->observe(array($this, 'onDatabaseEvent'))
      *       $database->spindleAndMutilate();
      *       $database->stopObserving($obsh);

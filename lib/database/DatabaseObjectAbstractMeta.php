@@ -51,8 +51,13 @@ abstract class DatabaseObjectAbstractMeta
      */
     protected $queries = array();
 
+    protected $_db;
+
     public function __construct($class, $members)
     {
+        $database = Site::getModule('Database');
+        $this->_db = $database->getSelected();
+
         $this->class = $class;
         $this->sqlCache = array();
 
@@ -91,12 +96,19 @@ abstract class DatabaseObjectAbstractMeta
         }
     }
 
+    public function getDatabase()
+    {
+        $database = Site::getModule('Database');
+        $database->select($this->_db);
+        return $database;
+    }
+
     protected function inspectColumn($column)
     {
         if (array_key_exists($column, $this->columnDef)) {
             return true;
         }
-        global $database;
+        $database = $this->getDatabase();
         $def = $database->getTableFieldDefinition($this->table, $column);
         if (! $def) {
             return false;

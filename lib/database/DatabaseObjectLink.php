@@ -24,6 +24,7 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/database/DatabaseObjectAbstract.php';
 require_once 'lib/database/DatabaseObjectLinkMeta.php';
 
 /**
@@ -50,7 +51,7 @@ require_once 'lib/database/DatabaseObjectLinkMeta.php';
  *
  *   FIXME
  */
-abstract class DatabaseObjectLink
+abstract class DatabaseObjectLink extends DatabaseObjectAbstract
 {
     protected $from;
     protected $to;
@@ -67,8 +68,8 @@ abstract class DatabaseObjectLink
             throw new InvalidArgumentException('unsaved DatabaseObject');
         }
 
-        global $database;
-        $meta = DatabaseObjectLinkMeta::forClass($linkClass);
+        $database = $for->getDatabase();
+        $meta = DatabaseObjectLinkMeta::forClass($linkClass, $for->_db);
         $ok = false;
         if (is_a($for, $meta->getFromClass())) {
             $ok = true;
@@ -100,8 +101,8 @@ abstract class DatabaseObjectLink
             throw new InvalidArgumentException('unsaved DatabaseObject');
         }
 
-        global $database;
-        $meta = DatabaseObjectLinkMeta::forClass($linkClass);
+        $database = $for->getDatabase();
+        $meta = DatabaseObjectLinkMeta::forClass($linkClass, $for->_db);
         $data = array();
         if (is_a($for, $meta->getFromClass())) {
             $sql = $meta->getSQL('link_load_from');
@@ -189,12 +190,12 @@ abstract class DatabaseObjectLink
 
     public function meta()
     {
-        return DatabaseObjectLinkMeta::forClass(get_class($this));
+        return DatabaseObjectLinkMeta::forClass(get_class($this), $this->_db);
     }
 
     protected function lockTables($database)
     {
-        global $database;
+        $database = $this->getDatabase();
         $meta = $this->meta();
         $database->lock(
             array(
@@ -207,7 +208,7 @@ abstract class DatabaseObjectLink
 
     protected function doInsert()
     {
-        global $database;
+        $database = $this->getDatabase();
         $this->lockTables();
         try {
             $sql = $this->meta()->getSQL('link_insert');
@@ -230,7 +231,7 @@ abstract class DatabaseObjectLink
             return;
         }
 
-        global $database;
+        $database = $this->getDatabase();
         $sql = $this->meta()->getSQL('link_update');
         $values = array_merge(
             $this->keyValue(),
@@ -241,7 +242,7 @@ abstract class DatabaseObjectLink
 
     public function delete()
     {
-        global $database;
+        $database = $this->getDatabase();
         $sql = $this->meta()->getSQL('link_delete');
         $database->prepare($sql)->execute($this->keyValue());
     }

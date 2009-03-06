@@ -24,9 +24,7 @@
  * @link         http://framework.redtreesystems.com
  */
 
-// TODO part ways with this
-require_once 'lib/component/RequestObject.php';
-
+require_once 'lib/database/DatabaseObjectAbstract.php';
 require_once 'lib/database/DatabaseObjectMeta.php';
 
 /**
@@ -79,14 +77,14 @@ require_once 'lib/database/DatabaseObjectMeta.php';
  * @category     Database
  * @package      Core
  */
-abstract class DatabaseObject extends RequestObject
+abstract class DatabaseObject extends DatabaseObjectAbstract
 {
     static protected $ObjectCache = array();
 
     static protected function cacheKey(DatabaseObjectMeta $meta, $id)
     {
-        global $database;
-        return $database->dsnId().'/'.$meta->getTable()."/$id";
+        $database = $meta->getDatabase();
+        return $database->getDSN().'/'.$meta->getTable()."/$id";
     }
 
     /**
@@ -97,7 +95,7 @@ abstract class DatabaseObject extends RequestObject
      * @param id int the object id
      * @return DatabaseObject
      */
-    static public function load($class, $id)
+    static public function load($class, $id, $db=null)
     {
         if (! is_int($id)) {
             if (is_numeric($id)) {
@@ -114,7 +112,7 @@ abstract class DatabaseObject extends RequestObject
             throw new InvalidArgumentException("invalid class $class");
         }
 
-        $cacheKey = self::cacheKey(DatabaseObjectMeta::forClass($class), $id);
+        $cacheKey = self::cacheKey(DatabaseObjectMeta::forClass($class, $db), $id);
         if (! array_key_exists($cacheKey, self::$ObjectCache)) {
             $refcls = new ReflectionClass($class);
             try {
@@ -168,10 +166,6 @@ abstract class DatabaseObject extends RequestObject
      */
     protected $memo = array();
 
-    public function __construct()
-    {
-    }
-
     /**
      * Determines if this key exists in the memoization
      *
@@ -221,12 +215,11 @@ abstract class DatabaseObject extends RequestObject
         }
         assert(! isset($this->_cacheKey));
 
-        global $database;
-
         $meta = $this->meta();
         $table = $meta->getTable();
         $key = $meta->getKey();
 
+        $database = $this->getDatabase();
         $database->transaction();
         $database->lock($table, Database::LOCK_WRITE);
         try {
@@ -274,7 +267,7 @@ abstract class DatabaseObject extends RequestObject
             self::$ObjectCache[$cacheKey] === $this
         );
 
-        global $database;
+        $database = $this->getDatabase();
         $sql = $meta->getSQL('dbo_select');
         $sth = $database->execute($sql, $id);
         $row = $sth->fetch(PDO::FETCH_ASSOC);
@@ -301,11 +294,11 @@ abstract class DatabaseObject extends RequestObject
         assert(array_key_exists($this->_cacheKey, self::$ObjectCache));
         assert(self::$ObjectCache[$this->_cacheKey] === $this);
 
-        global $database;
         $meta = $this->meta();
         $table = $meta->getTable();
         $key = $meta->getKey();
         $sql = $meta->getSQL('dbo_update');
+        $database = $this->getDatabase();
         $database->prepare($sql)->execute($this->getUpdateValues());
     }
 
@@ -321,7 +314,7 @@ abstract class DatabaseObject extends RequestObject
         assert(array_key_exists($this->_cacheKey, self::$ObjectCache));
         assert(self::$ObjectCache[$this->_cacheKey] === $this);
 
-        global $database;
+        $database = $this->getDatabase();
         $sql = $meta->getSQL('dbo_delete');
         $database->execute($sql, $this->id);
         $this->id = null;
@@ -338,7 +331,7 @@ abstract class DatabaseObject extends RequestObject
      */
     public function meta()
     {
-        return DatabaseObjectMeta::forClass(get_class($this));
+        return DatabaseObjectMeta::forClass(get_class($this, $this->_db));
     }
 
     /*

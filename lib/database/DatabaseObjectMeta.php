@@ -43,17 +43,27 @@ class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
      * Returns the meta object for a given DatabaseObjcet subclass
      *
      * @param class string the class
+     * @param string $db the database that this meta is valid in
      *
      * @return DatabaseObject_meta
      */
-    static public function forClass($class)
+    static public function forClass($class, $db=null)
     {
-        if (! array_key_exists($class, self::$ClassMeta)) {
+        if (! isset($db)) {
+            $database = Site::getModule('Database');
+            $db = $database->getSelected();
+        }
+        $key = $db.'/'.$class;
+        if (! array_key_exists($key, self::$ClassMeta)) {
             assert(class_exists($class));
             assert(is_subclass_of($class, 'DatabaseObject'));
-            self::$ClassMeta[$class] = new self($class);
+            $database = Site::getModule('Database');
+            if ($database->getSelected() != $db) {
+                $database->select($db);
+            }
+            self::$ClassMeta[$key] = new self($class);
         }
-        return self::$ClassMeta[$class];
+        return self::$ClassMeta[$key];
     }
 
     protected $key=null;
