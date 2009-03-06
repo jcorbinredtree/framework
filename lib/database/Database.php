@@ -337,27 +337,6 @@ class Database
     }
 
     /**
-     * Return error information
-     *
-     * @access public
-     * @return string error information
-     */
-    public function error()
-    {
-        $arr = null;
-
-        $this->lazyLoad();
-
-        if ($this->statement) {
-            $arr = $this->statement->errorInfo();
-        } else {
-            $arr = $this->pdo->errorInfo();
-        }
-
-        return $arr[2];
-    }
-
-    /**
      * Get the structure of a field into an array
      *
      * @see http://pear.php.net/package/MDB2/docs/latest/MDB2/MDB2_Driver_Reverse_Common.html#methodgetTableFieldDefinition
