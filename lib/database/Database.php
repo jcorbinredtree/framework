@@ -484,22 +484,17 @@ class Database
 
     /**
      * Returns an array of object rows based on the last prepare/execute
-     * The objects returned have been run through Params::ArrayToObject.
      *
      * @param PDOStatement $sth
      * @param string $type the type of objects to be returned
      * @return array an array of object rows
-     * @see Params::ArrayToObject
      */
-    // TODO knock the brawndo out of this
-    public function getResultObjects(PDOStatement $sth, $type='stdClass')
+    public function getResultObjects(PDOStatement $sth, $class='stdClass')
     {
         $output = array();
-
-        for ($i = 0; $i < $sth->rowCount(); $i++) {
-            array_push($output, $sth->fetchObject($type));
+        while (($o = $sth->fetchObject($class)) !== false) {
+            array_push($output, $o);
         }
-
         return $output;
     }
 
