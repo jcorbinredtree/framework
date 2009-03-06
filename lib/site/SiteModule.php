@@ -41,6 +41,8 @@ abstract class SiteModule extends CallbackManager
     private $optional = array();
     private $hasOptional = array();
 
+    protected $moduleDir;
+
     /**
      * Priavte utility, go away
      */
@@ -141,8 +143,10 @@ abstract class SiteModule extends CallbackManager
     {
         $this->site = $site;
 
-        // Build the list of required/optional modules
         $class = new ReflectionClass(get_class($this));
+        $this->moduleDir = dirname($class->getFileName());
+
+        // Build the list of required/optional modules
         $this->required = self::collectStaticArray(
             $class, 'RequiredModules', $this->required
         );
