@@ -137,30 +137,6 @@ class Database
     private $transactionLevel = 0;
 
     /**
-     * Serialize
-     *
-     * @access public
-     * @return array of variables to serialize
-     */
-    public function __sleep()
-    {
-        $arr = get_class_vars(get_class($this));
-        unset($arr['pdo']);
-        return array_keys($arr);
-    }
-
-    /**
-     * Reconnect to the database when we are unserialized.
-     *
-     * @access public
-     * @return void
-     */
-    public function __wakeup()
-    {
-        $this->init();
-    }
-
-    /**
      * Constructor; Allows for DSN and configuration options.
      *
      * @access public
