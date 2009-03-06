@@ -479,14 +479,14 @@ class Database
             foreach ($args as &$arg) {
                 if (is_array($arg)) {
                     foreach ($arg as &$a) {
-                        $this->bindParam($index++, $a);
+                        $this->statement->bindParam($index++, $a);
                     }
                     unset($a);
 
                     break;
                 } # else, not array
 
-                $this->bindParam($index++, $arg);
+                $this->statement->bindParam($index++, $arg);
             }
             unset($arg);
 
@@ -706,27 +706,6 @@ class Database
     public function count()
     {
         return (int) ($this->statement ? $this->statement->rowCount() : -1);
-    }
-
-    /**
-     * Like bindValue, except binds by reference instead of copying the data in
-     * value; then contents of value must be available when the statement
-     * executes.
-     *
-     * @see bindValue
-     * @param int|string $param parameter identifier. for a prepared statement using named placeholders,
-     * this will be a parameter name of the form :name. for a prepared statement using
-     * question mark placeholders, this will be the 1-indexed position of the parameter.
-     * @param $value the value to bind to the parameter.
-     * @return void
-     */
-    public function bindParam($param, &$value)
-    {
-        if ($this->log) {
-            $this->infoLog("bindValue($param=$value)");
-        }
-
-        $this->statement->bindParam($param, $value);
     }
 
     /**
