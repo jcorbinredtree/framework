@@ -25,6 +25,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
+require_once 'lib/ui/HTMLPage.php';
+
 class NotFoundPage extends HTMLPage
 {
     public function __construct(Site $site, $url=null)

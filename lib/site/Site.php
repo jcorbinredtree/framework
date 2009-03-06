@@ -31,9 +31,13 @@ require_once 'lib/site/SiteConfig.php';
 require_once 'lib/site/SiteLayout.php';
 require_once 'lib/site/SiteLog.php';
 require_once 'lib/site/SiteHandler.php';
-require_once 'lib/site/SitePageProvider.php';
 require_once 'lib/site/SiteModuleLoader.php';
 require_once 'Config.php';
+
+// TODO page module will clean this crap up
+require_once 'lib/site/SitePageProvider.php';
+require_once 'lib/site/ExceptionPage.php';
+require_once 'lib/site/NotFoundPage.php';
 
 // TODO this is just here for the autoloading, which needs to be split into its
 // own independant class

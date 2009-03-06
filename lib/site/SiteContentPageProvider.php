@@ -26,6 +26,7 @@
  */
 
 require_once 'lib/site/SitePageProvider.php';
+require_once 'lib/ui/HTMLPage.php';
 
 /**
  * Resolves urls to a template resource "pageContent:url"
