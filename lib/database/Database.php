@@ -389,128 +389,6 @@ class Database
     }
 
     /**
-     * Begins a transaction
-     *
-     * @see http://us.php.net/manual/en/pdo.begintransaction.php
-     * @return boolean true on success
-     */
-    public function transaction()
-    {
-        if ($this->transactionLevel++) {
-            $this->infoLog('transaction(start ignored)');
-            return;
-        }
-
-        $this->lazyLoad();
-
-        $this->startTiming();
-
-        $ret = $this->pdo->beginTransaction();
-
-        $this->endTiming();
-
-        if ($this->log) {
-            $this->infoLog('transaction(start)');
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Rolls a transaction back
-     *
-     * @see http://us.php.net/manual/en/pdo.rollback.php
-     * @return boolean true on success
-     */
-    public function rollback()
-    {
-        if (--$this->transactionLevel) {
-            $this->infoLog('transaction(rollback ignored)');
-            return;
-        }
-
-        $this->lazyLoad();
-
-        $this->startTiming();
-
-        $ret = $this->pdo->rollBack();
-
-        $this->endTiming();
-
-        if ($this->log) {
-            $this->infoLog('transaction(rollback)');
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Commits a transaction
-     *
-     * @see http://us.php.net/manual/en/pdo.commit.php
-     * @return boolean true on success
-     */
-    public function commit()
-    {
-        if (--$this->transactionLevel) {
-            $this->infoLog('transaction(commit ignored)');
-            return;
-        }
-
-        $this->lazyLoad();
-
-        $this->startTiming();
-
-        $ret = $this->pdo->commit();
-
-        $this->endTiming();
-
-        if ($this->log) {
-            $this->infoLog('transaction(commit)');
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Locks the specified tables.
-     *
-     * @access public
-     * @param mixed $tables either an array of table names or a single table name to lock
-     * @param int $type the type of lock to aquire. You may use the bit masks Database::LOCK_READ,
-     * and Database::LOCK_WRITE
-     * @return void
-     */
-    public function lock($tables, $type=Database::LOCK_READ)
-    {
-        foreach (array(
-            'READ' => Database::LOCK_READ,
-            'WRITE' => Database::LOCK_WRITE
-        ) as $op => $mask) {
-            if ($type & $mask) {
-                $sql = 'LOCK TABLES '.implode(" $op, ", (array) $tables)." $op";
-                if ($this->perform($sql, 'lock') < 0) {
-                    throw new DatabaseException($this,
-                        'lock', 'no rows affected'
-                    );
-                }
-            }
-        }
-    }
-
-    /**
-     * Unlocks any tables previousy locked. It's assumed to be safe to call this
-     * even if you haven't locked any tables.
-     *
-     * @access public
-     * @return void
-     */
-    public function unlock()
-    {
-        $this->perform("UNLOCK TABLES", 'unlock');
-    }
-
-    /**
      * Performs an arbitrary SQL statement.
      *
      * @access public
@@ -978,6 +856,128 @@ class Database
     {
         $sth = array_pop($this->statementStack);
         $this->statement =& end($this->statementStack);
+    }
+
+    /**
+     * Locks the specified tables.
+     *
+     * @access public
+     * @param mixed $tables either an array of table names or a single table name to lock
+     * @param int $type the type of lock to aquire. You may use the bit masks Database::LOCK_READ,
+     * and Database::LOCK_WRITE
+     * @return void
+     */
+    public function lock($tables, $type=Database::LOCK_READ)
+    {
+        foreach (array(
+            'READ' => Database::LOCK_READ,
+            'WRITE' => Database::LOCK_WRITE
+        ) as $op => $mask) {
+            if ($type & $mask) {
+                $sql = 'LOCK TABLES '.implode(" $op, ", (array) $tables)." $op";
+                if ($this->perform($sql, 'lock') < 0) {
+                    throw new DatabaseException($this,
+                        'lock', 'no rows affected'
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Unlocks any tables previousy locked. It's assumed to be safe to call this
+     * even if you haven't locked any tables.
+     *
+     * @access public
+     * @return void
+     */
+    public function unlock()
+    {
+        $this->perform("UNLOCK TABLES", 'unlock');
+    }
+
+    /**
+     * Begins a transaction
+     *
+     * @see http://us.php.net/manual/en/pdo.begintransaction.php
+     * @return boolean true on success
+     */
+    public function transaction()
+    {
+        if ($this->transactionLevel++) {
+            $this->infoLog('transaction(start ignored)');
+            return;
+        }
+
+        $this->lazyLoad();
+
+        $this->startTiming();
+
+        $ret = $this->pdo->beginTransaction();
+
+        $this->endTiming();
+
+        if ($this->log) {
+            $this->infoLog('transaction(start)');
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Rolls a transaction back
+     *
+     * @see http://us.php.net/manual/en/pdo.rollback.php
+     * @return boolean true on success
+     */
+    public function rollback()
+    {
+        if (--$this->transactionLevel) {
+            $this->infoLog('transaction(rollback ignored)');
+            return;
+        }
+
+        $this->lazyLoad();
+
+        $this->startTiming();
+
+        $ret = $this->pdo->rollBack();
+
+        $this->endTiming();
+
+        if ($this->log) {
+            $this->infoLog('transaction(rollback)');
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Commits a transaction
+     *
+     * @see http://us.php.net/manual/en/pdo.commit.php
+     * @return boolean true on success
+     */
+    public function commit()
+    {
+        if (--$this->transactionLevel) {
+            $this->infoLog('transaction(commit ignored)');
+            return;
+        }
+
+        $this->lazyLoad();
+
+        $this->startTiming();
+
+        $ret = $this->pdo->commit();
+
+        $this->endTiming();
+
+        if ($this->log) {
+            $this->infoLog('transaction(commit)');
+        }
+
+        return $ret;
     }
 
     /**
