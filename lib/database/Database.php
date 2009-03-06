@@ -457,21 +457,28 @@ class Database
     }
 
     /**
-     * Returns an array of single values based on the last prepare/execute
+     * Returns an array of arrays contaning the result set represented by the
+     * given statement handle.
      *
      * @param PDOStatement $sth
-     * @return array an array of single values
+     * @param boolean $collapse if true, the default, single column result sets
+     * are collapsed to a scalar value instead of a single-element array
+     * @return array
      */
-    // TODO knock the brawndo out of this
-    public function getResultValues(PDOStatement $sth)
+    public function getResultValues(PDOStatement $sth, $collapse=true)
     {
-        $output = array();
-
-        for ($i = 0; $i < $sth->rowCount(); $i++) {
-            $row = $sth->fetchColumn();
-            array_push($output, $row);
+        if ($collapse) {
+            $collapse = (bool) $sth->columnCount() == 1;
         }
 
+        $output = array();
+        while (($row = $sth->fetch(PDO::FETCH_NUM)) !== false) {
+            if ($collapse) {
+                array_push($output, $row[0]);
+            } else {
+                array_push($output, $row);
+            }
+        }
         return $output;
     }
 
