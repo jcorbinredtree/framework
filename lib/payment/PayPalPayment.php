@@ -57,7 +57,7 @@ class PayPalPayment extends Payment {
     global $current;
 
     // Note, we used to add extensions/ to include_path here, that should either
-    // be standardized in SiteLoader or we need to load more files here to make
+    // be standardized in Loader or we need to load more files here to make
     // up for whatever the PayPal code would otherwise try to load
     require_once 'extensions/PayPal.php';
     require_once 'extensions/PayPal/Profile/Handler/Array.php';

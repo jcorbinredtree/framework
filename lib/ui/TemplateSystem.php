@@ -68,16 +68,16 @@ class TemplateSystem extends SiteModule
 
         // TODO maybe we shouldn't add local paths here at all, leave that
         // up to the config
-        array_push($inc, SiteLoader::$LocalPath.'/templates');
-        array_push($inc, SiteLoader::$FrameworkPath.'/templates');
-        array_push($content, SiteLoader::$LocalPath.'/content');
+        array_push($inc, Loader::$LocalPath.'/templates');
+        array_push($inc, Loader::$FrameworkPath.'/templates');
+        array_push($content, Loader::$LocalPath.'/content');
         $nos = false;
         if (array_key_exists('contentpage_noshared_content', $copt)) {
             $nos = (bool) $copt['contentpage_noshared_content'];
             unset($copt['contentpage_noshared_content']);
         }
         if (! $nos) {
-            array_push($content, SiteLoader::$FrameworkPath.'/content');
+            array_push($content, Loader::$FrameworkPath.'/content');
         }
 
         $this->pstl = new PHPSTL(array_merge(array(

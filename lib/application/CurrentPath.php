@@ -34,7 +34,7 @@
  * Example:
  *   $path = CurrentPath::set('bla/foo')
  * same as:
- *   $path = CurrentPath::set(SiteLoader::$Base.'/bla/foo')
+ *   $path = CurrentPath::set(Loader::$Base.'/bla/foo')
  *
  * echo $path; // prints /path/to/site/bla/foo
  * echo $path->up(); // prints /path/to/site/bla
@@ -110,8 +110,8 @@ class CurrentPath
                 $url = (string) $path;
             }
 
-            $bl = strlen(SiteLoader::$Base);
-            if (substr($url, 0, $bl) == SiteLoader::$Base) {
+            $bl = strlen(Loader::$Base);
+            if (substr($url, 0, $bl) == Loader::$Base) {
                 $url = substr($url, $bl);
                 $url = explode('/', $url);
 

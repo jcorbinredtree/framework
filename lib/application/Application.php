@@ -142,8 +142,8 @@ class Application
         $targets = array();
         foreach (array('lib', 'components', 'modules', 'extensions') as $what) {
             array_push($targets,
-                SiteLoader::$LocalPath    ."/$what",
-                SiteLoader::$FrameworkPath."/$what"
+                Loader::$LocalPath    ."/$what",
+                Loader::$FrameworkPath."/$what"
             );
         }
 

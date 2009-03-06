@@ -38,7 +38,7 @@ class FrameworkCompiler extends PHPSTLCompiler
     protected function writeTemplateHeader()
     {
         parent::writeTemplateHeader(array(
-            'Framework Version' => Config::$FrameworkVersion
+            'Framework Version' => Loader::$FrameworkVersion
         ));
         $this->write("<?php global \$current, \$config; ?>\n");
         $this->write("<?php if (isset(\$this->page)) {\n");

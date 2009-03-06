@@ -51,7 +51,7 @@ require_once 'lib/application/Application.php';
  *   page logic is pulled out into a SitePageSystem
  *
  * Example usage in inedx.php:
- *   require_once('SITE/framework/SiteLoader.php');
+ *   require_once('SITE/framework/Loader.php');
  *   class MySite extends Site { ... }
  *   Site::doRole('MySite', 'web');
  *
@@ -187,7 +187,7 @@ abstract class Site extends CallbackManager
      * wise the argument should be an array of strings
      *
      * The array is then walked, and each path that is non-absolute, prepended
-     * with SiteLoader::$Base. Each path is resolved with realpath() and added
+     * with Loader::$Base. Each path is resolved with realpath() and added
      * to the result list only if it is a directory
      */
     public static function pathArray($path)
@@ -199,7 +199,7 @@ abstract class Site extends CallbackManager
         $r = array();
         foreach ($path as $p) {
             if (! preg_match('/^((\w:)?\/|~)/', $p)) {
-                $p = SiteLoader::$Base."/$p";
+                $p = Loader::$Base."/$p";
             }
             $p = realpath($p);
             if ($p !== false && is_dir($p)) {

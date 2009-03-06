@@ -38,11 +38,11 @@ class SiteTestsHandler extends SiteCliHandler
     public function sendResponse()
     {
         if (! class_exists('UnitTestCase')) {
-            require_once SiteLoader::$FrameworkPath.
+            require_once Loader::$FrameworkPath.
                 '/extensions/simpletest/autorun.php';
         }
 
-        require_once SiteLoader::$FrameworkPath.
+        require_once Loader::$FrameworkPath.
             '/lib/tests/FrameworkTestCase.php';
     }
 }

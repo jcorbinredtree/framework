@@ -25,7 +25,10 @@
     </Directory>
  */
 
-require_once('SITE/framework/SiteLoader.php');
+// This site was developed against this version of the framework
+//   See Loader.php for what else can be set here
+$FrameworkTargetVersion = '3.1';
+require_once('SITE/framework/Loader.php');
 
 class MySite extends Site
 {
@@ -33,9 +36,6 @@ class MySite extends Site
 
     public function onConfig()
     {
-        // This site was developed against this version of the framework
-        $this->config->setTargetVersion("3.1");
-
         $this->config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
         $this->config->addMailerOptions(array(
             'From'      => 'client@example.com',
