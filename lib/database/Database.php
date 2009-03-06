@@ -220,12 +220,12 @@ class Database
     /**
      * Connects to the database if not already connected.
      *
-     * @return void
+     * @return PDO
      */
-    private function lazyLoad()
+    public function getPDO()
     {
         if ($this->pdo) {
-            return;
+            return $this->pdo;
         }
 
         if (! is_array($this->dbOptions)) {
@@ -249,6 +249,8 @@ class Database
         );
 
         register_shutdown_function(array($this, 'unlock'));
+
+        return $this->pdo;
     }
 
     private $dsnId;
@@ -323,7 +325,7 @@ class Database
      */
     public function getTableFieldDefinition($table, $field)
     {
-        $this->lazyLoad();
+        $this->getPDO();
 
         /*
          * @WARNING: this is mysql-specific
@@ -354,7 +356,7 @@ class Database
     {
         $rows = 0;
 
-        $this->lazyLoad();
+        $this->getPDO();
 
         try {
             $this->startTiming();
@@ -436,7 +438,7 @@ class Database
      */
     public function prepare($sql)
     {
-        $this->lazyLoad();
+        $this->getPDO();
 
         $what = $this->whatStatement('prepare', $sql);
         try {
@@ -470,7 +472,7 @@ class Database
      */
     public function query($sql)
     {
-        $this->lazyLoad();
+        $this->getPDO();
 
         $what = $this->whatStatement('query', $sql);
         try {
@@ -545,7 +547,7 @@ class Database
      */
     public function lastInsertId()
     {
-        $this->lazyLoad();
+        $this->getPDO();
 
         $id = $this->pdo->lastInsertId();
 
@@ -671,7 +673,7 @@ class Database
             return;
         }
 
-        $this->lazyLoad();
+        $this->getPDO();
 
         $this->startTiming();
 
@@ -699,7 +701,7 @@ class Database
             return;
         }
 
-        $this->lazyLoad();
+        $this->getPDO();
 
         $this->startTiming();
 
@@ -727,7 +729,7 @@ class Database
             return;
         }
 
-        $this->lazyLoad();
+        $this->getPDO();
 
         $this->startTiming();
 
