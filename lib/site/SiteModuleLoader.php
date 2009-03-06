@@ -66,6 +66,24 @@ class SiteModuleLoader
     private $modulesLoaded  = null;
     private $site;
 
+    public static function loadModule($class)
+    {
+        if (! class_exists($class)) {
+            $path = "lib/".strtolower($class)."/$class.php";
+            @include_once $path;
+            if (! class_exists($class)) {
+                throw new InvalidArgumentException(
+                    "no such class $class, tried $path"
+                );
+            }
+        }
+        if (! is_subclass_of($class, 'SiteModule')) {
+            throw new InvalidArgumentException(
+                "$class isn't a subclass of SiteModule"
+            );
+        }
+    }
+
     /**
      * Loads the modules
      *
@@ -151,17 +169,7 @@ class SiteModuleLoader
         $idx = array();
         $new = array();
         foreach ($modules as $m) {
-            if (! class_exists($m)) {
-                __autoload($m);
-            }
-            if (! class_exists($m)) {
-                throw new InvalidArgumentException("no such class $m");
-            }
-            if (! is_subclass_of($m, 'SiteModule')) {
-                throw new InvalidArgumentException(
-                    "$m isn't a subclass of SiteModule"
-                );
-            }
+            self::loadModule($m);
             if (! array_key_exists($m, $idx)) {
                 $c = $m;
                 $gotit = false;

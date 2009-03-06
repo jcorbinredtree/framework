@@ -68,15 +68,7 @@ abstract class SiteModule extends CallbackManager
         }
         $r = array();
         foreach ($a as $c) {
-            if (! class_exists($c)) {
-                __autoload($c);
-            }
-            if (! class_exists($c)) {
-                throw new RuntimeException("no such class $c");
-            }
-            if (! is_subclass_of($c, 'SiteModule')) {
-                throw new RuntimeException("$c isn't a subclass of SiteModule");
-            }
+            SiteModuleLoader::loadModule($c);
             $gotit = false;
             for ($i=0; $i<count($r); $i++) {
                 $in =& $r[$i];
