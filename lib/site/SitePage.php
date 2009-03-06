@@ -27,7 +27,6 @@
 
 require_once 'lib/util/CallbackManager.php';
 require_once 'lib/site/SitePageHeaders.php';
-require_once 'lib/ui/TemplateSystem.php';
 
 /**
  * Describes a page in a site (amazing)
