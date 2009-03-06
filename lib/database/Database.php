@@ -449,7 +449,7 @@ class Database
         }
 
         if ($this->log) {
-            $this->infoLog($what, $this->count());
+            $this->infoLog($what, $this->statement->rowCount());
         }
 
         return $this->statement;
@@ -501,7 +501,7 @@ class Database
 
         if ($this->log) {
             $what = $this->whatStatement('executef', $args);
-            $this->infoLog($what, $this->count());
+            $this->infoLog($what, $this->statement->rowCount());
         }
 
         return $this->statement;
@@ -566,7 +566,7 @@ class Database
 
         if ($this->log) {
             $what = $this->whatStatement('query', $sql);
-            $this->infoLog($what, $this->count());
+            $this->infoLog($what, $this->statement->rowCount());
         }
 
         array_push($this->statementStack, $this->statement);
@@ -695,17 +695,6 @@ class Database
         }
 
         return $id;
-    }
-
-    /**
-     * Returns the number of items in the current result set.
-     *
-     * @access public
-     * @return int the number of rows in the result set
-     */
-    public function count()
-    {
-        return (int) ($this->statement ? $this->statement->rowCount() : -1);
     }
 
     /**

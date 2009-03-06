@@ -280,9 +280,9 @@ abstract class DatabaseObject extends RequestObject
         global $database;
         $sql = $meta->getSQL('dbo_select');
         $sth = $database->executef($sql, $id);
-        $row = $sth->fetch(PDO::FETCH_ASSOC)
-        if (! $database->count() || $row === false) {
-            $database->free();
+        $database->free();
+        $row = $sth->fetch(PDO::FETCH_ASSOC);
+        if ($row === false) {
             return false;
         }
         $this->unserialize($row, false);
