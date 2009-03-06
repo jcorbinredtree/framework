@@ -198,11 +198,9 @@ class Cacher
         $sth = $database->query('SHOW TABLE STATUS');
         while ($row = $sth->fetchObject('stdClass')) {
             if ($row->name == $table) {
-                $database->free();
                 return strtotime($row->updateTime);
             }
         }
-        $database->free();
 
         return 0;
     }
@@ -240,7 +238,6 @@ class Cacher
                 }
             }
         }
-        $database->free();
 
         return false;
     }

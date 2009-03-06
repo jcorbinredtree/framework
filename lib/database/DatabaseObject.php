@@ -231,9 +231,7 @@ abstract class DatabaseObject extends RequestObject
         $database->lock($table, Database::LOCK_WRITE);
         try {
             $sql = $meta->getSQL('dbo_insert');
-            $sth = $database->prepare($sql);
-            $database->free();
-            $sth->execute($this->getInsertValues());
+            $sth = $database->prepare($sql)->execute($this->getInsertValues());
             $this->id = (int) $database->lastInsertId();
 
             $cacheKey = self::cacheKey($meta, $this->id);
@@ -279,7 +277,6 @@ abstract class DatabaseObject extends RequestObject
         global $database;
         $sql = $meta->getSQL('dbo_select');
         $sth = $database->executef($sql, $id);
-        $database->free();
         $row = $sth->fetch(PDO::FETCH_ASSOC);
         if ($row === false) {
             return false;
@@ -309,9 +306,7 @@ abstract class DatabaseObject extends RequestObject
         $table = $meta->getTable();
         $key = $meta->getKey();
         $sql = $meta->getSQL('dbo_update');
-        $sth = $database->prepare($sql);
-        $database->free();
-        $sth->execute($this->getUpdateValues());
+        $database->prepare($sql)->execute($this->getUpdateValues());
     }
 
     /**
@@ -329,7 +324,6 @@ abstract class DatabaseObject extends RequestObject
         global $database;
         $sql = $meta->getSQL('dbo_delete');
         $database->executef($sql, $this->id);
-        $database->free();
         $this->id = null;
         $this->_cacheKey = null;
         unset(self::$ObjectCache[$this->_cacheKey]);

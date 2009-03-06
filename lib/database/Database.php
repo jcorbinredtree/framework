@@ -117,21 +117,6 @@ class Database
     private $totalQueries = 0;
 
     /**
-     * Holds the current statement
-     *
-     * @var PDOStatement
-     */
-    private $statement;
-
-    /**
-     * A stack of statements
-     *
-     * @access private
-     * @var array
-     */
-    private $statementStack = array();
-
-    /**
      * The current transaction level (allows nestable transactions)
      */
     private $transactionLevel = 0;
@@ -294,27 +279,6 @@ class Database
     }
 
     /**
-     * Gets the last statement
-     *
-     * @return PDOStatement
-     */
-    public function getStatement()
-    {
-        return $this->statement;
-    }
-
-    /**
-     * Sets the current statement
-     *
-     * @param PDOStatement $statement
-     * @return PDOStatement
-     */
-    public function setStatement(PDOStatement $statement)
-    {
-        return $this->statement = $statement;
-    }
-
-    /**
      * Get the structure of a field into an array
      *
      * @see http://pear.php.net/package/MDB2/docs/latest/MDB2/MDB2_Driver_Reverse_Common.html#methodgetTableFieldDefinition
@@ -332,7 +296,7 @@ class Database
          */
         try {
             $sql = "SELECT `$field` FROM `$table` LIMIT 1";
-            $sth = $this->pdo->query($sql);
+            $sth = $this->query($sql);
             $desc = $sth->getColumnMeta(0);
             $out = array($desc);
             $out[0]['notnull'] = in_array('not_null', $desc);
@@ -390,7 +354,7 @@ class Database
         $this->startTiming();
 
         try {
-            $this->prepare($sqlf);
+            $sth = $this->prepare($sqlf);
 
             // Temporarily disable logging
             $logging = $this->log;
@@ -402,18 +366,18 @@ class Database
             foreach ($args as &$arg) {
                 if (is_array($arg)) {
                     foreach ($arg as &$a) {
-                        $this->statement->bindParam($index++, $a);
+                        $sth->bindParam($index++, $a);
                     }
                     unset($a);
 
                     break;
                 } # else, not array
 
-                $this->statement->bindParam($index++, $arg);
+                $sth->bindParam($index++, $arg);
             }
             unset($arg);
 
-            $this->statement->execute();
+            $sth->execute();
             $this->endTiming();
             $this->log = $logging;
         } catch (Exception $e) {
@@ -424,10 +388,10 @@ class Database
 
         if ($this->log) {
             $what = $this->whatStatement('executef', $args);
-            $this->infoLog($what, $this->statement->rowCount());
+            $this->infoLog($what, $sth->rowCount());
         }
 
-        return $this->statement;
+        return $sth;
     }
 
     /**
@@ -445,7 +409,6 @@ class Database
             $this->startTiming();
             $sth = $this->pdo->prepare($sql);
             $this->endTiming();
-            $this->statement = $sth;
         } catch (PDOException $e) {
             $this->endTiming();
             throw new DatabaseException($this, $what, $e->getMessage());
@@ -458,9 +421,7 @@ class Database
             $this->infoLog($this->whatStatement('prepare', $sql));
         }
 
-        array_push($this->statementStack, $this->statement);
-
-        return $this->statement;
+        return $sth;
     }
 
     /**
@@ -477,7 +438,7 @@ class Database
         $what = $this->whatStatement('query', $sql);
         try {
             $this->startTiming();
-            $this->statement = $this->pdo->query($sql);
+            $sth = $this->pdo->query($sql);
             $this->endTiming();
         } catch (PDOException $e) {
             $this->endTiming();
@@ -489,29 +450,27 @@ class Database
 
         if ($this->log) {
             $what = $this->whatStatement('query', $sql);
-            $this->infoLog($what, $this->statement->rowCount());
+            $this->infoLog($what, $sth->rowCount());
         }
 
-        array_push($this->statementStack, $this->statement);
+        return $sth;
     }
 
     /**
      * Returns an array of single values based on the last prepare/execute
      *
-     * @access public
-     * @since v2.0
+     * @param PDOStatement $sth
      * @return array an array of single values
      */
-    public function getResultValues()
+    // TODO knock the brawndo out of this
+    public function getResultValues(PDOStatement $sth)
     {
         $output = array();
 
-        for ($i = 0; $i < $this->statement->rowCount(); $i++) {
-            $row = $this->statement->fetchColumn();
+        for ($i = 0; $i < $sth->rowCount(); $i++) {
+            $row = $sth->fetchColumn();
             array_push($output, $row);
         }
-
-        $this->free();
 
         return $output;
     }
@@ -520,21 +479,19 @@ class Database
      * Returns an array of object rows based on the last prepare/execute
      * The objects returned have been run through Params::ArrayToObject.
      *
-     * @access public
-     * @since v2.0
-     * @see Params::ArrayToObject
+     * @param PDOStatement $sth
      * @param string $type the type of objects to be returned
      * @return array an array of object rows
+     * @see Params::ArrayToObject
      */
-    public function getResultObjects($type='stdClass')
+    // TODO knock the brawndo out of this
+    public function getResultObjects(PDOStatement $sth, $type='stdClass')
     {
         $output = array();
 
-        for ($i = 0; $i < $this->statement->rowCount(); $i++) {
-            array_push($output, $this->statement->fetchObject($type));
+        for ($i = 0; $i < $sth->rowCount(); $i++) {
+            array_push($output, $sth->fetchObject($type));
         }
-
-        $this->free();
 
         return $output;
     }
@@ -556,18 +513,6 @@ class Database
         }
 
         return $id;
-    }
-
-    /**
-     * Frees the last result set
-     *
-     * @access public
-     * @return void
-     */
-    public function free()
-    {
-        $sth = array_pop($this->statementStack);
-        $this->statement =& end($this->statementStack);
     }
 
     /**

@@ -122,7 +122,6 @@ abstract class DatabaseObjectLink
 
         $otherId = null;
         $list = $database->executef($sql, $for->id);
-        $database->free();
 
         $list->bindColumn(1, $otherId);
         $i = 1;
@@ -216,9 +215,7 @@ abstract class DatabaseObjectLink
                 $this->keyValue(),
                 $this->autoValues()
             );
-            $sth = $database->prepare($sql);
-            $database->free();
-            $sth->execute($values);
+            $database->prepare($sql)->execute($values);
         } catch (Exception $e) {
             $database->unlock();
             throw $e;
@@ -239,18 +236,14 @@ abstract class DatabaseObjectLink
             $this->keyValue(),
             $this->autoValues()
         );
-        $sth = $database->prepare($sql);
-        $database->free();
-        $sth->execute($values);
+        $database->prepare($sql)->execute($values);
     }
 
     public function delete()
     {
         global $database;
         $sql = $this->meta()->getSQL('link_delete');
-        $sth = $database->prepare($sql);
-        $database->free();
-        $sth->execute($this->keyValue());
+        $database->prepare($sql)->execute($this->keyValue());
     }
 
     protected function keyValue()
