@@ -231,11 +231,10 @@ abstract class DatabaseObject extends RequestObject
         $database->lock($table, Database::LOCK_WRITE);
         try {
             $sql = $meta->getSQL('dbo_insert');
-            $values = $this->getInsertValues();
-            $database->prepare($sql);
-            $database->execute($values);
-            $this->id = (int) $database->lastInsertId();
+            $sth = $database->prepare($sql);
             $database->free();
+            $sth->execute($this->getInsertValues());
+            $this->id = (int) $database->lastInsertId();
 
             $cacheKey = self::cacheKey($meta, $this->id);
             assert(
@@ -310,10 +309,9 @@ abstract class DatabaseObject extends RequestObject
         $table = $meta->getTable();
         $key = $meta->getKey();
         $sql = $meta->getSQL('dbo_update');
-        $values = $this->getUpdateValues();
-        $database->prepare($sql);
-        $database->execute($values);
+        $sth = $database->prepare($sql);
         $database->free();
+        $sth->execute($this->getUpdateValues());
     }
 
     /**

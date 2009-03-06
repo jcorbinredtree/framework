@@ -377,61 +377,6 @@ class Database
     }
 
     /**
-     * Executes a prepared statement
-     *
-     * @param mixed $param an object, assoc array mapping to the names of
-     * the bound columns, or a normal array containing the values in order
-     *
-     * @return PDOStatement
-     */
-    public function execute($param=null)
-    {
-        $params = null;
-        if ($param) {
-            if (is_object($param)) {
-                $params = array();
-                $vars = get_object_vars($param);
-                foreach ($vars as $key => &$val) {
-                    if (null !== $val) {
-                        $params[":$key"] =& $val;
-                    }
-                }
-                unset($val);
-            } elseif (isset($param)) {
-                if (! is_array($param)) {
-                    throw new InvalidArgumentException('not an array');
-                }
-                $params =& $param;
-            }
-        }
-
-        $what = $this->whatStatement('execute', $params);
-        try {
-            $this->startTiming();
-            if ($params) {
-                $this->statement->execute($params);
-            } else {
-                $this->statement->execute();
-            }
-            $this->endTiming();
-        } catch (PDOException $e) {
-            $this->endTiming();
-            $this->free();
-            throw new DatabaseException($this, $what, $e->getMessage());
-        } catch (Exception $e) {
-            $this->endTiming();
-            $this->free();
-            throw $e;
-        }
-
-        if ($this->log) {
-            $this->infoLog($what, $this->statement->rowCount());
-        }
-
-        return $this->statement;
-    }
-
-    /**
      * Prepares and executes a statement
      *
      * @param string $sqlf a SQL string, with positional(?) based preparation
@@ -466,7 +411,7 @@ class Database
             }
             unset($arg);
 
-            $this->execute();
+            $this->statement->execute();
             $this->endTiming();
             $this->log = $logging;
         } catch (Exception $e) {
