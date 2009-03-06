@@ -32,7 +32,7 @@ require_once('SITE/framework/Loader.php');
 
 class MySite extends Site
 {
-    protected $mode = /* Site::TEST_MODE | */ Site::DEBUG_MODE;
+    protected $mode = /* Site::MODE_TEST | */ Site::MODE_DEBUG;
 
     public function onConfig()
     {
