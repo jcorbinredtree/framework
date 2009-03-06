@@ -507,7 +507,7 @@ class Database
         $output = array();
 
         for ($i = 0; $i < $this->statement->rowCount(); $i++) {
-            $row = $this->getScalarValue(false);
+            $row = $this->statement->fetchColumn();
             array_push($output, $row);
         }
 
@@ -556,24 +556,6 @@ class Database
         }
 
         return $id;
-    }
-
-    /**
-     * Fetch one row from the last result set.
-     *
-     * @access public
-     * @param boolean $kill the default, true, will free() the connection
-     * @return mixed a result
-     */
-    public function getScalarValue($kill=true)
-    {
-        $val = $this->statement->fetchColumn();
-
-        if ($kill) {
-            $this->free();
-        }
-
-        return $val;
     }
 
     /**

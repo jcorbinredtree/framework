@@ -159,9 +159,8 @@ class QueryBuilder
             global $database;
 
             $lsql = "SELECT COUNT(*) $meat";
-            if ($database->query($lsql)) {
-                $this->pager->setResults($database->getScalarValue());
-            }
+            $sth = $database->query($lsql);
+            $this->pager->setResults($sth->fetchColumn());
         }
 
         $sql .= $meat;
