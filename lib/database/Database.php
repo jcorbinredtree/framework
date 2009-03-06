@@ -573,26 +573,6 @@ class Database
     }
 
     /**
-     * Queries the database and returns an array of single values.
-     *
-     * @access public
-     * @since v1.7
-     * @param string $sql the SQL for your query
-     * @return array an array of single values
-     */
-    public function queryForResultValues($sql)
-    {
-        $args = func_get_args();
-        array_shift($args);
-
-        if ($this->executef($sql, $args)) {
-            return $this->getResultValues();
-        }
-
-        return array();
-    }
-
-    /**
      * Returns an array of single values based on the last prepare/execute
      *
      * @access public
@@ -611,48 +591,6 @@ class Database
         $this->free();
 
         return $output;
-    }
-
-    /**
-     * Queries the database and returns an array of object rows.
-     * The objects returned have been run through Params::ArrayToObject.
-     *
-     * @access public
-     * @since v1.7
-     * @see Params::ArrayToObject
-     * @param string $sql the SQL for your query
-     * @param string $type the type of objects to be returned
-     * @param arglist ... variable arguments representing the prepared args
-     * @return array an array of object rows
-     */
-    public function queryForResultObjects($sql, $type='stdClass')
-    {
-        $args = func_get_args();
-        if (count($args) > 2) {
-            array_shift($args);
-            array_shift($args);
-
-            /* flatten array args */
-            $tmp = array();
-            foreach ($args as $arg) {
-                if (is_array($arg)) {
-                    foreach ($arg as $i) {
-                        array_push($tmp, $i);
-                    }
-
-                    continue;
-                }
-
-                array_push($tmp, $arg);
-            }
-
-            $args = $tmp;
-        } else {
-            $args = array();
-        }
-
-        $this->executef($sql, $args);
-        return $this->getResultObjects($type);
     }
 
     /**
