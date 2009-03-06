@@ -154,7 +154,7 @@ class Params
      */
     static public function validate(&$mixed, $validation)
     {
-        global $current, $config;
+        global $current;
 
         $passed = true;
         $array = (is_object($mixed) ? get_object_vars($mixed) : $mixed);

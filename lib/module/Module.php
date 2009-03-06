@@ -117,7 +117,7 @@ abstract class Module extends BufferedObject implements ICacheable
      */
     static public function load($module)
     {
-        global $config, $database, $current;
+        global $database, $current;
 
         if (!class_exists($module)) {
             $path = "$config->absPath/modules/$module/$module.php";

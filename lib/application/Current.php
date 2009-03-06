@@ -142,8 +142,6 @@ class Current
      */
     public function getCurrentRequest($addOptions=null)
     {
-        global $config;
-
         $options = array_merge($_GET, $_POST);
 
         if ($addOptions) {

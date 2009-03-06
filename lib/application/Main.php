@@ -104,7 +104,7 @@ class Main
     public static function setLanguage()
     {
         // TODO revamp this into site/page
-        global $config, $current;
+        global $current;
 
         $req_key = '_la';
         $cookie_key = 'lang';

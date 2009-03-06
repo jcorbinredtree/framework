@@ -54,7 +54,7 @@ class PayPalPayment extends Payment {
    * @NOTICE: this is hardcoded to use US Currency
    */
   public function purchase() {
-    global $current, $config;
+    global $current;
 
     set_include_path("$config->absPath/extensions/:" . get_include_path());
     require_once "$config->absPath/extensions/PayPal.php";

@@ -81,7 +81,6 @@ class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
     function __construct($class)
     {
         $members = array();
-        global $config;
         $refcls = new ReflectionClass($class);
         foreach ($refcls->getProperties() as $prop) {
             $name = $prop->getName();

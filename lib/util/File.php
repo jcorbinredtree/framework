@@ -46,8 +46,6 @@ class File
      */
     public static function find($closure, $path, $excludeDirs=true)
     {
-        global $config;
-
     	if (is_dir($path)) {
     	    if (!$excludeDirs) {
     	        call_user_func($closure, $path);

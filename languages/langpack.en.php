@@ -45,10 +45,7 @@ class I18N_EN implements LangPack
 
     public function get($string)
     {
-        global $config;
-
         if (!isset($this->translation[$string])) {
-            //$config->warn( "unknown string $string for " . $this->getLanguageName() . ' language pack' );
             return $string;
         }
 

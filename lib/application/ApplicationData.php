@@ -27,8 +27,6 @@ class ApplicationData
 
     public static function initialize()
     {
-        global $config;
-
         // try to load our data from the session
         self::$data = Session::get(self::$SessionKey);
         if (self::$data && is_array(self::$data)) {

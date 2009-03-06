@@ -221,7 +221,7 @@ abstract class DatabaseObject extends RequestObject
         }
         assert(! isset($this->_cacheKey));
 
-        global $database, $config;
+        global $database;
 
         $meta = $this->meta();
         $table = $meta->getTable();
