@@ -33,16 +33,6 @@ require_once('SITE/framework/Loader.php');
 class MySite extends Site
 {
     protected $mode = /* Site::MODE_TEST | */ Site::MODE_DEBUG;
-
-    public function onConfig()
-    {
-        $this->config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
-        $this->config->addMailerOptions(array(
-            'From'      => 'client@example.com',
-            'FromName'  => 'Mr Person',
-            'Host'      => 'localhost'
-        ));
-    }
 }
 Site::doRole('MySite', 'web');
 

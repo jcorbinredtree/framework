@@ -32,7 +32,6 @@ require_once 'lib/site/SiteLayout.php';
 require_once 'lib/site/SiteLog.php';
 require_once 'lib/site/SiteHandler.php';
 require_once 'lib/site/SiteModuleLoader.php';
-require_once 'Config.php';
 
 // TODO page module will clean this crap up
 require_once 'lib/site/SitePageProvider.php';
@@ -149,7 +148,7 @@ abstract class Site extends CallbackManager
 
     /**
      * Returns the site config, convenience for Site::Site()->config
-     * @return Config
+     * @return SiteConfig
      */
     final public static function getConfig()
     {
@@ -237,7 +236,14 @@ abstract class Site extends CallbackManager
     protected $mode=0;
 
     /**
-     * @var Config
+     * The order of config file loading is:
+     *
+     *   Loader::$FrameworkPath/config.ini
+     *   {any config files added by SiteModules}
+     *   Loader::$LocalPath/config.ini
+     *   Loader::$Base/siteconfig.ini
+     *
+     * @var SiteConfig
      */
     public $config;
 
@@ -292,18 +298,6 @@ abstract class Site extends CallbackManager
             }
         }
 
-        // The log starts off in an unconfigured state where it accumulates
-        // messages until configuration is done and it's told what to do with
-        // them; however if something goes wrong early on, it dumps all logged
-        // messages
-        $this->log = new SiteLog($this);
-
-        if (! isset($this->layout)) {
-            $this->layout = new SiteLayout($this);
-        }
-
-        new SiteModuleLoader($this);
-
         $proto = 'http';
         $port = '';
         if (isset($_SERVER['SERVER_PORT'])) {
@@ -315,14 +309,30 @@ abstract class Site extends CallbackManager
         }
         $this->serverUrl = "$proto://".$_SERVER['SERVER_NAME'].$port;
 
-        // TODO allow for changable config class name?
-        global $config; // compatability global
-        $config = $this->config = new Config($this);
-        $this->onConfig();
-        $this->dispatchCallback('onConfig');
+        if (! isset($this->layout)) {
+            $this->layout = new SiteLayout($this);
+        }
 
-        // Configuration is done
-        $this->dispatchCallback('onPostConfig');
+        // The log starts off in an unconfigured state where it accumulates
+        // messages until configuration is done and it's told what to do with
+        // them; however if something goes wrong early on, it dumps all logged
+        // messages
+        $this->log = new SiteLog($this);
+
+        $this->config = new SiteConfig($this);
+        $this->config->addFile(Loader::$FrameworkPath.'/config.ini');
+
+        new SiteModuleLoader($this);
+
+        try {
+            $this->dispatchCallback('onConfig');
+            $this->config->addFile(Loader::$LocalPath.'/config.ini');
+            $this->config->addFile(Loader::$Base.'/siteconfig.ini');
+            $this->config->compile();
+            $this->dispatchCallback('onPostConfig');
+        } catch (SiteConfigParseException $ex) {
+            die("Error loading configuration: ".$ex->getMessage()."\n");
+        }
 
         $this->timing = $this->isDebugMode();
         if ($this->timing) {
@@ -557,8 +567,6 @@ abstract class Site extends CallbackManager
 
         $this->log->info($message);
     }
-
-    abstract public function onConfig();
 
     /**
      * Returns the database interface for the site

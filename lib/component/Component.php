@@ -101,8 +101,6 @@ abstract class Component extends ActionProvider
      */
     final public function __construct($actionId=null)
     {
-        global $config;
-
         $this->title = get_class($this);
         $this->onInitialize();
         $this->onRegisterActions();
@@ -111,11 +109,7 @@ abstract class Component extends ActionProvider
             $actionId = Params::request(self::$ActionKey, null);
         }
         if (! isset($actionId)) {
-            if (get_class($this) == $config->getDefaultComponent()) {
-                $actionId = $config->getDefaultAction();
-            } else {
-                throw new RuntimeException("need an action");
-            }
+            throw new RuntimeException("need an action");
         }
 
         $this->action = $this->getAction($actionId);
