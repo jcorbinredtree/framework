@@ -132,15 +132,10 @@ class SiteModuleLoader
                 }
             }
         }
-    }
 
-    public function call($method)
-    {
-        $args = array_slice(func_get_args(), 1);
+        // Now initialize each module
         foreach ($this->modules as $module) {
-            if (method_exists($module, $method)) {
-                call_user_func_array(array($module, $method), $args);
-            }
+            $module->initialize();
         }
     }
 

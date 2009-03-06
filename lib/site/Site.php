@@ -298,7 +298,6 @@ abstract class Site extends CallbackManager
         }
 
         new SiteModuleLoader($this);
-        $this->modules->call('initialize');
 
         $proto = 'http';
         $port = '';
@@ -315,8 +314,7 @@ abstract class Site extends CallbackManager
         global $config; // compatability global
         $config = $this->config = new Config($this);
         $this->onConfig();
-
-        $this->modules->call('onConfig');
+        $this->dispatchCallback('onConfig');
 
         // Configuration is done
         $this->dispatchCallback('onPostConfig');

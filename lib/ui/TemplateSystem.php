@@ -44,7 +44,13 @@ class TemplateSystem extends SiteModule
 
     private $pstl;
 
-    public function onConfig()
+    public function initialize()
+    {
+        parent::initialize();
+        $this->site->addCallback('onPostConfig', array($this, 'onPostConfig'));
+    }
+
+    public function onPostConfig()
     {
         $copt = $this->site->config->getTemplateOptions();
 

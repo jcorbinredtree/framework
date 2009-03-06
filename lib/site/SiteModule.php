@@ -167,9 +167,10 @@ abstract class SiteModule extends CallbackManager
             }
         }
     }
+
     /**
-     * Called by Site directly after every module has been instantiated and the
-     * list of active modules stabalized.
+     * Called by SiteModuleLoader after every module has been instantiated and
+     * the list of active modules stabalized.
      *
      * Sets $hasOptional keys for each $optional module.
      * @return void
