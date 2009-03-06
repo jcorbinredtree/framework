@@ -279,12 +279,12 @@ abstract class DatabaseObject extends RequestObject
 
         global $database;
         $sql = $meta->getSQL('dbo_select');
-        $database->executef($sql, $id);
-        if (! $database->count()) {
+        $sth = $database->executef($sql, $id);
+        $row = $sth->fetch(PDO::FETCH_ASSOC)
+        if (! $database->count() || $row === false) {
             $database->free();
             return false;
         }
-        $row = $database->getRow();
         $this->unserialize($row, false);
         $this->id = $id;
         $this->_cacheKey = $cacheKey;

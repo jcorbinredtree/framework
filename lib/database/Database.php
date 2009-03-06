@@ -768,27 +768,6 @@ class Database
     }
 
     /**
-     * Fetches a row from the current result set. Note that the default
-     * is now PDO::FETCH_ASSOC.
-     *
-     * @access public
-     * @see getObject
-     * @param int $as can fetch in object, array, or keyed mode
-     * @param boolean $kill the default, true, will free() the statement
-     * @return mixed a row
-     */
-    public function getRow($as=PDO::FETCH_ASSOC, $kill=true)
-    {
-        $row = $this->statement->fetch($as);
-
-        if ($kill) {
-            $this->free();
-        }
-
-        return $row;
-    }
-
-    /**
      * Fetches an object from the current result set. This maps field
      * names, replacing _ with the next letter capitalized. Note that
      * fields will be created on your object if they do not exist
@@ -803,7 +782,7 @@ class Database
     {
         $obj = new $type();
 
-        if ($row = $this->getRow(PDO::FETCH_ASSOC, false)) {
+        if ($row = $this->statement->fetch(PDO::FETCH_ASSOC)) {
             $meta = new DatabaseObjectMeta($type);
             $key = $meta->getKey();
             if ($obj instanceof DatabaseObject && isset($row[$key])) {
