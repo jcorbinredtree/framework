@@ -531,7 +531,7 @@ class Database
         $output = array();
 
         for ($i = 0; $i < $this->statement->rowCount(); $i++) {
-            array_push($output, $this->getObject($type, false));
+            array_push($output, $this->statement->fetchObject($type));
         }
 
         $this->free();
@@ -574,40 +574,6 @@ class Database
         }
 
         return $val;
-    }
-
-    /**
-     * Fetches an object from the current result set. This maps field
-     * names, replacing _ with the next letter capitalized. Note that
-     * fields will be created on your object if they do not exist
-     *
-     * @access public
-     * @param string $type the type of objects to be returned
-     * @param boolean $kill the default, true, will free() the connection
-     * @see Params::ArrayToObject
-     * @return $type an object
-     */
-    public function getObject($type='stdClass', $kill=true)
-    {
-        $obj = new $type();
-
-        if ($row = $this->statement->fetch(PDO::FETCH_ASSOC)) {
-            $meta = new DatabaseObjectMeta($type);
-            $key = $meta->getKey();
-            if ($obj instanceof DatabaseObject && isset($row[$key])) {
-                $row['id'] = $row[$key];
-            }
-
-            Params::arrayToObject($row, $obj, true);
-
-            if ($kill) {
-                $this->free();
-            }
-
-            return $obj;
-        }
-
-        return null;
     }
 
     /**

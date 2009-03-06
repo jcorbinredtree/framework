@@ -194,19 +194,15 @@ class Cacher
     {
         global $database;
 
-        /*
-         * @WARNING: This is mysql-specific
-         */
-        if ($database->query('SHOW TABLE STATUS')) {
-            while ($row = $database->getObject('stdClass', false)) {
-                if ($row->name == $table) {
-                    $database->free();
-                    return strtotime($row->updateTime);
-                }
+        // @WARNING: This is mysql-specific
+        $sth = $database->query('SHOW TABLE STATUS');
+        while ($row = $sth->fetchObject('stdClass')) {
+            if ($row->name == $table) {
+                $database->free();
+                return strtotime($row->updateTime);
             }
-
-            $database->free();
         }
+        $database->free();
 
         return 0;
     }
@@ -234,22 +230,17 @@ class Cacher
             $tables = array($tables);
         }
 
-        /*
-         * @WARNING: This is mysql-specific
-         */
-        if ($database->query('SHOW TABLE STATUS')) {
-            while ($row = $database->getObject('stdClass', false)) {
-                if (in_array($row->name, $tables)) {
-                    $updateTime = strtotime($row->update_time);
-
-                    if ($updateTime < $time) {
-                        return true;
-                    }
+        // @WARNING: This is mysql-specific
+        $sth = $database->query('SHOW TABLE STATUS');
+        while ($row = $sth->fetchObject('stdClass')) {
+            if (in_array($row->name, $tables)) {
+                $updateTime = strtotime($row->update_time);
+                if ($updateTime < $time) {
+                    return true;
                 }
             }
-
-            $database->free();
         }
+        $database->free();
 
         return false;
     }
