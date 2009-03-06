@@ -402,32 +402,6 @@ abstract class Component extends ActionProvider
         $page = Site::getPage();
         $page->addToBuffer('content', $this);
     }
-
-    /**
-     * DEPRECATED, use HTMLPage->addAsset(...)
-     */
-    public function addScript($req)
-    {
-        global $config;
-        $config->deprecatedComplain(
-            'Component->addScript(...)',
-            'HTMLPage->addAsset(new HTMLPageScript(...))'
-        );
-        SitePage::getCurrent()->addAsset(new HTMLPageScript($req));
-    }
-
-    /**
-     * DEPRECATED, use HTMLPage->addAsset(...)
-     */
-    public function addStylesheet($req)
-    {
-        global $config;
-        $config->deprecatedComplain(
-            'Component->addScript(...)',
-            'HTMLPage->addAsset(new HTMLPageStylesheet(...))'
-        );
-        SitePage::getCurrent()->addAsset(new HTMLPageStylesheet($req));
-    }
 }
 
 ?>
