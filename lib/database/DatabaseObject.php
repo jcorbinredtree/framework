@@ -24,8 +24,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/database/DatabaseObjectAbstract.php';
-require_once 'lib/database/DatabaseObjectMeta.php';
+require_once dirname(__FILE__).'/DatabaseObjectAbstract.php';
+require_once dirname(__FILE__).'/DatabaseObjectMeta.php';
 
 /**
  * Simple ORM object base class

@@ -25,8 +25,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/site/SiteModule.php';
-
 /**
  * Database site module
  *

@@ -28,7 +28,7 @@
  * @see DatabaseObject::meta
  */
 
-require_once 'lib/database/DatabaseObjectAbstractMeta.php';
+require_once dirname(__FILE__).'/DatabaseObjectAbstractMeta.php';
 
 class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
 {

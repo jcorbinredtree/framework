@@ -24,8 +24,8 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/database/DatabaseObjectAbstract.php';
-require_once 'lib/database/DatabaseObjectLinkMeta.php';
+require_once dirname(__FILE__).'/DatabaseObjectAbstract.php';
+require_once dirname(__FILE__).'/DatabaseObjectLinkMeta.php';
 
 /**
  * Represents managed links between database objects

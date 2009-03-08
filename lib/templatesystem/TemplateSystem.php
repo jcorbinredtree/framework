@@ -24,8 +24,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/site/SiteModule.php';
-
 /**
  * Singleton php-stl template
  */

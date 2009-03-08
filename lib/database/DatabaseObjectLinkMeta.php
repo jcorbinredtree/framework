@@ -24,7 +24,7 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/database/DatabaseObjectAbstractMeta.php';
+require_once dirname(__FILE__).'/DatabaseObjectAbstractMeta.php';
 
 class DatabaseObjectLinkMeta extends DatabaseObjectAbstractMeta
 {
