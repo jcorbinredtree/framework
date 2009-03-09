@@ -41,7 +41,7 @@ class UiTag extends Tag
      * @param DOMElement element the tag such as <ui:pageBuffer />
      * @return void
      */
-    public function pageBuffer(DOMElement &$element)
+    public function pageBuffer(DOMElement $element)
     {
         $area = $this->requiredAttr($element, 'area', false);
         $clear = $this->getBooleanAttr($element, 'clear', true);
@@ -58,7 +58,7 @@ class UiTag extends Tag
      * @param name string required
      * @param default mixed optional
      */
-    public function pageData(DOMElement &$element)
+    public function pageData(DOMElement $element)
     {
         $var = $this->requiredAttr($element, 'var', false);
         $name = $this->requiredAttr($element, 'name');
@@ -85,7 +85,7 @@ class UiTag extends Tag
      * @param DOMElement element the tag such as <ui:pageBuffer />
      * @return void
      */
-    public function warnings(DOMElement &$element)
+    public function warnings(DOMElement $element)
     {
         $contClass = $this->getUnquotedAttr($element, 'class', 'warnings-container');
 
@@ -112,7 +112,7 @@ class UiTag extends Tag
      * @param DOMElement element the tag such as <ui:pageBuffer />
      * @return void
      */
-    public function notices(DOMElement &$element)
+    public function notices(DOMElement $element)
     {
         $contClass = $this->getUnquotedAttr($element, 'class', 'notices-container');
 
@@ -164,7 +164,7 @@ class UiTag extends Tag
      * @param DOMElement element the tag such as <ui:pageBuffer />
      * @return void
      */
-    public function addAssets(DOMElement &$element)
+    public function addAssets(DOMElement $element)
     {
         $this->compiler->write(
             "<?php if (! \$page instanceof HTMLPage) {\n".

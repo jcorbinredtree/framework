@@ -32,7 +32,7 @@ class FormTag extends Tag
     /**
      * hidden field
      */
-    public function hidden(DOMElement &$element)
+    public function hidden(DOMElement $element)
     {
         $name = $this->requiredAttr($element, 'name', false);
         $value = $this->getUnquotedAttr($element, 'value');
@@ -60,7 +60,7 @@ class FormTag extends Tag
      * @param int optional maxlength - the max length of the field (defaults to 255)
      * @param bool enabled - true if enabled, false otherwise
      */
-    public function input(DOMElement &$element)
+    public function input(DOMElement $element)
     {
         $name = $this->requiredAttr($element, 'name', false);
         $id = $this->getUnquotedAttr($element, 'id', $name);
@@ -91,7 +91,7 @@ class FormTag extends Tag
      * @param string optional value - the value for this field
      * @param string optional checked - a boolean value to select the box or not
      */
-    public function checkbox(DOMElement &$element)
+    public function checkbox(DOMElement $element)
     {
         $name = $this->requiredAttr($element, 'name', false);
         $value = $value = $this->getUnquotedAttr($element, 'value');
@@ -115,7 +115,7 @@ class FormTag extends Tag
      * @param string optional value - the value for this field
      * @param string optional checked - a boolean value to select the box or not
      */
-    public function radio(DOMElement &$element)
+    public function radio(DOMElement $element)
     {
         $name = $this->requiredAttr($element, 'name', false);
         $value = $value = $this->getUnquotedAttr($element, 'value');
@@ -141,7 +141,7 @@ class FormTag extends Tag
      * @param int optional cols - the number of cols you'd like to have (defaults to 50)
      * @param bool enabled - true if enabled, false otherwise
      */
-    public function textarea(DOMElement &$element)
+    public function textarea(DOMElement $element)
     {
         $name = $this->requiredAttr($element, 'name', false);
         $value = $this->getUnquotedAttr($element, 'value', '@content');
@@ -173,7 +173,7 @@ class FormTag extends Tag
      * @param string required label - the text for the button
      * @param string optional href - the href to go to when clicked. if not set, the button will be a submit button
      */
-    public function button(DOMElement &$element)
+    public function button(DOMElement $element)
     {
         $label = $this->requiredAttr($element, 'label', false);
 
@@ -198,7 +198,7 @@ class FormTag extends Tag
      * @param boolean optional multiple - if this is a multiple list or not
      * @param boolean enabled - true if enabled, false otherwise
      */
-    public function select(DOMElement &$element)
+    public function select(DOMElement $element)
     {
         $name = $this->requiredAttr($element, 'name', false);
         $options = $this->requiredAttr($element, 'options', false);
@@ -241,7 +241,8 @@ class FormTag extends Tag
      * @param string required name - the name you'd like to give this element
      * @param string optional id - the id you want for this element (defaults to name)
      */
-    public function countries( DOMElement &$element ) {
+    public function countries(DOMElement $element)
+    {
         static $countries = array(
            "United States"=>"United States", "United Kingdom"=>"United Kingdom", "Afghanistan"=>"Afghanistan",
            "Albania"=>"Albania", "Algeria"=>"Algeria", "American Samoa"=>"American Samoa",
@@ -345,7 +346,6 @@ class FormTag extends Tag
                $this->compiler->write( '<option value = "' . $value . '" <?php echo (("' . $value . '"==' . $select . ')?"selected=\"selected\"":""); ?>>' . $label . '</option>' );
            }
            $this->compiler->write( '</select>' );
-
     }
 
     /**
@@ -355,7 +355,7 @@ class FormTag extends Tag
      * @param string required name - the name you'd like to give this element
      * @param string optional id - the id you want for this element (defaults to name)
      */
-    public function states(DOMElement &$element)
+    public function states(DOMElement $element)
     {
         static $states = array(
             '' => '&nbsp;',
