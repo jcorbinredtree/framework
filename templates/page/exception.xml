@@ -1,11 +1,11 @@
 <template
-  xmlns:core="class://CoreTag"
-  xmlns:ui="class://UiTag">
+  xmlns:core="urn:redtree:php-stl:core:v2.0"
+  xmlns:page="urn:redtree:ui:page:v1.0">
 
 <core:param name="exception" required="true" type="Exception" />
 
 <core:doctype id="xhtml 1.1" />
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html core:xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>Unhandled Exception</title>
   </head>
@@ -16,8 +16,8 @@
     <arg name="exception" value="${exception}" />
   </core:render>
 
-  <ui:warnings />
-  <ui:notices />
+  <page:warnings />
+  <page:notices />
 </div>
 
   </body>

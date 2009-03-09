@@ -44,9 +44,17 @@ class TemplateSystem extends SiteModule
         require_once "$this->moduleDir/CurrentTemplateProvider.php";
         require_once "$this->moduleDir/ContentPageTemplateProvider.php";
 
-        // TODO implement Class:// registration in php-stl
-        require_once "$this->moduleDir/tags/UiTag.php";
-        require_once "$this->moduleDir/tags/FormTag.php";
+        PHPSTL::registerNamespace(
+            'urn:redtree:ui:form:v1.0',
+            'TemplateFormHandler',
+            dirname(__FILE__).'/TemplateFormHandler.php'
+        );
+
+        PHPSTL::registerNamespace(
+            'urn:redtree:ui:page:v1.0',
+            'TemplatePageHandler',
+            dirname(__FILE__).'/TemplatePageHandler.php'
+        );
 
         $this->site->addCallback('onPostConfig', array($this, 'onPostConfig'));
     }

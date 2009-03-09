@@ -1,11 +1,11 @@
 <template
-  xmlns:core="class://CoreTag"
-  xmlns:ui="class://UiTag"
+  xmlns:core="urn:redtree:php-stl:core:v2.0"
+  xmlns:page="urn:redtree:ui:page:v1.0"
   core:extends="${this.pageTemplate}">
 
-<ui:addAssets>
+<page:addAssets>
   <stylesheet href="css/layouts/default.css" />
-</ui:addAssets>
+</page:addAssets>
 
 <div id="main-container">
   <div id="left">
@@ -18,13 +18,13 @@
       </ul>
     </div>
     -->
-    <ui:pageBuffer area="left" />
+    <page:buffer area="left" />
   </div>
 
   <div id="center">
-    <ui:pageBuffer area="content" />
-    <ui:warnings />
-    <ui:notices />
+    <page:buffer area="content" />
+    <page:warnings />
+    <page:notices />
   </div>
 </div>
 

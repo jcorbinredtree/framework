@@ -1,4 +1,5 @@
-<template xmlns:core="class://CoreTag">
+<template
+  xmlns:core="urn:redtree:php-stl:core:v2.0">
 
 <core:param name="requestUrl" />
 <core:param name="pageUrl" />

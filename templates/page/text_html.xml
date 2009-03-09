@@ -1,17 +1,18 @@
+<?whitespace trim ?>
 <template
-  xmlns:core="class://CoreTag"
-  xmlns:ui="class://UiTag">
+  xmlns:core="urn:redtree:php-stl:core:v2.0"
+  xmlns:page="urn:redtree:ui:page:v1.0">
 
 <core:param name="content" default="${page.getBuffer('content', false, true)}" />
 
 <core:if test="${page.xmlHeader}">
-  <ui:pageData var="xmlVersion" name="xmlVersion" default="1.0" />
-  <ui:pageData var="xmlEncoding" name="xmlEncoding" default="utf-8" />
+  <page:data var="xmlVersion" name="xmlVersion" default="1.0" />
+  <page:data var="xmlEncoding" name="xmlEncoding" default="utf-8" />
   <core:xmlHeader version="$xmlVersion" encoding="$xmlEncoding" />
 </core:if>
 <core:doctype id="${page.doctype}" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html core:xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title><core:out value="${page.formatTitle()}" /></title>
     <core:forEach list="${page.getAssets()}" var="asset">
@@ -29,8 +30,8 @@
       template already did this, or if there's been errors generated since
       then.
     -->
-    <ui:warnings />
-    <ui:notices />
+    <page:warnings />
+    <page:notices />
   </body>
 </html>
 </template>

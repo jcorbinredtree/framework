@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UiTag class definition
+ * TemplatePageHandler class definition
  *
  * PHP version 5
  *
@@ -25,9 +25,9 @@
  */
 
 /**
- * Provides template tages for interfacing with HTMLPage objects
+ * Provides template interface to SitePage
  */
-class UiTag extends Tag
+class TemplatePageHandler extends PHPSTLNSHandler
 {
     /**
      * Outputs the contents of a named page buffer
@@ -38,10 +38,10 @@ class UiTag extends Tag
      *
      * @see SitePage::getBUffer, SitePage::clearBuffer
      *
-     * @param DOMElement element the tag such as <ui:pageBuffer />
+     * @param DOMElement element the tag such as <page:buffer />
      * @return void
      */
-    public function pageBuffer(DOMElement $element)
+    public function handleElementBuffer(DOMElement $element)
     {
         $area = $this->requiredAttr($element, 'area', false);
         $clear = $this->getBooleanAttr($element, 'clear', true);
@@ -58,7 +58,7 @@ class UiTag extends Tag
      * @param name string required
      * @param default mixed optional
      */
-    public function pageData(DOMElement $element)
+    public function handleElementData(DOMElement $element)
     {
         $var = $this->requiredAttr($element, 'var', false);
         $name = $this->requiredAttr($element, 'name');
@@ -82,10 +82,10 @@ class UiTag extends Tag
      *   <ul class="$class"><li>...</li></ul>
      *
      *
-     * @param DOMElement element the tag such as <ui:pageBuffer />
+     * @param DOMElement element the tag such as <page:warnings />
      * @return void
      */
-    public function warnings(DOMElement $element)
+    public function handleElementWarnings(DOMElement $element)
     {
         $contClass = $this->getUnquotedAttr($element, 'class', 'warnings-container');
 
@@ -109,10 +109,10 @@ class UiTag extends Tag
      * Outputs something like:
      *   <ul class="$class"><li>...</li></ul>
      *
-     * @param DOMElement element the tag such as <ui:pageBuffer />
+     * @param DOMElement element the tag such as <page:notices />
      * @return void
      */
-    public function notices(DOMElement $element)
+    public function handleElementNotices(DOMElement $element)
     {
         $contClass = $this->getUnquotedAttr($element, 'class', 'notices-container');
 
@@ -164,7 +164,7 @@ class UiTag extends Tag
      * @param DOMElement element the tag such as <ui:pageBuffer />
      * @return void
      */
-    public function addAssets(DOMElement $element)
+    public function handleElementAddAssets(DOMElement $element)
     {
         $this->compiler->write(
             "<?php if (! \$page instanceof HTMLPage) {\n".
