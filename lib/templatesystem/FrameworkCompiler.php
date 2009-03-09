@@ -32,46 +32,20 @@
  */
 class FrameworkCompiler extends PHPSTLCompiler
 {
-    /**
-     * Framework Template preamble
-     */
+    // Framework Template preamble
     protected function writeTemplateHeader()
     {
         parent::writeTemplateHeader(array(
             'Framework Version' => Loader::$FrameworkVersion
         ));
-        $this->write("<?php global \$current; ?>\n");
-        $this->write("<?php if (isset(\$this->page)) {\n");
-        $this->write("  \$page = \$this->page;\n");
-        $this->write("} else {\n");
-        $this->write("  \$page = Site::getPage();\n");
-        $this->write('} ?>');
-
-        $doc = $this->dom->documentElement;
-        if ($doc->hasAttribute('type')) {
-            $type = $doc->getAttribute('type');
-        } else {
-            $type = 'text/html';
-        }
-        $this->write(
-            "<?php \$this->type = '$type';\n".
-            "if (! \$page->compatibleType(\$this->type)) {\n".
-            "  throw new RuntimeException(\$this->type.' incompatible ".
-            "with a '.\$page->getType().' page');\n".
-            '} ?>'
-        );
-    }
-
-    /**
-     * Specifies the replacement rules for this template
-     *
-     * @param string $output
-     * @return string
-     */
-    public function replaceRules($output)
-    {
-        $output = preg_replace('/[$][{](?:[=])?params[.](.+?)[.](.+?)[}]/i', 'Params::$1("$2")', $output);
-        return parent::replaceRules($output);
+        $this->write('<?php '.
+            "global \$current;\n".
+            "if (isset(\$this->page)) {\n".
+            "  \$page = \$this->page;\n".
+            "} else {\n".
+            "  \$page = Site::getPage();\n".
+            "}\n".
+        ' ?>');
     }
 }
 
