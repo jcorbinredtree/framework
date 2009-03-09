@@ -28,9 +28,9 @@ class Template extends PHPSTLTemplate
 {
     private $currentPath=null;
 
-    public function __construct(PHPSTLTemplateProvider $provider, $resource)
+    public function __construct(PHPSTLTemplateProvider $provider, $resource, $identifier)
     {
-        parent::__construct($provider, $resource);
+        parent::__construct($provider, $resource, $identifier);
 
         // Stash away the current path for when we render
         global $current;
