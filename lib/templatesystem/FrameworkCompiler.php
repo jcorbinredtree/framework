@@ -32,6 +32,15 @@
  */
 class FrameworkCompiler extends PHPSTLCompiler
 {
+    protected static $proxy;
+    public static function getParamsProxy()
+    {
+        if (! isset(self::$proxy)) {
+            self::$proxy = new ParamsProxyStub();
+        }
+        return self::$proxy;
+    }
+
     // Framework Template preamble
     protected function writeTemplateHeader()
     {
@@ -45,7 +54,60 @@ class FrameworkCompiler extends PHPSTLCompiler
             "} else {\n".
             "  \$page = Site::getPage();\n".
             "}\n".
+            "\$params = ".__CLASS__."::getParamsProxy();\n".
         ' ?>');
+    }
+}
+
+/**
+ * Used to transform expressions like:
+ *   ${params.post.foo}
+ *   ${params.post('foo', 'default')}
+ * Into calls like:
+ *   Params::post('foo')
+ *   Params::post('foo', 'default')
+ *
+ * An instance of this class is created at the top of every template and set
+ * to $params
+ */
+class ParamsProxyStub
+{
+    public function __get($type)
+    {
+        if (! property_exists($this, $type)) {
+            $this->type = new ParamsProxy($type);
+        }
+        return $this->type;
+    }
+
+    public function __call($name, $args)
+    {
+        $this->$name->call($args);
+    }
+}
+
+class ParamsProxy
+{
+    private $call;
+
+    public function __construct($type)
+    {
+        $this->call = array('Params', $type);
+        if (! is_callable($this->call)) {
+            throw new BadMethodCallException(
+                "No such method Params::$type"
+            );
+        }
+    }
+
+    public function call($args)
+    {
+        return call_user_func_array($this->call, $args);
+    }
+
+    public function __get($name)
+    {
+        return call_user_func($this->call, $name);
     }
 }
 
