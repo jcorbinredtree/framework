@@ -372,21 +372,14 @@ abstract class Component extends ActionProvider
      */
     public function render()
     {
-        switch ($this->stage) {
-            default:
-            case Stage::VIEW:
-                Application::performAction($this, $this->action, $this->stage);
-                break;
-            case Stage::VALIDATE:
-                if (!Application::call($this, $this->action, Stage::VALIDATE)) {
-                    Application::performAction($this, $this->action, Stage::VIEW);
-                    break;
-                }
-            case Stage::PERFORM:
-                if (!Application::call($this, $this->action, Stage::PERFORM)) {
-                    Application::performAction($this, $this->action, Stage::VIEW);
-                }
-                break;
+        // TODO there used to be a caching mechanism here
+        // @see Cacher::useCache, Cacher::writeCache
+
+        if (! $this->perform($this->action, $this->stage) && (
+            $this->stage == Stage::PERFORM ||
+            $this->stage == Stage::VALIDATE
+        )) {
+            $this->perform($this->action, Stage::VIEW);
         }
 
         $page = Site::getPage();
