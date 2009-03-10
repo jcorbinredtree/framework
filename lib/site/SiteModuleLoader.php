@@ -291,7 +291,7 @@ class SiteModuleLoader
             throw new InvalidArgumentException('not a SiteModule or string');
         }
         if (! class_exists($module)) {
-            throw new InvalidArgumentException("No such class $module");
+            return false;
         }
         if (! is_subclass_of($module, 'SiteModule')) {
             throw new InvalidArgumentException(

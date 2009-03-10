@@ -58,26 +58,7 @@ abstract class SiteModule extends CallbackManager
             }
             $c = $c->getParentClass();
         }
-        $r = array();
-        foreach ($a as $c) {
-            SiteModuleLoader::loadModule($c);
-            $gotit = false;
-            for ($i=0; $i<count($r); $i++) {
-                $in =& $r[$i];
-                if (is_subclass_of($in, $c)) {       // superceded
-                    $gotit = true;
-                    break;
-                } elseif (is_subclass_of($c, $in)) { // supercedes
-                    $in = $c;
-                    $gotit = true;
-                    break;
-                }
-            }
-            if (! $gotit) {
-                array_push($r, $c);
-            }
-        }
-        return $r;
+        return $a;
     }
 
     protected $site;
@@ -154,6 +135,27 @@ abstract class SiteModule extends CallbackManager
             $class, 'OptionalModules', $this->optional
         );
 
+        $r = array();
+        foreach ($this->required as $c) {
+            SiteModuleLoader::loadModule($c);
+            $gotit = false;
+            for ($i=0; $i<count($r); $i++) {
+                $in =& $r[$i];
+                if (is_subclass_of($in, $c)) {       // superceded
+                    $gotit = true;
+                    break;
+                } elseif (is_subclass_of($c, $in)) { // supercedes
+                    $in = $c;
+                    $gotit = true;
+                    break;
+                }
+            }
+            if (! $gotit) {
+                array_push($r, $c);
+            }
+        }
+        $this->required = $r;
+
         foreach ($this->required as $req) {
             if (! $this->site->modules->has($req)) {
                 $reqclass = new ReflectionClass($req);
@@ -178,7 +180,7 @@ abstract class SiteModule extends CallbackManager
     public function initialize()
     {
         foreach ($this->optional as $opt) {
-            $this->hasOptional[$opt] = $this->Sitsite->modules->has($req);
+            $this->hasOptional[$opt] = $this->site->modules->has($opt);
         }
     }
 }
