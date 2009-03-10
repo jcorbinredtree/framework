@@ -57,7 +57,6 @@ class SiteWebHandler extends SiteHandler
 
     public function startRequest()
     {
-        Main::restoreRequest(); // Restore any previously saved requests
         Main::setLanguage();
     }
 }

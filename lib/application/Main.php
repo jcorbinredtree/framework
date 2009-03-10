@@ -18,28 +18,6 @@ require_once 'lib/i18n/I18N.php';
 class Main
 {
     /**
-     * Restores a previously saved request
-     *
-     * @return void
-     */
-    public static function restoreRequest()
-    {
-        if ($request = Application::popSavedRequest()) {
-            global $current;
-
-            if (Site::Site()->isDebugMode()) {
-                Site::getLog()->debug("restoring saved request: " . print_r($request, true));
-            }
-
-            $_GET = $request->get;
-            $_POST = $request->post;
-            $_REQUEST = $request->request;
-
-            $current->component = $request->component;
-        }
-    }
-
-    /**
      * Set the language
      *
      * @return void

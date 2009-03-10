@@ -56,64 +56,6 @@ class Application
     }
 
     /**
-     * TODO modularize request saving if it seems to have any use going forward
-     */
-    public static $RequestSaveKey = '_sr';
-
-    /**
-     * Saves the current request into the session. A new class
-     * is created with the following properties:
-     *     stage (int)
-     *     action (string)
-     *     component (string)
-     *     get (array)
-     *     post (array)
-     *     request (array)
-     *
-     * @static
-     * @access public
-     * @return void
-     */
-    static public function saveRequest()
-    {
-        global $current;
-
-        $obj = new stdClass();
-        $obj->get = $_GET;
-        $obj->post = $_POST;
-        $obj->request = $_REQUEST;
-        $obj->component = $current->component;
-
-        Site::getLog()->info("saving request");
-
-        $_SESSION[self::$RequestSaveKey] = serialize($obj);
-    }
-
-    /**
-     * Gets the saved request out of the session, and removes it. Upon
-     * success, a structure with the following properties is returned:
-     *     action (string)
-     *     stage (int)
-     *     component (string)
-     *     get (array)
-     *     post (array)
-     *     request (array)
-     *
-     * @static
-     * @access public
-     * @return object structure upon success; null otherwise
-     */
-    static public function popSavedRequest()
-    {
-        $request = Session::get(self::$RequestSaveKey);
-        if (isset($request)) {
-            Session::set(self::$RequestSaveKey, null);
-            $request =  unserialize($request);
-        }
-        return $request;
-    }
-
-    /**
      * Calls the specified action
      *
      * @static
