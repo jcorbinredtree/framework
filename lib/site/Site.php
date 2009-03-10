@@ -478,6 +478,7 @@ abstract class Site extends CallbackManager
     {
         $args = array_slice(func_get_args(), 1);
         try {
+            CurrentPath::set(Loader::$Base);
             $url = $this->parseUrl(Params::server('REQUEST_URI'));
 
             @ob_start();
