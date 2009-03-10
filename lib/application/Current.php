@@ -66,15 +66,6 @@ class Current
     public $path = null;
 
     /**
-     * Determine whether or not the request is secure
-     *
-     * @since 1.4
-     * @access private
-     * @var boolean
-     */
-    private $secure = false;
-
-    /**
      * Holds the current warning messages to print to
      * the user
      *
@@ -101,35 +92,6 @@ class Current
     public function __construct()
     {
         $this->path = new CurrentPath(Loader::$Base);
-    }
-
-    /**
-     * Sets whether this is a secure (https) request.
-     *
-     * @since 1.4
-     * @access public
-     * @param boolean the value to set
-     * @return void
-     */
-    public function setSecureRequest($val=true)
-    {
-        $this->secure = $val;
-    }
-
-    /**
-     * Returns true if this is a secure request. Note
-     * that this is only a value, and does not actually
-     * determine if this is actually a secure request,
-     * but it is generally believed to coincide with
-     * reality.
-     *
-     * @since 1.4
-     * @access public
-     * @return boolean true if this is a secure request
-     */
-    public function isSecureRequest()
-    {
-        return $this->secure;
     }
 
     /**

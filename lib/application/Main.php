@@ -18,23 +18,6 @@ require_once 'lib/i18n/I18N.php';
 class Main
 {
     /**
-     * Requires the -secure requests be secured via https by forwarding the request
-     * to the https equivalent
-     *
-     * @return void
-     */
-    public static function secureRequest()
-    {
-        global $current;
-
-        if (($current->isSecureRequest()) && (!Params::server('HTTPS'))) {
-            $uri = $current->getCurrentRequest(array('-textalize' => true));
-
-            Application::Forward($uri);
-        }
-    }
-
-    /**
      * Restores a previously saved request
      *
      * @return void

@@ -48,10 +48,7 @@ class SiteWebHandler extends SiteHandler
             ' <=='
         );
 
-        // TODO do secure checking right
-        global $current;
-        $current->setSecureRequest(Params::request('_se'));
-        $this->site->addCallback('onAccessCheck', array('Main', 'secureRequest'));
+        // TODO implement secure checking
 
         $this->site->addCallback('onRequestStart', array($this, 'startRequest'), true);
 
