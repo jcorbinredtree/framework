@@ -17,12 +17,26 @@
   </ul>
 </core:if>
 <h3>Trace:</h3>
-<ul>
-  <li>${=exception.getFile()} (${=exception.getLine()})</li>
+<ul>@{="\n"}
   <core:forEach list="${exception.getTrace()}" var="frame">
-    <core:if test="@{array_key_exists('file', ${frame})}">
-      <li>${=frame['file']} (${=frame['line']})</li>
-    </core:if>
+    <li><?whitespace trim ?>
+      <core:if test="@{array_key_exists('file', ${frame})}">
+        <core:out format="sprintf:%s(%s)"
+          value="${frame['file']}, ${frame['line']}" />
+      <core:else />
+        [internal function]
+      </core:if>:@{=' '}
+
+      <core:if test="@{array_key_exists('class', ${frame})}">
+        ${=frame['class']}
+        ${=frame['type']}
+      </core:if>
+      ${=frame['function']}(
+      <core:forEach list="${frame['args']}" var="arg">
+        <core:out value="${arg}" format="repr" />
+        <core:if test="@{! ${loop.isLast()}}">@{=', '}</core:if>
+      </core:forEach>
+    )<?whitespace collapse ?></li>@{="\n"}
   </core:forEach>
 </ul>
 
