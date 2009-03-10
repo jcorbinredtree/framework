@@ -25,7 +25,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/site/Session.php';
 require_once 'lib/site/SiteContentPageProvider.php';
 
 /**
@@ -36,9 +35,6 @@ class SiteWebHandler extends SiteHandler
     public function initialize()
     {
         parent::initialize();
-
-        Session::start($this->site);
-        Session::check($this->site);
 
         $this->site->log->info(
             "==> Framework v".Loader::$FrameworkVersion.

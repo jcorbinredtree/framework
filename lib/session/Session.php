@@ -13,54 +13,62 @@
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  */
 
-class Session
+class Session extends SiteModule
 {
-    public static $TimeKey = '__session_start_time';
+    /**
+     * What key to store the time the session was started in, can be overidden
+     * by [session.timeKey]
+     */
+    protected $timeKey = '__session_start_time';
 
-    private function __construct()
+    public function initialize()
     {
-    }
-
-    public static function configure(Site $site)
-    {
-        $lifetime = $site->config->get('session.expire', 0);
-        $path = $site->config->get('session.path', $site->url);
+        $lifetime = $this->site->config->get('session.expire', 0);
+        $path = $this->site->config->get('session.path', $this->site->url);
 
         if ($path[strlen($path)-1] != '/') {
             $path .= '/';
         }
 
         session_set_cookie_params($lifetime, $path);
+
+        $this->site->addCallback('onPostConfig', array($this, 'onPostConfig'));
+        $this->site->addCallback('onInitialize', array($this, 'start'));
+        $this->site->addCallback('onAccessCheck', array($this, 'check'));
     }
 
-    public static function start(Site $site)
+    public function onPostConfig()
     {
-        self::configure($site);
+        $this->timeKey = $this->site->config->get('session.timeKey', $this->timeKey);
+    }
+
+    public function start()
+    {
         $r = session_start();
-        if (! self::has(self::$TimeKey)) {
-            self::set(self::$TimeKey, time());
+        if (! $this->has($this->timeKey)) {
+            $this->set($this->timeKey, time());
         }
 
-        $site->dispatchCallback('onSessionStart');
+        $this->site->dispatchCallback('onSessionStart');
 
         return $r;
     }
 
-    public static function check(Site $site)
+    public function check()
     {
-        $lifetime = $site->config->get('session.expire', 0);
+        $lifetime = $this->site->config->get('session.expire', 0);
         if (
             $lifetime > 0 &&
-            time() - self::get(self::$TimeKey) >= $lifetime
+            time() - $this->get($this->timeKey) >= $lifetime
         ) {
-            self::end($site);
-            self::start($site);
+            $this->end($this->site);
+            $this->start($this->site);
         }
     }
 
-    public static function end(Site $site)
+    public function end()
     {
-        $site->dispatchCallback('onSessionEnd');
+        $this->site->dispatchCallback('onSessionEnd');
         $sname = session_name();
         if (array_key_exists($sname, $_COOKIE) && isset($_COOKIE[$sname])) {
             setcookie($sname, '', time()-42000, '/');
@@ -69,7 +77,7 @@ class Session
         return session_destroy();
     }
 
-    public static function set($key, $data)
+    public function set($key, $data)
     {
         if (isset($data)) {
             $_SESSION[$key] = $data;
@@ -78,7 +86,7 @@ class Session
         }
     }
 
-    public static function get($key, $default=null)
+    public function get($key, $default=null)
     {
         if (array_key_exists($key, $_SESSION) && isset($_SESSION[$key])) {
             return $_SESSION[$key];
@@ -87,7 +95,7 @@ class Session
         }
     }
 
-    public static function has($key)
+    public function has($key)
     {
         return array_key_exists($key, $_SESSION);
     }
