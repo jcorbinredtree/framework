@@ -171,6 +171,7 @@ class TemplatePageHandler extends PHPSTLNSHandler
             "  throw new RuntimeException('Can only add html assets to an html page');\n".
             '} ?>'
         );
+        $assets = array();
         foreach ($element->childNodes as $n) {
             if ($n->nodeType == XML_ELEMENT_NODE) {
                 $href = $this->requiredAttr($n, 'href', false);
@@ -179,66 +180,64 @@ class TemplatePageHandler extends PHPSTLNSHandler
                     $href = (string) $current->path->url->down($href);
                     $href = $this->quote($href);
                 }
+                $href = $this->quote($href);
                 switch ($n->tagName) {
                 case 'script':
+                    $asset = array('HTMLPageScript', $href);
                     $type = $this->getAttr($n, 'type');
-                    $this->compiler->write(
-                        '<?php $page->addAsset(new HTMLPageScript('.
-                        $href.
-                        (isset($type) ? ", $type" : '').
-                        ')); ?>'
-                    );
+                    if (isset($type)) {
+                        array_push($asset, $type);
+                    }
                     break;
                 case 'stylesheet':
                     $alt = $this->getBooleanAttr($n, 'alternate');
                     $title = $this->getAttr($n, 'title');
                     $media = $this->getAttr($n, 'media');
 
-                    $args = array($href);
-                    array_push($args, $alt ? 'true' : 'false');
+                    $asset = array('HTMLPageStylesheet', $href);
+                    array_push($asset, $alt ? 'true' : 'false');
                     if (isset($title)) {
-                        array_push($args, $title);
+                        array_push($asset, $title);
                     } elseif (isset($media)) {
-                        array_push($args, 'null');
+                        array_push($asset, 'null');
                     }
                     if (isset($media)) {
-                        array_push($args, $media);
+                        array_push($asset, $media);
                     }
-                    $this->compiler->write(
-                        '<?php $page->addAsset(new HTMLPageStylesheet('.
-                        implode(', ', $args).')); ?>'
-                    );
                     break;
                 case 'link':
                     $rel = $this->requiredAttr($n, 'rel');
                     $type = $this->requiredAttr($n, 'type');
                     $title = $this->getAttr($n, 'title');
-                    $this->compiler->write(
-                        '<?php $page->addAsset(new HTMLPageLinkedResource('.
-                        implode(', ', array(
-                            $href, $type, $rel
-                        )).
-                        (isset($title) ? ", $title" : '').
-                        ')); ?>'
-                    );
+                    $asset = array('HTMLPageLinkedResource', $href, $type, $rel);
+                    if (isset($title)) {
+                        array_push($asset, $title);
+                    }
                     break;
                 case 'alternate':
                     $type = $this->requiredAttr($n, 'type');
                     $title = $this->getAttr($n, 'title');
-                    $this->compiler->write(
-                        '<?php $page->addAsset(new HTMLPageAlternateLink('.
-                        implode(', ', array($href, $type
-                        )).
-                        (isset($title) ? ", $title" : '').
-                        ')); ?>'
-                    );
+                    $asset = array('HTMLPageAlternateLink', $href, $type);
+                    if (isset($title)) {
+                        array_push($asset, $title);
+                    }
                     break;
                 default:
                     throw new RuntimeException(
                         'Unknown asset element '.$n->tagName
                     );
                 }
+                array_push($assets, sprintf('new %s(%s)',
+                    array_shift($asset), implode(', ', $asset)
+                ));
             }
+        }
+        if (count($assets)) {
+            $buffer = '';
+            foreach ($assets as $asset) {
+                $buffer .= "\$page->addAsset($asset);\n";
+            }
+            $this->compiler->write("<?php\n$buffer?>");
         }
     }
 }

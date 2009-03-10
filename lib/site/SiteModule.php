@@ -35,14 +35,6 @@ require_once 'lib/util/CallbackManager.php';
  */
 abstract class SiteModule extends CallbackManager
 {
-    protected $site;
-
-    private $required = array();
-    private $optional = array();
-    private $hasOptional = array();
-
-    protected $moduleDir;
-
     /**
      * Priavte utility, go away
      */
@@ -87,6 +79,14 @@ abstract class SiteModule extends CallbackManager
         }
         return $r;
     }
+
+    protected $site;
+
+    private $required = array();
+    private $optional = array();
+    private $hasOptional = array();
+
+    protected $moduleDir;
 
     /**
      * Returns the list of required module names

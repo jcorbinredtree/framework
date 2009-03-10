@@ -109,7 +109,7 @@ class CurrentPath
             $this->url = $url;
         } else {
             if (! isset($url)) {
-                $url = (string) $path;
+                $url = (string) $this->path;
             }
 
             $bl = strlen(Loader::$Base);

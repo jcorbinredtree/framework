@@ -45,7 +45,7 @@ class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
      * @param class string the class
      * @param string $db the database that this meta is valid in
      *
-     * @return DatabaseObject_meta
+     * @return DatabaseObjectMeta
      */
     static public function forClass($class, $db=null)
     {

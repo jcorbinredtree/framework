@@ -47,15 +47,16 @@ class FrameworkCompiler extends PHPSTLCompiler
         parent::writeTemplateHeader(array(
             'Framework Version' => Loader::$FrameworkVersion
         ));
+        $this->write("<?php global \$current; ?>");
+        $tsys = Site::getModule('TemplateSystem');
         $this->write('<?php '.
-            "global \$current;\n".
             "if (isset(\$this->page)) {\n".
             "  \$page = \$this->page;\n".
             "} else {\n".
             "  \$page = Site::getPage();\n".
             "}\n".
-            "\$params = ".__CLASS__."::getParamsProxy();\n".
         ' ?>');
+        $this->write("<?php \$params = ".__CLASS__."::getParamsProxy(); ?>");
     }
 }
 
