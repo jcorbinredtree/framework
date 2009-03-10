@@ -25,7 +25,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/application/Application.php';
 require_once 'lib/site/Session.php';
 require_once 'lib/site/SiteContentPageProvider.php';
 

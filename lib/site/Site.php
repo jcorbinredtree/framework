@@ -38,10 +38,6 @@ require_once 'lib/site/SitePageProvider.php';
 require_once 'lib/site/ExceptionPage.php';
 require_once 'lib/site/NotFoundPage.php';
 
-// TODO this is just here for the autoloading, which needs to be split into its
-// own independant class
-require_once 'lib/application/Application.php';
-
 /**
  * A site has:
  *   pages

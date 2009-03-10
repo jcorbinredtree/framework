@@ -25,8 +25,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/application/Application.php';
-
 class SiteCliHandler extends SiteHandler
 {
     /**

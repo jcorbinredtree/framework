@@ -25,7 +25,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/application/Application.php';
 require_once 'lib/site/SiteCliHandler.php';
 
 class SiteTestsHandler extends SiteCliHandler
