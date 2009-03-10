@@ -89,6 +89,14 @@ abstract class SiteModule extends CallbackManager
     protected $moduleDir;
 
     /**
+     * @return Site
+     */
+    public function getSite()
+    {
+        return $this->site;
+    }
+
+    /**
      * Returns the list of required module names
      *
      * @return array
