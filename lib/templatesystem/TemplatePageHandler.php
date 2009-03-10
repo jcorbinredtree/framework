@@ -71,59 +71,34 @@ class TemplatePageHandler extends PHPSTLNSHandler
         }
     }
 
-    /**
-     * Outputs the list of current warnings if any, then clears the list of
-     * current warnings.
-     *
-     * Attributes:
-     *   class string optional, defaults to 'warnings-container'
-     *
-     * Outputs something like:
-     *   <ul class="$class"><li>...</li></ul>
-     *
-     *
-     * @param DOMElement element the tag such as <page:warnings />
-     * @return void
-     */
-    public function handleElementWarnings(DOMElement $element)
+    protected function handleElement(DOMElement $element)
     {
-        $contClass = $this->getUnquotedAttr($element, 'class', 'warnings-container');
-
-        $this->compiler->write('<?php if (count($current->getWarnings())) { ?>');
-        $this->compiler->write('<ul class="'.$contClass.'">');
-        $this->compiler->write('<?php foreach ($current->getWarnings() as $w) { ?>');
-        $this->compiler->write('<li><?php echo $w ?></li>');
-        $this->compiler->write('<?php } ?>');
-        $this->compiler->write('</ul>');
-        $this->compiler->write('<?php $current->clearWarnings(); ?>');
-        $this->compiler->write('<?php } ?>');
+        switch ($element->localName) {
+        case 'notices':
+        case 'warnings':
+            $this->getMessList($element, $element->localName);
+            break;
+        default:
+            parent::handleElement($element);
+            break;
+        }
     }
 
-    /**
-     * Outputs the list of current notices if any, then clears the list of
-     * current notices.
-     *
-     * Attributes:
-     *   class string optional, defaults to 'notices-container'
-     *
-     * Outputs something like:
-     *   <ul class="$class"><li>...</li></ul>
-     *
-     * @param DOMElement element the tag such as <page:notices />
-     * @return void
-     */
-    public function handleElementNotices(DOMElement $element)
+    private function getMessList(DOMElement $element, $type)
     {
-        $contClass = $this->getUnquotedAttr($element, 'class', 'notices-container');
 
-        $this->compiler->write('<?php if (count($current->getNotices())) { ?>');
-        $this->compiler->write('<ul class="'.$contClass.'">');
-        $this->compiler->write('<?php foreach ($current->getNotices() as $w) { ?>');
-        $this->compiler->write('<li><?php echo $w ?></li>');
-        $this->compiler->write('<?php } ?>');
-        $this->compiler->write('</ul>');
-        $this->compiler->write('<?php $current->clearNotices(); ?>');
-        $this->compiler->write('<?php } ?>');
+        $get = 'get'.ucfirst($type);
+        $clear = 'clear'.ucfirst($type);
+        $contClass = $this->getUnquotedAttr($element, 'class', "$type-container");
+        $this->compiler->write("<?php\n".
+            "if (count(\$page->$get())) { \n".
+            "  ?><ul class=\"$contClass\"><?php\n".
+            "  foreach (\$page->$get() as \$w) {\n".
+            "    ?><li><?php echo \$w ?></li><?php\n".
+            "  } \n?></ul><?php\n".
+            "  \$page->$clear();\n".
+            "}\n".
+        "?>");
     }
 
     /**

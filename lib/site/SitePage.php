@@ -448,6 +448,36 @@ class SitePage extends CallbackManager
         }
     }
 
+    public function addWarning($warning)
+    {
+        $this->addData('warnings', $warning);
+    }
+
+    public function addNotice($notice)
+    {
+        $this->addData('notices', $notice);
+    }
+
+    public function getWarnings()
+    {
+        return $this->getData('warnings', array());
+    }
+
+    public function getNotices()
+    {
+        return $this->getData('notices', array());
+    }
+
+    public function clearWarnings()
+    {
+        $this->cleartData('warnings');
+    }
+
+    public function clearNotices()
+    {
+        $this->cleartData('notices');
+    }
+
     /**
      * Renders this page
      *

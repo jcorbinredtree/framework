@@ -66,24 +66,6 @@ class Current
     public $path = null;
 
     /**
-     * Holds the current warning messages to print to
-     * the user
-     *
-     * @access private
-     * @var array
-     */
-    private $warnings = array();
-
-    /**
-     * Holds the current notice messages to print to
-     * the user
-     *
-     * @access private
-     * @var array
-     */
-    private $notices = array();
-
-    /**
      * Constructor
      *
      * @access public
@@ -113,74 +95,6 @@ class Current
         return $this->component->getActionURI(
             $this->action->id, $options, $this->stage
         );
-    }
-
-    /**
-     * Adds a warning to the system. This will be printed to the
-     * browser.
-     *
-     * @param string $warning the warning
-     * @return void
-     */
-    public function addWarning($warning)
-    {
-        array_push($this->warnings, $warning);
-    }
-
-    /**
-     * Get the current warnings as an array
-     *
-     * @access public
-     * @return array the warnings
-     */
-    public function getWarnings()
-    {
-        return $this->warnings;
-    }
-
-    /**
-     * Adds a notice to the system. This will be printed to the
-     * browser.
-     *
-     * @param string the notice
-     * @return void
-     */
-    public function addNotice($notice)
-    {
-        array_push($this->notices, $notice);
-    }
-
-    /**
-     * Clears the current warnings
-     *
-     * @since v1.5
-     * @return void
-     */
-    public function clearWarnings()
-    {
-        $this->warnings = array();
-    }
-
-    /**
-     * Clears the current notices
-     *
-     * @since v1.5
-     * @return void
-     */
-    public function clearNotices()
-    {
-        $this->notices = array();
-    }
-
-    /**
-     * Get the current notices as an array
-     *
-     * @access public
-     * @return array the notices
-     */
-    public function getNotices()
-    {
-        return $this->notices;
     }
 }
 
