@@ -47,7 +47,6 @@ class FrameworkCompiler extends PHPSTLCompiler
         parent::writeTemplateHeader(array(
             'Framework Version' => Loader::$FrameworkVersion
         ));
-        $this->write("<?php global \$current; ?>");
         $tsys = Site::getModule('TemplateSystem');
         $this->write('<?php '.
             "if (isset(\$this->page)) {\n".

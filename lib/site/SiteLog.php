@@ -303,12 +303,7 @@ class SiteLog
             $mess .= ", use $new instead";
         }
 
-        global $current;
-        if (isset($current)) {
-            $current->addNotice($mess);
-        } else {
-            trigger_error($mess);
-        }
+        trigger_error($mess);
     }
 
     private function cleanMess(&$message)

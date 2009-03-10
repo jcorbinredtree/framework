@@ -141,8 +141,8 @@ class Params
     }
 
     /**
-     * Validates the given keys, adding errors to $current as required. The keys used
-     * may be in dotted (or colon) format, indicating an object property on the given object.
+     * Validates the given keys. The keys used may be in dotted (or colon)
+     * format, indicating an object property on the given object.
      *
      * @param mixed $mixed an object or associtive array on which to validate
      * @param array $validation an associtive array of key/warning pairs.
@@ -154,8 +154,6 @@ class Params
      */
     static public function validate(&$mixed, $validation)
     {
-        global $current;
-
         $passed = true;
         $array = (is_object($mixed) ? get_object_vars($mixed) : $mixed);
 
@@ -184,7 +182,7 @@ class Params
                 switch ($type) {
                     case Params::VALIDATE_EMPTY:
                         if (!trim($value)) {
-                            $current->addWarning($message, $key);
+                            Site::getPage()->addWarning($message, $key);
                             $passed = false;
                             continue;
                         }
@@ -192,7 +190,7 @@ class Params
                         break;
                     case Params::VALIDATE_EMPTY_STRICT:
                         if (null === $value) {
-                            $current->addWarning($message, $key);
+                            Site::getPage()->addWarning($message, $key);
                             $passed = false;
                             continue;
                         }
@@ -200,7 +198,7 @@ class Params
                         break;
                     case Params::VALIDATE_NUMERIC:
                         if ($value && (!is_numeric($value))) {
-                            $current->addWarning($message, $key);
+                            Site::getPage()->addWarning($message, $key);
                             $passed = false;
                             continue;
                         }
@@ -208,7 +206,7 @@ class Params
                         break;
                     case Params::VALIDATE_EMAIL:
                         if ($value && (!Email::IsValid($value))) {
-                            $current->addWarning($message, $key);
+                            Site::getPage()->addWarning($message, $key);
                             $passed = false;
                             continue;
                         }
@@ -216,7 +214,7 @@ class Params
                         break;
                     case Params::VALIDATE_EMAIL_BLACKLIST:
                         if ($value && Email::IsValid($value) && (Email::IsBlackListed($value))) {
-                            $current->addWarning($message, $key);
+                            Site::getPage()->addWarning($message, $key);
                             $passed = false;
                             continue;
                         }

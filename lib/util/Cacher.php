@@ -254,8 +254,6 @@ class Cacher
      */
     private static function getCacheDirectory(ICacheable &$obj)
     {
-        global $current;
-
         $params = get_class($obj);
         $request = array_merge($_GET, $_POST);
 
@@ -264,7 +262,8 @@ class Cacher
             $params .= (is_array($value) ? implode(',', $value) : $value);
         }
 
-        // TODO $params .= ($current->user ? $current->user->id : -1);
+        // TODO allow other parts of the system to params, used by a Login
+        // module to make cache specific per user here
 
         $site = Site::Site();
         $cacheDir = $site->layout->getCacheArea('objects');

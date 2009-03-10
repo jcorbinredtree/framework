@@ -25,8 +25,6 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/application/Current.php';
-
 /**
  * Abstract base class for site request handlers
  * Handler stages:
@@ -74,9 +72,6 @@ abstract class SiteHandler
      */
     public function initialize()
     {
-        // TODO SitePage will supercede this eventually
-        global $current;
-        $current = new Current();
     }
 
     /**
@@ -86,8 +81,6 @@ abstract class SiteHandler
      */
     public function cleanup()
     {
-        global $current;
-        unset($current);
     }
 
     /**

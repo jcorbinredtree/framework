@@ -33,10 +33,7 @@ class Template extends PHPSTLTemplate
         parent::__construct($provider, $resource, $identifier);
 
         // Stash away the current path for when we render
-        global $current;
-        if (isset($current)) {
-            $this->currentPath = $current->path;
-        }
+        $this->currentPath = CurrentPath::get();
     }
 
     /**

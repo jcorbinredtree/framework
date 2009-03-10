@@ -54,8 +54,6 @@ class PayPalPayment extends Payment {
    * @NOTICE: this is hardcoded to use US Currency
    */
   public function purchase() {
-    global $current;
-
     // Note, we used to add extensions/ to include_path here, that should either
     // be standardized in Loader or we need to load more files here to make
     // up for whatever the PayPal code would otherwise try to load
@@ -139,7 +137,7 @@ class PayPalPayment extends Payment {
     $response = $caller->DoDirectPayment( $dp_request );
 
     if ( PayPal::isError( $response ) ) {
-      $current->addWarning( $response->message );
+      Site::getPage()->addWarning($response->message);
       return false;
     }
 
@@ -149,11 +147,11 @@ class PayPalPayment extends Payment {
 
     if ( is_array( $response->Errors ) ) {
       foreach ( $response->Errors as $error ) {
-        $current->addWarning( $error->LongMessage );
-	 	  }
+        Site::getPage()->addWarning($error->LongMessage);
+      }
     }
     else {
-      $current->addWarning( $response->Errors->LongMessage );
+    Site::getPage()->addWarning($response->Errors->LongMessage);
     }
 
     return false;

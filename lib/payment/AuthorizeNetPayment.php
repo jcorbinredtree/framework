@@ -60,8 +60,6 @@ class AuthorizeNetPayment extends Payment
      */
     public function purchase()
     {
-        global $current;
-
         if($this->live){
             $auth_net_url                = "https://secure.authorize.net/gateway/transact.dll";
         }
@@ -128,7 +126,7 @@ class AuthorizeNetPayment extends Payment
         return true;
     }
 
-    $current->addWarning($resp[3]);
+    Site::getPage()->addWarning($resp[3]);
     return false;
 
     }

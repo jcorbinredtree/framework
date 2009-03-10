@@ -25,7 +25,7 @@
  */
 
 /**
- * Loads templates inside of $current->path
+ * Loads templates inside of CurrentPath::get
  *
  * Only handles template resources beginning in "view/"
  */
@@ -44,8 +44,7 @@ class CurrentTemplateProvider extends PHPSTLFileBackedProvider
             return null;
         }
 
-        global $current;
-        $path = realpath("$current->path/$resource");
+        $path = realpath(CurrentPath::get().'/'.$resource);
         if ($path == false || ! is_file($path)) {
             return null;
         } else {
@@ -55,9 +54,8 @@ class CurrentTemplateProvider extends PHPSTLFileBackedProvider
 
     protected function createTemplate($resource, $data, $identifier=null)
     {
-        global $current;
         return parent::createTemplate($resource, $data,
-            "file://$current->path/$resource"
+            'file://'.CurrentPath::get().'/'.$resource
         );
     }
 

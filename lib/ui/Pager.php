@@ -263,8 +263,6 @@ class Pager extends SessionObject
      */
     protected function getPageLink($page, $start)
     {
-        global $current;
-
         $args = $this->args;
         if (is_object($args)) {
             $t = get_object_vars($args);
@@ -281,7 +279,9 @@ class Pager extends SessionObject
         if (isset($this->component)) {
             return $this->component->getActionURI($action, $args, Stage::VIEW);
         } else {
-            return $current->component->getActionURI(null, $args, Stage::VIEW);
+            // TODO some kind of a uri-generation callback set on Pager
+            // instantiation is needed
+            throw new RuntimeException('unimplemented');
         }
      }
 

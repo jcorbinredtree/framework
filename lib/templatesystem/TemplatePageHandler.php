@@ -150,10 +150,13 @@ class TemplatePageHandler extends PHPSTLNSHandler
         foreach ($element->childNodes as $n) {
             if ($n->nodeType == XML_ELEMENT_NODE) {
                 $href = $this->requiredAttr($n, 'href', false);
-                if ($this->needsQuote($href) && ! preg_match('~^(?:\w+://|/)~', $href)) {
-                    global $current;
-                    $href = (string) $current->path->url->down($href);
-                    $href = $this->quote($href);
+                $path = CurrentPath::get();
+                if (
+                    isset($path) &&
+                    $this->needsQuote($href) &&
+                    ! preg_match('~^(?:\w+://|/)~', $href)
+                ) {
+                    $href = $this->quote((string) $path->url->down($href));
                 }
                 $href = $this->quote($href);
                 switch ($n->tagName) {

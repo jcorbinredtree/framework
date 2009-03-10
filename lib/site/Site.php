@@ -26,6 +26,7 @@
  */
 
 require_once 'lib/util/CallbackManager.php';
+require_once 'lib/util/CurrentPath.php';
 require_once 'lib/util/Params.php';
 require_once 'lib/site/SiteConfig.php';
 require_once 'lib/site/SiteLayout.php';

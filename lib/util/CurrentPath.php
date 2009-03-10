@@ -17,7 +17,7 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     Application
+ * @category     Util
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2007 Red Tree Systems, LLC
  * @license      MPL 1.1
@@ -60,6 +60,13 @@ class CurrentPath
      */
     public $url=null;
 
+    private static $current=null;
+
+    public static function get()
+    {
+        return self::$current;
+    }
+
     /**
      * Sets the current->path. A relative or absolute path
      * may be used.
@@ -79,9 +86,8 @@ class CurrentPath
             }
         }
 
-        global $current;
-        $oldPath = $current->path;
-        $current->path = $path;
+        $oldPath = self::$current;
+        self::$current = $path;
         return $oldPath;
     }
 
