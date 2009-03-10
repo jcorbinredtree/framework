@@ -29,11 +29,6 @@ require_once dirname(__FILE__).'/DatabaseObjectAbstractMeta.php';
 class DatabaseObjectLinkMeta extends DatabaseObjectAbstractMeta
 {
     /**
-     * Static storage for meta objects
-     */
-    static private $ClassMeta = array();
-
-    /**
      * Static singlton manager
      *
      * Returns the meta object for a given DatabaseObjcetLink subclass
@@ -47,20 +42,7 @@ class DatabaseObjectLinkMeta extends DatabaseObjectAbstractMeta
     {
         assert(class_exists($class));
         assert(is_subclass_of($class, 'DatabaseObjectLink'));
-
-        if (! isset($db)) {
-            $database = Site::getModule('Database');
-            $db = $database->getSelected();
-        }
-        $key = $db.'/'.$class;
-        if (! array_key_exists($key, self::$ClassMeta)) {
-            $database = Site::getModule('Database');
-            if ($database->getSelected() != $db) {
-                $database->select($db);
-            }
-            self::$ClassMeta[$key] = new self($class);
-        }
-        return self::$ClassMeta[$key];
+        return self::metaForClass($class, __CLASS__, $db);
     }
 
     protected $queries = array(

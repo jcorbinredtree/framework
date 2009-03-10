@@ -26,6 +26,25 @@
 
 abstract class DatabaseObjectAbstractMeta
 {
+    static private $MetaCache = array();
+    final static protected function metaForClass($objectClass, $metaClass, $db=null)
+    {
+        $database = Site::getModule('Database');
+
+        if (! isset($db)) {
+            $db = $database->getSelected();
+        }
+
+        $key = $db.'/'.$objectClass;
+        if (! array_key_exists($key, self::$MetaCache)) {
+            if ($database->getSelected() != $db) {
+                $database->select($db);
+            }
+            self::$MetaCache[$key] = new $metaClass($objectClass);
+        }
+        return self::$MetaCache[$key];
+    }
+
     protected $class;
     protected $table;
 
