@@ -512,9 +512,17 @@ abstract class Site extends CallbackManager
                 $this->page->render();
                 @ob_end_flush();
             } catch (Exception $rex) {
-                // Looks like if we want something done right, we'll have to
-                // do it ourselves
-                $this->exceptionHandlerOfLastResort($rex, $ex);
+                header('Content-Type: text/html');
+                print
+                    "<html>\n".
+                    "  <head><title>Broken exception handler</title></head>\n".
+                    "  <body>\n".
+                    "    <h1>Broken exception handler:</h1>\n".
+                    "    <pre>$rex</pre>\n\n".
+                    "    <h1>Original exception:</h1>\n".
+                    "    <pre>$ex</pre>\n".
+                    "  </body>\n".
+                    "</html>\n";
             }
         }
         $this->timingReport();
@@ -595,49 +603,6 @@ abstract class Site extends CallbackManager
         if (! $page->hasLayout()) {
             $page->setLayout(self::$DefaultPageLayout);
         }
-    }
-
-    /**
-     * yes it's got a long name
-     * yes it's supposed to be a pain in the ass
-     * no you shouldn't touch it
-     *
-     * @param rex Exception recursive exception (what went really wrong)
-     * @param ex Exception oriiginal exception (what went wrong)
-     */
-    final private function exceptionHandlerOfLastResort($rex, $ex)
-    {
-        // The rat fell off the wheel so hard that even ExceptionPage failed
-        $l = array(
-            'Broken exception handler' => $rex,
-            'Original exception' => $ex
-        );
-        print
-            "<html><head>\n".
-            "  <title>Broken exception handler</title>\n".
-            "</head><body>\n\n";
-        foreach ($l as $title => $e) {
-            print "<p><h1>$title:</h1>\n";
-            print $e->getMessage()." at ".htmlentities($e->getFile().':'.$e->getLine())."<br />\n";
-            $i = 0;
-            print "Trace:<table cellpadding=\"0\" cellspacing=\"1\" border=\"0\">\n";
-            foreach ($e->getTrace() as $frame) {
-                $i++;
-                $what = '';
-                if (array_key_exists('class', $frame) && array_key_exists('type', $frame)) {
-                    $what .= $frame['class'].$frame['type'];
-                }
-                print "<tr><td>$i</td><td>".htmlentities($what.$frame['function'])."</td><td>";
-                if (array_key_exists('file', $frame) && array_key_exists('line', $frame)) {
-                    print htmlentities($frame['file']).':'.$frame['line'];
-                } else {
-                    print "-- Unknown --";
-                }
-                print "</td></tr>\n";
-            }
-            print "</table></p>\n\n";
-        }
-        print "</body></html>\n";
     }
 }
 
