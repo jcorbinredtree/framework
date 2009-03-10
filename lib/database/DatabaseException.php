@@ -46,22 +46,18 @@ class DatabaseException extends RuntimeException
      */
     private function errorLog(Database $db, $what, $why=null)
     {
-        $parts = array($what);
+        $mess = "Database::$what failed: $why";
 
-        array_push($parts, "failed: $why");
-
-        if ($db->time && isset($db->lastTimeDelta)) {
-            array_push($parts,
-                sprintf('time: %.4f seconds', $db->lastTimeDelta)
-            );
+        if ($db->isTiming()) {
+            $lt = $db->getLastTime();
+            if (isset($lt)) {
+                $mess .= ', '.sprintf('time: %.4f seconds', $lt);
+            }
         }
 
-        Site::getLog()->error(
-            # Usually looks something like:
-            #   Database::action(details), failed: it didn't work out, time: n.mmmm seconds
-            'Database::'.implode(', ', $parts),
-            4 # try to pin it on Database's consumer
-        );
+        # Usually looks something like:
+        #   Database::action(details), failed: it didn't work out, time: n.mmmm seconds
+        $db->getSite()->log->error($mess, 4);
     }
 }
 

@@ -112,6 +112,7 @@ class Database extends SiteModule
     {
         parent::initialize();
 
+        require_once "$this->moduleDir/DatabaseException.php";
         require_once "$this->moduleDir/DatabaseObject.php";
         require_once "$this->moduleDir/DatabaseObjectLink.php";
 
@@ -646,6 +647,16 @@ class Database extends SiteModule
 
     private $startTime = null;
     private $lastTimeDelta = null;
+
+    public function isTiming()
+    {
+        return $this->time;
+    }
+
+    public function getLastTime()
+    {
+        return $this->lastTimeDelta;
+    }
 
     /**
      * Starts timing if enabled and not already timing.
