@@ -114,34 +114,6 @@ class Application
     }
 
     /**
-     * Forward the user to another location. Note that this must happen
-     * before headers are sent. This method terminates the script.
-     *
-     * @static
-     * @access public
-     * @return void
-     */
-    static public function forward($uri=null)
-    {
-        $site = Site::Site();
-
-        // TODO this should go away, replaced by the location header provision
-        // in SitePageHeaders
-
-        if ($site->isTestMode()) {
-            return;
-        }
-
-        if (! $uri) {
-            $uri = $site->serverUrl.$site->url;
-        }
-
-        session_write_close();
-        header("Location: $uri");
-        exit(0);
-    }
-
-    /**
      * Calls the specified action
      *
      * @static

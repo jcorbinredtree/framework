@@ -120,9 +120,7 @@ abstract class Component extends ActionProvider
         $this->stage = Params::request(self::$StageKey, Stage::VIEW);
 
         if ((Params::server('HTTPS') != 'on') && $this->action->requiresSSL) {
-            Application::forward(
-                $current->getCurrentRequest(array('-secure'=>true))
-            );
+            // TODO implement secure checking
         }
     }
 
