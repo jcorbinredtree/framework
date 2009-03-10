@@ -427,12 +427,16 @@ class SitePage extends CallbackManager
      * @return mixed
      * @see addData, setData
      */
-    public function getData($name)
+    public function getData($name, $default=null)
     {
-        if (! array_key_exists($name, $this->data)) {
-            return null;
+        if (
+            array_key_exists($name, $this->data) &&
+            isset($this->data[$name])
+        ) {
+            return $this->data[$name];
+        } else {
+            return $default;
         }
-        return $this->data[$name];
     }
 
     /**
