@@ -34,6 +34,6 @@ class MySite extends Site
 {
     protected $mode = /* Site::MODE_TEST | */ Site::MODE_DEBUG;
 }
-Site::doRole('MySite', 'web');
+Site::set('MySite')->handle();
 
 ?>

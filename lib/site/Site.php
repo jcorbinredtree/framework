@@ -31,40 +31,22 @@ require_once 'lib/util/Params.php';
 require_once 'lib/site/SiteConfig.php';
 require_once 'lib/site/SiteLayout.php';
 require_once 'lib/site/SiteLog.php';
-require_once 'lib/site/SiteHandler.php';
 require_once 'lib/site/SiteModuleLoader.php';
-
-// TODO page module will clean this crap up
-require_once 'lib/site/SitePageProvider.php';
-require_once 'lib/site/ExceptionPage.php';
-require_once 'lib/site/NotFoundPage.php';
 
 /**
  * A site has:
- *   pages
- *   a configuration
- *   and more
- *
- * TODO
- *   someday a site will only have a configuration, modules after:
- *   page logic is pulled out into a SitePageSystem
+ *   configuration
+ *   modules
  *
  * Example usage in inedx.php:
  *   require_once('SITE/framework/Loader.php');
  *   class MySite extends Site { ... }
- *   Site::doRole('MySite', 'web');
+ *   Site::set('MySyte')->handle();
  *
  * @package Site
  */
 abstract class Site extends CallbackManager
 {
-    public static $DefaultPageLayout = 'default';
-
-    public static $Modules = array(
-        // TODO move this out into a requirement of forth-coming SitePageSystem
-        'TemplateSystem'
-    );
-
     /**
      * Static management
      */
@@ -96,35 +78,12 @@ abstract class Site extends CallbackManager
      * Sets the site class in play and instantiates $TheSite
      *
      * @param class string classname, subclass of Site
-     * @return void
+     * @return Site the site
      */
     final public static function set($class)
     {
         assert(is_subclass_of($class, 'Site'));
-        self::$TheSite = new $class();
-    }
-
-    /**
-     * Primary entry point, convenience function really
-     *
-     * Exapmle:
-     *   Site::doRole('MySite', 'some-handler', 'some', 'handler', 'args');
-     *
-     * Is equivalent to:
-     *   Site::set('MySite');
-     *   Site::Site()->handle('some-handler', 'some', 'handler', 'args');
-     *
-     * @param SiteClass string as in Site::set
-     * @param role string as in Site::handle
-     * @return void
-     * @see Site::set, Site::handle
-     */
-    final public static function doRole($SiteClass, $role)
-    {
-        self::set($SiteClass);
-        self::Site();
-        $args = array_slice(func_get_args(), 1);
-        call_user_func_array(array(self::$TheSite, 'handle'), $args);
+        return self::$TheSite = new $class();
     }
 
     /**
@@ -166,19 +125,6 @@ abstract class Site extends CallbackManager
         $site = self::Site();
         assert(isset($site->modules));
         return $site->modules->get($module);
-    }
-
-    /**
-     * Returns the current SitePage, convenience for Site::Site()->page
-     * @return SitePage
-     */
-    final public static function getPage()
-    {
-        $site = self::Site();
-        if (! isset($site->page)) {
-            throw new RuntimeException('no current site page');
-        }
-        return $site->page;
     }
 
     /**
@@ -241,14 +187,6 @@ abstract class Site extends CallbackManager
      * @var SiteConfig
      */
     public $config;
-
-    /**
-     * This member is meant to supercede the old $current global, it should
-     * embody all aspects of the current request/response context
-     *
-     * @var SitePage
-     */
-    public $page;
 
     /**
      * Absolute url for how the client got to the server, has no path
@@ -378,47 +316,11 @@ abstract class Site extends CallbackManager
     }
 
     /**
-     * Loads a site handler by role name
-     *   e.g., "role" resolves to "SiteRoleHandler"
-     *
-     * SiteRoleHandler must be a subclass of SiteHandler
-     *
-     * If the SiteRoleHandler class isn't already loaded, then trys to
-     * load "lib/site/SiteRoleHandler.php", failing that, an
-     * InvalidArgumentException is thrown
-     *
-     * @param role string required usually something like 'web', 'web-lite',
-     * etc; will be camelcased with respect to dashes or underscores
-     * @return SiteHandler the handler
-     * @see SiteHandler
-     */
-    public function loadHandler($role)
-    {
-        assert(is_string($role));
-
-        $class = 'Site'.implode('',
-            array_map('ucfirst', preg_split('/[-_]/', $role))
-        ).'Handler';
-        if (! class_exists($class)) {
-            ob_start();
-            include_once "lib/site/$class.php";
-            @ob_end_clean();
-        }
-        if (! class_exists($class)) {
-            throw new InvalidArgumentException("no such handler $role");
-        }
-
-        assert(is_subclass_of($class, 'SiteHandler'));
-
-        return new $class($this);
-    }
-
-    /**
      * Sites can override this if they need to do wild things with path
      * translation
      *
      * @param string $requrl the requested url, like $_SERVER['REQUEST_URI']
-     * @return string the url that should be resolved to a page
+     * @return string the url being served
      * @see handle
      */
     protected function parseUrl($requrl)
@@ -445,70 +347,64 @@ abstract class Site extends CallbackManager
     }
 
     /**
-     * Handles a site request for a given role by delegating to SiteRoleHandler
-     *
-     * Calls the handle method on the handler instance with any additional
-     * arguments passed after $role
-     *
      * Handling process:
-     *   Load Handler                            role => handler
-     *   handler->setArguments                   args -> handler
-     *   handler->initialize                     handler stage
-     *   dispatch: onHandlerInitialize           callback
-     *   Got a page?
-     *     yes: continue
-     *     no: page = new NotFoundPage
-     *   dispatch: onPageResolved                callback
-     *   dispatch: onAccessCheck                 callback
-     *   dispatch: onRequestStart                callback
-     *   handler->sendResponse                   handler stage
-     *   dispatch: onRequestSent                 callback
-     *   dispatch: onHandlerCleanup              callback
-     *   $handler->cleanup                       handler stage
+     *   dispatch: onParseUrl
+     *   dispatch: onAccessCheck
+     *   dispatch: onRequestStart
+     *   dispatch: onSendResponse
+     *   dispatch: onResponseSent
      *   dispatch: onCleanup
      *
-     * @param role string
+     * At any point in the process, a thrown exception will cause 'onException'
+     * to be dispatched, if that generates no output, then the exception is
+     * simply printed in a minimal html document. After the onException, normal cleanup is done
+     *
      * @return void
-     * @see loadHandler, parseUrl
+     * @see parseUrl
      */
-    final public function handle($role)
+    final public function handle()
     {
         $args = array_slice(func_get_args(), 1);
         try {
-            CurrentPath::set(Loader::$Base);
-            $url = $this->parseUrl(Params::server('REQUEST_URI'));
-
             @ob_start();
-            $handler = $this->loadHandler($role);
-            $handler->setArguments($args);
-            $handler->initialize();
-            $this->dispatchCallback('onHandlerInitialize', $handler);
-            $r = $this->marshallSingleCallback('onResolvePage', $url);
-            if (! isset($r) || $r === SitePageProvider::FAIL) {
-                $this->page = new NotFoundPage($this, $url);
-            } elseif ($r === SitePageProvider::REDIRECT) {
-                $this->dispatchCallback('onRedirect', $this);
-            } else {
-                $this->page = $r;
-            }
-            if (isset($this->page)) {
-                $this->dispatchCallback('onPageResolved', $this);
-                $this->dispatchCallback('onAccessCheck', $this);
-                $this->dispatchCallback('onRequestStart', $this);
-                $handler->sendResponse();
-                $this->dispatchCallback('onRequestSent', $this);
-            }
-            $this->dispatchCallback('onHandlerCleanup', $handler);
-            $handler->cleanup();
+
+            CurrentPath::set(Loader::$Base);
+
+            $url = $this->parseUrl(Params::server('REQUEST_URI'));
+            $this->dispatchCallback('onParseUrl', $this, $url);
+            $this->log->info(sprintf(
+                '==> Framework v%s: New Request from %s - %s <==',
+                Loader::$FrameworkVersion,
+                Params::server('REMOTE_ADDR'),
+                $url
+            ));
+
+            $this->dispatchCallback('onAccessCheck',  $this);
+            $this->dispatchCallback('onRequestStart', $this);
+            $this->dispatchCallback('onSendResponse', $this);
+            $this->dispatchCallback('onResponseSent', $this);
             $this->dispatchCallback('onCleanup');
+
             @ob_end_flush();
         } catch (Exception $ex) {
             @ob_end_clean();
             try {
-                @ob_start();
-                $this->page = new ExceptionPage($this, $ex, $this->page);
-                $this->page->render();
-                @ob_end_flush();
+                ob_start();
+                $this->dispatchCallback('onException', $this, $ex);
+                if (ob_get_length()) {
+                    ob_end_flush();
+                } else {
+                    @ob_end_clean();
+                    header('Content-Type: text/html');
+                    print
+                        "<html>\n".
+                        "  <head><title>Unhandled Exception</title></head>\n".
+                        "  <body>\n".
+                        "    <h1>Unhandled exception:</h1>\n".
+                        "    <pre>$ex</pre>\n".
+                        "  </body>\n".
+                        "</html>\n";
+                }
             } catch (Exception $rex) {
                 header('Content-Type: text/html');
                 print
@@ -521,6 +417,11 @@ abstract class Site extends CallbackManager
                     "    <pre>$ex</pre>\n".
                     "  </body>\n".
                     "</html>\n";
+            }
+            try {
+                $this->dispatchCallback('onCleanup');
+            } catch (Exception $ex) {
+                print "Exception in cleanup: <pre>$ex</pre>\n";
             }
         }
         $this->timingReport();
@@ -576,30 +477,6 @@ abstract class Site extends CallbackManager
             return $this->serverUrl.$this->url.'/'.$url;
         } else {
             return $url;
-        }
-    }
-
-    /**
-     * Determines the layout for a page
-     *
-     * This is called from the HTMLPage constructor, a layout may or may not
-     * have been set by the constructor depending on if one was provided by the
-     * instantiating scope.
-     *
-     * The onLayoutHTMLPage callback is dispatched, callbacks should modify the
-     * page directly and throw a StopException if they wan to halt the callback.
-     * If the page has no layout set after dispatching, then it will be set to
-     * Site::$DefaultPageLayout.
-     *
-     * @param page HTMLPage
-     * @return string
-     * @see HTMLPage, CallbackManager::dispatchCallback
-     */
-    public function layoutHTMLPage(HTMLPage &$page)
-    {
-        $this->dispatchCallback('onLayoutHTMLPage', $page);
-        if (! $page->hasLayout()) {
-            $page->setLayout(self::$DefaultPageLayout);
         }
     }
 }
