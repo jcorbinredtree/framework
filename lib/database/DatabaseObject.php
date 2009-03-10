@@ -331,7 +331,7 @@ abstract class DatabaseObject extends DatabaseObjectAbstract
      */
     public function meta()
     {
-        return DatabaseObjectMeta::forClass(get_class($this, $this->_db));
+        return DatabaseObjectMeta::forClass(get_class($this), $this->_db);
     }
 
     /*

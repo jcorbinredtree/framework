@@ -149,6 +149,7 @@ abstract class DatabaseObjectLink extends DatabaseObjectAbstract
 
     public function __construct($from, $to)
     {
+        parent::__construct();
         $meta = $this->meta();
         if (is_array($from)) { // loading not creating
             assert(array_key_exists('from', $from));
