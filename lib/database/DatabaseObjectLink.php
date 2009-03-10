@@ -58,12 +58,9 @@ abstract class DatabaseObjectLink extends DatabaseObjectAbstract
 
     public static function deleteFor($linkClass, DatabaseObject $for)
     {
-        if (
-            ! class_exists($linkClass) ||
-            ! is_subclass_of($linkClass, __CLASS__)
-        ) {
-            throw new InvalidArgumentException('invalid linkClass');
-        }
+        assert(class_exists($linkClass));
+        assert(is_subclass_of($linkClass, __CLASS__));
+
         if (! isset($for->id)) {
             throw new InvalidArgumentException('unsaved DatabaseObject');
         }
@@ -91,12 +88,9 @@ abstract class DatabaseObjectLink extends DatabaseObjectAbstract
 
     public static function loadFor($linkClass, DatabaseObject $for)
     {
-        if (
-            ! class_exists($linkClass) ||
-            ! is_subclass_of($linkClass, __CLASS__)
-        ) {
-            throw new InvalidArgumentException('invalid linkClass');
-        }
+        assert(class_exists($linkClass));
+        assert(is_subclass_of($linkClass, __CLASS__));
+
         if (! isset($for->id)) {
             throw new InvalidArgumentException('unsaved DatabaseObject');
         }

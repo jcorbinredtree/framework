@@ -49,14 +49,15 @@ class DatabaseObjectMeta extends DatabaseObjectAbstractMeta
      */
     static public function forClass($class, $db=null)
     {
+        assert(class_exists($class));
+        assert(is_subclass_of($class, 'DatabaseObject'));
+
         if (! isset($db)) {
             $database = Site::getModule('Database');
             $db = $database->getSelected();
         }
         $key = $db.'/'.$class;
         if (! array_key_exists($key, self::$ClassMeta)) {
-            assert(class_exists($class));
-            assert(is_subclass_of($class, 'DatabaseObject'));
             $database = Site::getModule('Database');
             if ($database->getSelected() != $db) {
                 $database->select($db);

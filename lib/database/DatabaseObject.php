@@ -97,6 +97,9 @@ abstract class DatabaseObject extends DatabaseObjectAbstract
      */
     static public function load($class, $id, $db=null)
     {
+        assert(class_exists($class));
+        assert(is_subclass_of($class, __CLASS__));
+
         if (! is_int($id)) {
             if (is_numeric($id)) {
                 $id = (int) $id;
@@ -104,12 +107,6 @@ abstract class DatabaseObject extends DatabaseObjectAbstract
             if (! is_int($id) || $id == 0) {
                 throw new InvalidArgumentException('invalid id');
             }
-        }
-        if (
-            ! class_exists($class) ||
-            ! is_subclass_of($class, 'DatabaseObject')
-        ) {
-            throw new InvalidArgumentException("invalid class $class");
         }
 
         $cacheKey = self::cacheKey(DatabaseObjectMeta::forClass($class, $db), $id);
