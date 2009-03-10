@@ -34,7 +34,7 @@
  * @category   I18N
  * @package    Core
  */
-class I18N_EN implements LangPack
+class I18N_EN extends LangPack
 {
     private $translation = array();
 

@@ -31,7 +31,8 @@
  * @category     I18N
  * @package        Core
  */
-interface LangPack {
+abstract class LangPack
+{
     /**
      * Returns a string in a specific language
      *
@@ -39,7 +40,7 @@ interface LangPack {
      * @param string $string a string/key in english
      * @return string a string in a specific language
      */
-    public function get($string);
+    abstract public function get($string);
 
     /**
      * Returns the fully qualified name of the language.
@@ -47,7 +48,7 @@ interface LangPack {
      * @access public
      * @return string the fully qualified name of the language
      */
-    public function getLanguageName();
+    abstract public function getLanguageName();
 }
 
 ?>

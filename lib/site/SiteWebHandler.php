@@ -49,14 +49,7 @@ class SiteWebHandler extends SiteHandler
 
         // TODO implement secure checking
 
-        $this->site->addCallback('onRequestStart', array($this, 'startRequest'), true);
-
         new SiteContentPageProvider($this->site);
-    }
-
-    public function startRequest()
-    {
-        Main::setLanguage();
     }
 }
 
