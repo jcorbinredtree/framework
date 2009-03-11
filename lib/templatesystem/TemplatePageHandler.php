@@ -162,7 +162,7 @@ class TemplatePageHandler extends PHPSTLNSHandler
                     $this->needsQuote($href) &&
                     ! preg_match('~^(?:\w+://|/)~', $href)
                 ) {
-                    $href = $this->quote((string) $path->url->down($href));
+                    $href = (string) $path->url->down($href);
                 }
                 $href = $this->quote($href);
                 switch ($n->tagName) {
