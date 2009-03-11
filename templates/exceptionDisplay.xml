@@ -16,8 +16,8 @@
     </core:forEach>
   </ul>
 </core:if>
-<h3>Trace:</h3>
-<ul>@{="\n"}
+<h3>Stack trace:</h3>
+<ol start="0">@{="\n"}
   <core:forEach list="${exception.getTrace()}" var="frame">
     <li><?whitespace trim ?>
       <core:if test="@{array_key_exists('file', ${frame})}">
@@ -38,6 +38,6 @@
       </core:forEach>
     )<?whitespace collapse ?></li>@{="\n"}
   </core:forEach>
-</ul>
+</ol>
 
 </template>
