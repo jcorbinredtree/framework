@@ -69,5 +69,4 @@ class CurrentTemplateProvider extends PHPSTLFileBackedProvider
     }
 }
 
-# vim:set sw=4 ts=4 expandtab:
 ?>

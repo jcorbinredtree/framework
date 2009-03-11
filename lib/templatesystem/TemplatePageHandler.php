@@ -220,5 +220,4 @@ class TemplatePageHandler extends PHPSTLNSHandler
     }
 }
 
-# vim:set sw=4 ts=4 expandtab:
 ?>

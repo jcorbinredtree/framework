@@ -60,5 +60,4 @@ class Template extends PHPSTLTemplate
     }
 }
 
-# vim:set sw=4 ts=4 expandtab:
 ?>

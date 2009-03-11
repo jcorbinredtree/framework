@@ -59,5 +59,4 @@ abstract class DatabaseObjectAbstract
     abstract public function meta();
 }
 
-# vim:set sw=4 ts=4 expandtab:
 ?>
