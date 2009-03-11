@@ -128,8 +128,13 @@ class SiteModuleLoader
         $this->modulesLoaded  = null;
 
         // Now re-order the modules in dependency order
+        $sanity=0;
         for ($i=0; $i<count($this->modules); $i++) {
+            if (++$sanity > 1000) {
+                throw new RuntimeException('Likely SiteModule dependency loop');
+            }
             $module = $this->modules[$i];
+            $restart=null;
             foreach ($module->getRequired() as $dep) {
                 for ($j=0; $j<count($this->modules); $j++) {
                     if ($this->modules[$j] instanceof $dep) {
@@ -137,11 +142,17 @@ class SiteModuleLoader
                             array_splice($this->modules, $i, 0,
                                 array_splice($this->modules, $j, 1)
                             );
+                            if (! isset($restart)) {
+                                $restart = $i-1;
+                            }
                             $i++;
                         }
                         break;
                     }
                 }
+            }
+            if (isset($restart)) {
+                $i = $restart;
             }
         }
 
