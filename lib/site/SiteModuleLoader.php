@@ -69,13 +69,7 @@ class SiteModuleLoader
     public static function loadModule($class)
     {
         if (! class_exists($class)) {
-            $path = "lib/".strtolower($class)."/$class.php";
-            @include_once $path;
-            if (! class_exists($class)) {
-                throw new InvalidArgumentException(
-                    "no such class $class, tried $path"
-                );
-            }
+            require_once "lib/".strtolower($class)."/$class.php";
         }
         if (! is_subclass_of($class, 'SiteModule')) {
             throw new InvalidArgumentException(
