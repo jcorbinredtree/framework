@@ -76,7 +76,7 @@ abstract class Component extends ActionProvider
     }
 
     /**
-     * Constructs a SitePage that will render a given component class
+     * Constructs a Page that will render a given component class
      */
     static public function createComponentPage($class)
     {

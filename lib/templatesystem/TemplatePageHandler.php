@@ -25,7 +25,7 @@
  */
 
 /**
- * Provides template interface to SitePage
+ * Provides template interface to Page
  */
 class TemplatePageHandler extends PHPSTLNSHandler
 {
@@ -36,7 +36,7 @@ class TemplatePageHandler extends PHPSTLNSHandler
      *   name  string  required the name of the page buffer
      *   clear boolean optional default true, clear the buffer afterwords
      *
-     * @see SitePage::getBUffer, SitePage::clearBuffer
+     * @see Page::getBuffer, Page::clearBuffer
      *
      * @param DOMElement element the tag such as <page:buffer />
      * @return void
@@ -86,6 +86,12 @@ class TemplatePageHandler extends PHPSTLNSHandler
 
     private function getMessList(DOMElement $element, $type)
     {
+        $tsys = Site::getModule('TemplateSystem');
+        if (! $tsys->hasModule('PageSystem')) {
+            throw new RuntimeException(
+                "cannot get $type, PageSystem not available"
+            );
+        }
 
         $get = 'get'.ucfirst($type);
         $clear = 'clear'.ucfirst($type);

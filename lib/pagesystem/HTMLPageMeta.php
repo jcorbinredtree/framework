@@ -17,7 +17,6 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     Ui
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2009 Red Tree Systems, LLC
  * @license      MPL 1.1

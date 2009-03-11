@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SitePageHeaders definition
+ * PageHeaders definition
  *
  * PHP version 5
  *
@@ -17,7 +17,6 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     UI
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2009 Red Tree Systems, LLC
  * @license      MPL 1.1
@@ -29,7 +28,7 @@
  * Describes outgoing HTTP headers
  */
 
-class SitePageHeaders
+class PageHeaders
 {
     private $table = array();
     private $statusCode = null;
@@ -197,7 +196,7 @@ class SitePageHeaders
      * Adds a header value, if relpace is true the header will be forced to a
      * singleton, otherwise, multiple calls to add for the same value will
      * result in an array, however the first call will create only a singleton:
-     *   $hdr = new SitePageHeaders();
+     *   $hdr = new PageHeaders();
      *   $hdr->add('Foo', 'a');
      *     $hdr->get('Foo') == 'a'
      *     $hdr->get('Foo', true) == array('a')

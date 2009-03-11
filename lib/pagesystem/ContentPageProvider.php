@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SiteContentPageProvider definition
+ * ContentPageProvider definition
  *
  * PHP version 5
  *
@@ -17,7 +17,6 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     Site
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2009 Red Tree Systems, LLC
  * @license      MPL 1.1
@@ -25,13 +24,10 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/site/SitePageProvider.php';
-require_once 'lib/ui/HTMLPage.php';
-
 /**
  * Resolves urls to a template resource "pageContent:url"
  */
-class SiteContentPageProvider extends SitePageProvider
+class ContentPageProvider extends PageProvider
 {
     private static $loadingPage = null;
 
@@ -47,20 +43,22 @@ class SiteContentPageProvider extends SitePageProvider
     }
 
     /**
-     * Loads a content page, currently limited to being "only" an HTMLPage
-     * @see SitePageProvider::loadPage
+     * Resolves content pages, currently limited to being "only" an HTMLPage
+     * @see PageProvider::resolve
      */
-    public function loadPage($url)
+    public function resolve($url)
     {
         try {
             self::$loadingPage = $page = new HTMLPage(
-                $this->site, null, "pageContent:$url"
+                $this->pagesys->getSite(),
+                null,
+                "pageContent:$url"
             );
             self::$loadingPage = null;
             return $page;
         } catch (PHPSTLNoSuchResource $ex) {
             self::$loadingPage = null;
-            return SitePageProvider::DECLINE;
+            return PageProvider::DECLINE;
         } catch (Exception $e) {
             self::$loadingPage = null;
             throw $e;

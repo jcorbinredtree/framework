@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SitePage definition
+ * Page definition
  *
  * PHP version 5
  *
@@ -17,7 +17,6 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     UI
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2009 Red Tree Systems, LLC
  * @license      MPL 1.1
@@ -26,7 +25,7 @@
  */
 
 require_once 'lib/util/CallbackManager.php';
-require_once 'lib/site/SitePageHeaders.php';
+require_once dirname(__FILE__).'/PageHeaders.php';
 
 /**
  * Describes a page in a site (amazing)
@@ -37,7 +36,7 @@ require_once 'lib/site/SitePageHeaders.php';
  *
  * @package Site
  */
-class SitePage extends CallbackManager
+class Page extends CallbackManager
 {
     /**
      * The component responsible for this page, if any
@@ -48,7 +47,7 @@ class SitePage extends CallbackManager
     /**
      * Outgoing HTTP Header interface
      *
-     * @var SitePageHeaders
+     * @var PageHeaders
      */
     public $headers;
 
@@ -101,7 +100,7 @@ class SitePage extends CallbackManager
     /**
      * Constructor
      *
-     * Creates a new SitePage.
+     * Creates a new Page.
      *
      * @param site Site
      * @param type string the type of the page, defaults to 'text/plain'
@@ -126,7 +125,7 @@ class SitePage extends CallbackManager
                 preg_replace('/\//', '_', $this->type)
             );
         }
-        $this->headers = new SitePageHeaders();
+        $this->headers = new PageHeaders();
         $this->headers->setContentType($this->type);
     }
 
@@ -199,7 +198,7 @@ class SitePage extends CallbackManager
     {
         if (isset($this->renderingBuffer)) {
             throw new RuntimeException(
-                'SitePage->getBuffer called recursively '.
+                'Page->getBuffer called recursively '.
                 "$name inside of $this->renderingBuffer"
             );
         }
@@ -490,6 +489,7 @@ class SitePage extends CallbackManager
      *
      * dispatches two callbacks: prerender and postrender
      *
+     * @param Site $site
      * @see processBuffers
      * @return void
      */

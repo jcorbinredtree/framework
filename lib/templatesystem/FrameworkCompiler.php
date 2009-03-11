@@ -48,13 +48,15 @@ class FrameworkCompiler extends PHPSTLCompiler
             'Framework Version' => Loader::$FrameworkVersion
         ));
         $tsys = Site::getModule('TemplateSystem');
-        $this->write('<?php '.
-            "if (isset(\$this->page)) {\n".
-            "  \$page = \$this->page;\n".
-            "} else {\n".
-            "  \$page = Site::getPage();\n".
-            "}\n".
-        ' ?>');
+        if ($tsys->hasModule('PageSystem')) {
+            $this->write('<?php '.
+                "if (isset(\$this->page)) {\n".
+                "  \$page = \$this->page;\n".
+                "} else {\n".
+                "  \$page = Site::getModule('PageSystem')->getCurrentPage();\n".
+                "}\n".
+            ' ?>');
+        }
         $this->write("<?php \$params = ".__CLASS__."::getParamsProxy(); ?>");
     }
 }

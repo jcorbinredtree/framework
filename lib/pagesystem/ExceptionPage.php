@@ -17,15 +17,12 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     Site
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2009 Red Tree Systems, LLC
  * @license      MPL 1.1
  * @version      2.0
  * @link         http://framework.redtreesystems.com
  */
-
-require_once 'lib/site/SitePage.php';
 
 /**
  * ExceptionPage is the page used to display unhandled exceptions
@@ -34,10 +31,8 @@ require_once 'lib/site/SitePage.php';
  *
  * Note: this should NOT be an HTMLPage, the idea is that this page is used when
  * something goes wrong, and so should have as few moving parts as possible
- *
- * @package Ui
  */
-class ExceptionPage extends SitePage
+class ExceptionPage extends Page
 {
     /**
      * Constructor
@@ -49,7 +44,7 @@ class ExceptionPage extends SitePage
      *
      * @param site Site
      * @param ex Exception
-     * @param oldPage SitePage
+     * @param oldPage Page
      * @see Current
      */
     public function __construct(Site $site, Exception $ex, $oldPage=null)

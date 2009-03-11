@@ -32,6 +32,10 @@ class TemplateSystem extends SiteModule
     public static $TemplateClass = 'Template';
     public static $CompilerClass = 'FrameworkCompiler';
 
+    public static $OptionalModules = array(
+        'PageSystem'
+    );
+
     private $pstl;
 
     public function initialize()
@@ -42,7 +46,9 @@ class TemplateSystem extends SiteModule
         require_once "$this->moduleDir/FrameworkCompiler.php";
         require_once "$this->moduleDir/Template.php";
         require_once "$this->moduleDir/CurrentTemplateProvider.php";
-        require_once "$this->moduleDir/ContentPageTemplateProvider.php";
+        if ($this->hasModule('PageSystem')) {
+            require_once "$this->moduleDir/ContentPageTemplateProvider.php";
+        }
 
         PHPSTL::registerNamespace(
             'urn:redtree:ui:form:v1.0',
@@ -50,11 +56,13 @@ class TemplateSystem extends SiteModule
             dirname(__FILE__).'/TemplateFormHandler.php'
         );
 
-        PHPSTL::registerNamespace(
-            'urn:redtree:ui:page:v1.0',
-            'TemplatePageHandler',
-            dirname(__FILE__).'/TemplatePageHandler.php'
-        );
+        if ($this->hasModule('PageSystem')) {
+            PHPSTL::registerNamespace(
+                'urn:redtree:ui:page:v1.0',
+                'TemplatePageHandler',
+                dirname(__FILE__).'/TemplatePageHandler.php'
+            );
+        }
 
         $this->site->addCallback('onPostConfig', array($this, 'onPostConfig'));
     }
@@ -69,34 +77,39 @@ class TemplateSystem extends SiteModule
             unset($copt['include_path']);
         }
 
-        $content = array();
-        if (array_key_exists('contentpage_path', $copt)) {
-            $content = Site::pathArray($copt['contentpage_path']);
-            unset($copt['contentpage_path']);
-        }
-
         // TODO maybe we shouldn't add local paths here at all, leave that
         // up to the config
         array_push($inc, Loader::$LocalPath.'/templates');
         array_push($inc, Loader::$FrameworkPath.'/templates');
-        array_push($content, Loader::$LocalPath.'/content');
+
         $nos = false;
         if (array_key_exists('contentpage_noshared_content', $copt)) {
             $nos = (bool) $copt['contentpage_noshared_content'];
             unset($copt['contentpage_noshared_content']);
         }
-        if (! $nos) {
-            array_push($content, Loader::$FrameworkPath.'/content');
+
+        if ($this->hasModule('PageSystem')) {
+            $content = array();
+            if (array_key_exists('contentpage_path', $copt)) {
+                $content = Site::pathArray($copt['contentpage_path']);
+                unset($copt['contentpage_path']);
+            }
+            array_push($content, Loader::$LocalPath.'/content');
+            if (! $nos) {
+                array_push($content, Loader::$FrameworkPath.'/content');
+            }
+            $copt['contentpage_path'] = $content;
         }
 
         $this->pstl = new PHPSTL(array_merge(array(
-            'contentpage_path'    => $content,
             'include_path'        => $inc,
             'template_class'      => self::$TemplateClass,
             'compiler_class'      => self::$CompilerClass,
             'diskcache_directory' => $this->site->layout->getCacheArea('template')
         ), $copt));
-        $this->pstl->addProvider(new ContentPageTemplateProvider($this->pstl));
+        if ($this->hasModule('PageSystem')) {
+            $this->pstl->addProvider(new ContentPageTemplateProvider($this->pstl));
+        }
         $this->pstl->addProvider(new CurrentTemplateProvider($this->pstl));
     }
 

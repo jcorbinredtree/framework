@@ -17,7 +17,6 @@
  *
  * The Initial Developer of the Original Code is Red Tree Systems, LLC. All Rights Reserved.
  *
- * @category     UI
  * @author       Red Tree Systems, LLC <support@redtreesystems.com>
  * @copyright    2009 Red Tree Systems, LLC
  * @license      MPL 1.1
@@ -25,12 +24,11 @@
  * @link         http://framework.redtreesystems.com
  */
 
-require_once 'lib/site/SitePage.php';
-require_once 'lib/ui/HTMLPageAsset.php';
-require_once 'lib/ui/HTMLPageMeta.php';
+require_once dirname(__FILE__).'/HTMLPageAsset.php';
+require_once dirname(__FILE__).'/HTMLPageMeta.php';
 
 /**
- * HTMLPages are SitePages with codified detail needed to coherently build an
+ * HTMLPages are Pages with codified detail needed to coherently build an
  * HTML page such as:
  *   whether to include an <?xml ... ?> header
  *   doctype
@@ -40,7 +38,7 @@ require_once 'lib/ui/HTMLPageMeta.php';
  *
  * @package Ui
  */
-class HTMLPage extends SitePage
+class HTMLPage extends Page
 {
     /**
      * Whether to output a <?xml ... ?> header
@@ -105,15 +103,15 @@ class HTMLPage extends SitePage
      *
      * Details:
      *   The value of $layout, whatever it ends up being, is set as the
-     *   $template property and so is processed by SitePage::render. If the page
+     *   $template property and so is processed by Page::render. If the page
      *   layout cares to be a well behaved html page in the normal sense, it
      *   needs to extend the normal html template.
      *
      *   When the HTMLPage is rendered, it sets the template argument
      *   'pageTemplate' to the value of the $template property usually provided
-     *   for a text/html page, see SitePage for whatever that means,
+     *   for a text/html page, see Page for whatever that means,
      *
-     * @see Current, SitePage::$template, SitePage::render, setLayout,
+     * @see Current, Page::$template, Page::render, setLayout,
      * Site::setHTMLPageLayout, CoreTag::_extends
      */
     public function __construct(Site $site, $layout=null, $content=null, $data=null)
@@ -135,7 +133,7 @@ class HTMLPage extends SitePage
             }
             $this->setLayout($layout);
         }
-        $this->site->layoutHTMLPage($this);
+        $this->site->modules->get('PageSystem')->layoutHTMLPage($this);
         if (isset($content)) {
             if (is_string($content)) {
                 $tsys = $this->site->modules->get('TemplateSystem');
