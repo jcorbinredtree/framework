@@ -23,6 +23,8 @@ class Session extends SiteModule
 
     public function initialize()
     {
+        parent::initialize();
+
         $lifetime = $this->site->config->get('session.expire', 0);
         $path = $this->site->config->get('session.path', $this->site->url);
 

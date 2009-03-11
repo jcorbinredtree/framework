@@ -33,6 +33,8 @@ class Mailer extends SiteModule
 
     public function initialize()
     {
+        parent::initialize();
+
         $this->path = $this->moduleDir.'/phpmailer';
         require_once "$this->path/class.phpmailer.php";
 

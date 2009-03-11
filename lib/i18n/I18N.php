@@ -40,6 +40,8 @@ class I18N extends SiteModule
 
     public function initialize()
     {
+        parent::initialize();
+
         require_once $this->moduleDir.'/LangPack.php';
 
         $this->site->addCallback('onPostConfig',   array($this, 'onPostConfig'));
