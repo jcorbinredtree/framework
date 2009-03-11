@@ -73,20 +73,24 @@ class PageSystem extends SiteModule
     {
         foreach ($this->providers as $provider) {
             $r = $provider->resolve($this->site->requestUrl);
-            if (! isset($r) || $r === PageProvider::FAIL) {
-                $this->currentPage = new NotFoundPage($this->site);
-            } elseif ($r instanceof Page) {
+            if ($r === PageProvider::FAIL || $r instanceof Page) {
                 $this->currentPage = $r;
-            } else {
+                break;
+            } elseif (isset($r)) {
                 throw new InvalidArgumentException(
                     'Expecting a provider constant or a Page object '.
                     'from '.get_class($provider).'::resolve'
                 );
             }
         }
-        if (isset($this->currentPage)) {
-            $this->dispatchCallback('onPageResolved', $this, $this->currentPage);
+
+        if (
+            ! isset($this->currentPage) ||
+            $this->currentPage === PageProvider::FAIL
+        ) {
+            $this->currentPage = new NotFoundPage($this->site);
         }
+        $this->dispatchCallback('onPageResolved', $this, $this->currentPage);
     }
 
     public function renderCurrentPage(Site $site)
