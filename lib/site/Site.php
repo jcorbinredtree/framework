@@ -32,6 +32,7 @@ require_once 'lib/site/SiteConfig.php';
 require_once 'lib/site/SiteLayout.php';
 require_once 'lib/site/SiteLog.php';
 require_once 'lib/site/SiteModuleLoader.php';
+require_once 'lib/site/SiteRedirectException.php';
 
 /**
  * A site has:
@@ -256,29 +257,37 @@ abstract class Site extends CallbackManager
         }
         $this->serverUrl = "$proto://".$_SERVER['SERVER_NAME'].$port;
 
-        if (! isset($this->layout)) {
-            $this->layout = new SiteLayout($this);
-        }
-
-        // The log starts off in an unconfigured state where it accumulates
-        // messages until configuration is done and it's told what to do with
-        // them; however if something goes wrong early on, it dumps all logged
-        // messages
-        $this->log = new SiteLog($this);
-
-        $this->config = new SiteConfig($this);
-        $this->config->addFile(Loader::$FrameworkPath.'/config.ini');
-
-        new SiteModuleLoader($this);
-
         try {
-            $this->dispatchCallback('onConfig');
+            if (! isset($this->layout)) {
+                $this->layout = new SiteLayout($this);
+            }
+
+            // The log starts off in an unconfigured state where it accumulates
+            // messages until configuration is done and it's told what to do with
+            // them; however if something goes wrong early on, it dumps all logged
+            // messages
+            $this->log = new SiteLog($this);
+
+            $this->config = new SiteConfig($this);
+            $this->config->addFile(Loader::$FrameworkPath.'/config.ini');
+
+            new SiteModuleLoader($this);
+
+            $this->dispatchCallback('onConfig', $this);
             $this->config->addFile(Loader::$LocalPath.'/config.ini');
             $this->config->addFile(Loader::$Base.'/siteconfig.ini');
             $this->config->compile();
-            $this->dispatchCallback('onPostConfig');
+            $this->dispatchCallback('onPostConfig', $this);
         } catch (SiteConfigParseException $ex) {
-            die("Error loading configuration: ".$ex->getMessage()."\n");
+            header('Status: 500 Internal Error');
+            $this->printErrorPage(
+                'Error loading onfiguration',
+                "<h1>Error loading configuration:</h1>\n".
+                "<pre>".$ex->getMessage()."</pre>\n"
+            );
+            exit(1);
+        } catch (Exception $ex) {
+            $this->dispatchException($ex);
         }
 
         $this->timing = $this->isDebugMode();
@@ -363,12 +372,12 @@ abstract class Site extends CallbackManager
 
     /**
      * Handling process:
-     *   dispatch: onParseUrl
-     *   dispatch: onAccessCheck
-     *   dispatch: onRequestStart
-     *   dispatch: onSendResponse
-     *   dispatch: onResponseSent
-     *   dispatch: onCleanup
+     *   dispatch: onParseUrl      }-> caught Exception
+     *   dispatch: onAccessCheck     |-> dispatch: onException
+     *   dispatch: onRequestStart    |
+     *   dispatch: onSendResponse  }---> caught SiteRedirectException
+     *   dispatch: onResponseSent    | |-> redirect
+     *   cleanup <-------------------/-/
      *
      * At any point in the process, a thrown exception will cause 'onException'
      * to be dispatched, if that generates no output, then the exception is
@@ -397,48 +406,102 @@ abstract class Site extends CallbackManager
             $this->dispatchCallback('onRequestStart', $this);
             $this->dispatchCallback('onSendResponse', $this);
             $this->dispatchCallback('onResponseSent', $this);
-            $this->dispatchCallback('onCleanup');
 
             @ob_end_flush();
+        } catch (SiteRedirectException $r) {
+            @ob_end_clean();
+            header("Location: $r->url");
         } catch (Exception $ex) {
             @ob_end_clean();
-            try {
-                ob_start();
-                $this->dispatchCallback('onException', $this, $ex);
-                if (ob_get_length()) {
-                    ob_end_flush();
-                } else {
-                    @ob_end_clean();
-                    header('Content-Type: text/html');
-                    print
-                        "<html>\n".
-                        "  <head><title>Unhandled Exception</title></head>\n".
-                        "  <body>\n".
-                        "    <h1>Unhandled exception:</h1>\n".
-                        "    <pre>$ex</pre>\n".
-                        "  </body>\n".
-                        "</html>\n";
-                }
-            } catch (Exception $rex) {
-                header('Content-Type: text/html');
-                print
-                    "<html>\n".
-                    "  <head><title>Broken exception handler</title></head>\n".
-                    "  <body>\n".
-                    "    <h1>Broken exception handler:</h1>\n".
-                    "    <pre>$rex</pre>\n\n".
-                    "    <h1>Original exception:</h1>\n".
-                    "    <pre>$ex</pre>\n".
-                    "  </body>\n".
-                    "</html>\n";
-            }
-            try {
-                $this->dispatchCallback('onCleanup');
-            } catch (Exception $ex) {
-                print "Exception in cleanup: <pre>$ex</pre>\n";
+            $this->dispatchException($ex);
+        }
+
+        $this->cleanup();
+    }
+
+    private $inCleanup   = false;
+    private $inException = false;
+
+    /**
+     * Runs Site cleanup, carefully handling exceptions
+     */
+    final protected function cleanup()
+    {
+        if ($this->inCleanup) {
+            return;
+        }
+        $this->inCleanup = true;
+
+        try {
+            $this->dispatchCallback('onCleanup', $this);
+            $this->timingReport();
+        } catch (Exception $ex) {
+            if ($this->inException) {
+                print "<h1>Exception in cleanup: </h1>\n<pre>$ex</pre>\n";
+            } else {
+                $this->dispatchException($ex);
             }
         }
-        $this->timingReport();
+
+        $this->inCleanup = false;
+    }
+
+    /**
+     * Dispatches the onException callback for a given exception
+     *
+     * If the callback further screws up or doesn't generate any output, a
+     * minimal exception display is output
+     */
+    final private function dispatchException(Exception $ex)
+    {
+        if ($this->inException) {
+            ob_start();
+            debug_print_backtrace();
+            $trace = ob_get_clean();
+            die("Site::dispatchException called recursively:\n$trace");
+        }
+        $this->inException = true;
+
+        @ob_end_clean();
+        ob_start();
+        $outTitle = null;
+
+        try {
+            ob_start();
+            $this->dispatchCallback('onException', $this, $ex);
+            if (ob_get_length()) {
+                ob_end_flush();
+            } else {
+                @ob_end_clean();
+                $outTitle = 'Unhandled Exception';
+                print "<h1>$outTitle:</h1>\n<pre>$ex</pre>\n";
+            }
+        } catch (Exception $rex) {
+            $outTitle = 'Broken exception handler';
+            print
+                "<h1>$outTitle:</h1><pre>$rex</pre>\n\n".
+                "<h1>Original exception:</h1>\n<pre>$ex</pre>\n";
+        }
+
+        $mess = ob_get_clean();
+        if (isset($outTitle)) {
+            $this->printErrorPage($outTitle, $mess);
+        } else {
+            print $mess;
+        }
+
+        $this->inException = false;
+    }
+
+    protected function printErrorPage($title, $body)
+    {
+        header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Error');
+        header('Status: 500 Internal Error');
+        header('Content-Type: text/html');
+        print
+            "<html>\n".
+            "<head><title>$title</title></head>\n".
+            "<body>\n\n$body\n  </body></html>\n";
     }
 
     private $timing = false;
