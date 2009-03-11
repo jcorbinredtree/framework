@@ -110,12 +110,12 @@ class TemplateSystem extends SiteModule
 
     public function load($resource)
     {
-        return $this->pstl->load($resource);
+        return $this->getPHPSTL()->load($resource);
     }
 
     public function process($resource, $args=null)
     {
-        return $this->pstl->process($resource, $args);
+        return $this->getPHPSTL()->process($resource, $args);
     }
 }
 
