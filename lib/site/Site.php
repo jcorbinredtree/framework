@@ -365,6 +365,9 @@ abstract class Site extends CallbackManager
                 "invalid requset url '$requrl', expecting something under $base"
             );
         }
+        if (($i = strpos($url, '?')) !== false) {
+            $url = substr($url, 0, $i);
+        }
 
         $this->requestUrl = $url;
         $this->dispatchCallback('onParseUrl', $this);
