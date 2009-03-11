@@ -69,7 +69,7 @@ abstract class Site extends CallbackManager
     final public static function Site()
     {
         if (! isset(self::$TheSite)) {
-            throw new RuntimeException('site not started');
+            throw new RuntimeException('Site not set');
         }
         return self::$TheSite;
     }
@@ -83,7 +83,7 @@ abstract class Site extends CallbackManager
     final public static function set($class)
     {
         assert(is_subclass_of($class, 'Site'));
-        return self::$TheSite = new $class();
+        return new $class();
     }
 
     /**
@@ -221,6 +221,13 @@ abstract class Site extends CallbackManager
      */
     private function __construct()
     {
+        if (isset(self::$TheSite)) {
+            throw new RuntimeException(
+                'Site already set to '.get_class(self::$TheSite)
+            );
+        }
+        self::$TheSite = $this;
+
         $start = array(microtime(true), 'start');
         $this->timePoint('start');
 
