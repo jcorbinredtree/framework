@@ -204,6 +204,13 @@ abstract class Site extends CallbackManager
     public $url;
 
     /**
+     * The url currently being served
+     *
+     * @var string
+     */
+    public $requestUrl;
+
+    /**
      * @var SiteModuleLoader
      */
     public $modules;
@@ -350,7 +357,8 @@ abstract class Site extends CallbackManager
             );
         }
 
-        return $url;
+        $this->requestUrl = $url;
+        $this->dispatchCallback('onParseUrl', $this);
     }
 
     /**
@@ -377,13 +385,12 @@ abstract class Site extends CallbackManager
 
             CurrentPath::set(Loader::$Base);
 
-            $url = $this->parseUrl(Params::server('REQUEST_URI'));
-            $this->dispatchCallback('onParseUrl', $this, $url);
+            $this->parseUrl(Params::server('REQUEST_URI'));
             $this->log->info(sprintf(
                 '==> Framework v%s: New Request from %s - %s <==',
                 Loader::$FrameworkVersion,
                 Params::server('REMOTE_ADDR'),
-                $url
+                $this->requestUrl
             ));
 
             $this->dispatchCallback('onAccessCheck',  $this);
