@@ -205,7 +205,7 @@ if (isset($FrameworkPath)) {
 }
 
 // TODO make this go away
-Loader::$LocalPath = Loader::$Base.'/SITE/local';
+Loader::$LocalPath = Loader::$Base;
 set_include_path(implode(':', array(
     get_include_path(),
     Loader::$FrameworkPath,

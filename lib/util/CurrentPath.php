@@ -123,11 +123,12 @@ class CurrentPath
                 $url = substr($url, $bl);
                 $url = explode('/', $url);
 
-                // TODO SiteLayout should tell us about this, not be hardcoded here
-                if (count($url) >= 1 && $url[0] == 'SITE') {
+                // TODO Intropsect Loader variables and the site's url base, and
+                // determine the framework path thusly
+                if (count($url) >= 1 && $url[0] == 'framework') {
+                    $url = array_slice($url, 1);
+                } elseif (count($url) >= 2 && $url[0] == '' && $url[1] == 'framework') {
                     $url = array_slice($url, 2);
-                } elseif (count($url) >= 2 && $url[0] == '' && $url[1] == 'SITE') {
-                    $url = array_slice($url, 3);
                 }
 
                 if ($url[0] == '') {

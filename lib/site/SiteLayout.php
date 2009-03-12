@@ -21,7 +21,7 @@ class SiteLayout
     /**
      * The site writable area
      *
-     * @default Loader::$Base/SITE/writable
+     * @default Loader::$Base/writable
      * @var string
      */
     public $writableDir;
@@ -69,7 +69,7 @@ class SiteLayout
     {
         $this->site = $site;
 
-        $this->writableDir = Loader::$Base.'/SITE/writable';
+        $this->writableDir = Loader::$Base.'/writable';
         $this->cacheDir = $this->writableDir.'/cache';
         $this->logDir = $this->writableDir.'/logs';
         $this->cacheAreas = array();

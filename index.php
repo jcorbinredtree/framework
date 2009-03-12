@@ -9,29 +9,28 @@
  * http://example.com/some/path/index.php/to/the/site
  *     presuming that the site's document root is at /some/path on example.com
  *
- * Furthermore, all direct requests to the SITE/ directory should be denied.
- *
- * An example apache config:
-    <Directory /path/to/project>
-        RewriteEngine On
-        RewriteBase /project
-
-        RewriteCond %{REQUEST_FILENAME} !-d
-        RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteRule ^(.*)$ index.php [L]
-    </Directory>
-    <Directory /path/to/project/SITE>
-        Deny from all
-    </Directory>
+ * See apache.conf for more setup details
  */
 
 // This site was developed against this version of the framework
 //   See Loader.php for what else can be set here
 $FrameworkTargetVersion = '3.1';
-require_once('SITE/framework/Loader.php');
+require_once('framework/Loader.php');
 
 class MySite extends Site
 {
+    public static $Modules = array(
+      // A module is currently just something loadable as:
+      //   lib/MODULE/module.php
+      //
+      // The framework currently has the following modules:
+      //   I18N
+      //   Session
+      //   Mailer
+      //   Database
+      //   PageSystem
+      //   TemplateSystem
+    );
     protected $mode = /* Site::MODE_TEST | */ Site::MODE_DEBUG;
 }
 Site::set('MySite')->handle();

@@ -40,7 +40,7 @@ require_once 'lib/site/SiteRedirectException.php';
  *   modules
  *
  * Example usage in inedx.php:
- *   require_once('SITE/framework/Loader.php');
+ *   require_once('framework/Loader.php');
  *   class MySite extends Site { ... }
  *   Site::set('MySyte')->handle();
  *
