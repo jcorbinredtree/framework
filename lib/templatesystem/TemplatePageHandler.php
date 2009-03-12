@@ -43,11 +43,11 @@ class TemplatePageHandler extends PHPSTLNSHandler
      */
     public function handleElementBuffer(DOMElement $element)
     {
-        $area = $this->requiredAttr($element, 'area', false);
+        $area = $this->requiredAttr($element, 'area');
         $clear = $this->getBooleanAttr($element, 'clear', true);
         $clear = $clear ? 'true' : 'false';
         $this->compiler->write(
-            "<?php print \$page->getBuffer('$area', false, $clear); ?>"
+            "<?php print \$page->getBuffer($area, false, $clear); ?>"
         );
     }
 
