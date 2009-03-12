@@ -30,6 +30,35 @@
 class TemplatePageHandler extends PHPSTLNSHandler
 {
     /**
+     * Makes things like:
+     *   <core:if page:test="isBufferEmpty:name" />
+     * Work as you would exect
+     */
+    public function handleAttrTest(DOMAttr $attr)
+    {
+        $val = $attr->value;
+        if (($i = strpos($val, ':')) !== false) {
+            $type = trim(substr($val, 0, $i));
+            $val = trim(substr($val, $i+1));
+        } else {
+            throw new PHPSTLCompilerException($this->compiler, 'missing value');
+        }
+        switch ($type) {
+        case 'hasBuffer':
+            return '${page.hasBuffer('.$this->quote($val).')}';
+            break;
+        case 'hasData':
+            return '${page.hasData('.$this->quote($val).')}';
+            break;
+        default:
+            throw new PHPSTLCompilerException($this->compiler,
+                "invalid test type $type"
+            );
+            break;
+        }
+    }
+
+    /**
      * Outputs the contents of a named page buffer
      *
      * Attributes:
