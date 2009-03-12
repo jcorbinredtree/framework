@@ -182,6 +182,22 @@ class Page extends CallbackManager
     }
 
     /**
+     * Tests whether the given buffer has any content
+     *
+     * @param name the name of the buffer, e.g. head, top, left, etc
+     * @return boolean
+     */
+    public function hasBuffer($name)
+    {
+        assert(is_string($name));
+        if (array_key_exists($name, $this->buffers)) {
+            return count($this->buffers[$name]) != 0;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Renders and returns the named buffer
      *
      * @param name the name of the buffer, e.g. head, top, left, etc
