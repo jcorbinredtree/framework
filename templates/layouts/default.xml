@@ -7,25 +7,33 @@
   <stylesheet href="css/layouts/default.css" />
 </page:addAssets>
 
-<div id="main-container">
+<page:addToBuffer area="content">
+  <page:warnings />
+  <page:notices />
+</page:addToBuffer>
+
+<!-- TODO implement navigation
+<div id= "nav">
+  <ul>
+    <core:forEach list="${page.getLeftNavigation()}" var="item">
+      <li><a href="${=item.href}">${=item.label}</a></li>
+    </core:forEach>
+  </ul>
+</div>
+-->
+<div id="wrapper">
+<core:if page:test="hasBuffer:left">
   <div id="left">
-    <!-- TODO implement navigation
-    <div id= "nav">
-      <ul>
-        <core:forEach list="${page.getLeftNavigation()}" var="item">
-          <li><a href="${=item.href}">${=item.label}</a></li>
-        </core:forEach>
-      </ul>
-    </div>
-    -->
     <page:buffer area="left" />
   </div>
-
+  <div id="center" class="hasLeft">
+    <page:buffer area="content" />
+  </div>
+<core:else />
   <div id="center">
     <page:buffer area="content" />
-    <page:warnings />
-    <page:notices />
   </div>
+</core:if>
 </div>
 
 </template>
