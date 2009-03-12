@@ -326,6 +326,16 @@ class SiteModuleLoader
         return false;
     }
 
+    public function getModuleDir($module)
+    {
+        return $this->get($module)->getDir();
+    }
+
+    public function getModulePrefix($module)
+    {
+        return $this->get($module)->getPrefix();
+    }
+
     /**
      * Returns the SiteModule object added to the site for the given class,
      * this will be either of the class or a subclass of it
