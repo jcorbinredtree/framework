@@ -42,12 +42,12 @@ class TemplateSystem extends SiteModule
     {
         parent::initialize();
 
-        require_once "$this->moduleDir/php-stl/PHPSTL.php";
-        require_once "$this->moduleDir/FrameworkCompiler.php";
-        require_once "$this->moduleDir/Template.php";
-        require_once "$this->moduleDir/CurrentTemplateProvider.php";
+        require_once "$this->dir/php-stl/PHPSTL.php";
+        require_once "$this->dir/FrameworkCompiler.php";
+        require_once "$this->dir/Template.php";
+        require_once "$this->dir/CurrentTemplateProvider.php";
         if ($this->hasModule('PageSystem')) {
-            require_once "$this->moduleDir/ContentPageTemplateProvider.php";
+            require_once "$this->dir/ContentPageTemplateProvider.php";
         }
 
         PHPSTL::registerNamespace(

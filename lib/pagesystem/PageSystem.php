@@ -48,14 +48,14 @@ class PageSystem extends SiteModule
     {
         parent::initialize();
 
-        require_once $this->moduleDir.'/Page.php';
-        require_once $this->moduleDir.'/HTMLPage.php';
-        require_once $this->moduleDir.'/PageProvider.php';
-        require_once $this->moduleDir.'/ContentPageProvider.php';
-        require_once $this->moduleDir.'/ExceptionPage.php';
-        require_once $this->moduleDir.'/NotFoundPage.php';
+        require_once $this->dir.'/Page.php';
+        require_once $this->dir.'/HTMLPage.php';
+        require_once $this->dir.'/PageProvider.php';
+        require_once $this->dir.'/ContentPageProvider.php';
+        require_once $this->dir.'/ExceptionPage.php';
+        require_once $this->dir.'/NotFoundPage.php';
 
-        $this->site->config->addFile($this->moduleDir.'/defaults.ini');
+        $this->site->config->addFile($this->dir.'/defaults.ini');
 
         $this->site->addCallback('onPostConfig', array($this, 'onPostConfig'));
     }

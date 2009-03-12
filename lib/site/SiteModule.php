@@ -67,7 +67,7 @@ abstract class SiteModule extends CallbackManager
     private $optional = array();
     private $hasOptional = array();
 
-    protected $moduleDir;
+    protected $dir;
 
     /**
      * @return Site
@@ -110,6 +110,11 @@ abstract class SiteModule extends CallbackManager
         return $this->hasOptional[$module];
     }
 
+    public function getDir()
+    {
+        return $this->dir;
+    }
+
     /**
      * Creates a new SiteModule
      *
@@ -125,7 +130,7 @@ abstract class SiteModule extends CallbackManager
         $this->site = $site;
 
         $class = new ReflectionClass(get_class($this));
-        $this->moduleDir = dirname($class->getFileName());
+        $this->dir = dirname($class->getFileName());
 
         // Build the list of required/optional modules
         $this->required = self::collectStaticArray(

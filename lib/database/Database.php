@@ -112,9 +112,9 @@ class Database extends SiteModule
     {
         parent::initialize();
 
-        require_once "$this->moduleDir/DatabaseException.php";
-        require_once "$this->moduleDir/DatabaseObject.php";
-        require_once "$this->moduleDir/DatabaseObjectLink.php";
+        require_once "$this->dir/DatabaseException.php";
+        require_once "$this->dir/DatabaseObject.php";
+        require_once "$this->dir/DatabaseObjectLink.php";
 
         $this->site->addCallback('onPostConfig', array($this, 'onPostConfig'));
     }

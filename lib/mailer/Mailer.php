@@ -35,10 +35,10 @@ class Mailer extends SiteModule
     {
         parent::initialize();
 
-        $this->path = $this->moduleDir.'/phpmailer';
+        $this->path = $this->dir.'/phpmailer';
         require_once "$this->path/class.phpmailer.php";
 
-        $this->site->config->addFile($this->moduleDir.'/defaults.ini');
+        $this->site->config->addFile($this->dir.'/defaults.ini');
     }
 
     public function getMailer()

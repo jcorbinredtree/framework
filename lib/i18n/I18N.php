@@ -42,7 +42,7 @@ class I18N extends SiteModule
     {
         parent::initialize();
 
-        require_once $this->moduleDir.'/LangPack.php';
+        require_once $this->dir.'/LangPack.php';
 
         $this->site->addCallback('onPostConfig',   array($this, 'onPostConfig'));
         $this->site->addCallback('onRequestStart', array($this, 'onRequestStart'));
@@ -125,7 +125,7 @@ class I18N extends SiteModule
      */
     protected function setLangPack($lang)
     {
-        $path = "$this->moduleDir/languages/".strtolower($lang).".php";
+        $path = "$this->dir/languages/".strtolower($lang).".php";
         if (! file_exists($path)) {
             throw new RuntimeException("no such lang pack, no path $path");
         }
