@@ -81,6 +81,43 @@ class TemplatePageHandler extends PHPSTLNSHandler
     }
 
     /**
+     * Adds content to the named page buffer, example:
+     *   <page:addToBuffer area="content">
+     *     Here be content!
+     *   </page:addToBuffer>
+     *
+     * Or if you have content in a variable:
+     *   <page:addToBuffer area="content" var="${some.content.var}" />
+     *
+     * @param DOMElement element the tag such as <page:buffer />
+     * @return void
+     * @see Page::addToBuffer
+     */
+    public function handleElementAddTobuffer(DOMElement $element)
+    {
+        $area = $this->requiredAttr($element, 'area');
+        if ($element->hasAttribute('var')) {
+            $var = $this->getAttr($element, 'var');
+            $this->compiler->write(
+                "<?php \$page->addToBuffer($area, $var); ?>"
+            );
+        } else {
+            $this->compiler->write("<?php\n".
+                "ob_start();\n".
+                "try {\n".
+            "?>");
+            $this->process($element);
+            $this->compiler->write("<?php\n".
+                "  \$page->addToBuffer($area, @ob_get_clean());\n".
+                "} catch (Exception \$e) {\n".
+                "  ob_end_clean();\n".
+                "  throw \$e;\n".
+                "}\n".
+            "?>");
+        }
+    }
+
+    /**
      * Gets a page data item
      *
      * @param var string required
