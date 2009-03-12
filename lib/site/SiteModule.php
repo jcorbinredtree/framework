@@ -68,6 +68,7 @@ abstract class SiteModule extends CallbackManager
     private $hasOptional = array();
 
     protected $dir;
+    protected $prefix;
 
     /**
      * @return Site
@@ -115,6 +116,11 @@ abstract class SiteModule extends CallbackManager
         return $this->dir;
     }
 
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
     /**
      * Creates a new SiteModule
      *
@@ -131,6 +137,22 @@ abstract class SiteModule extends CallbackManager
 
         $class = new ReflectionClass(get_class($this));
         $this->dir = dirname($class->getFileName());
+        $fp = Loader::$FrameworkPath.'/';
+        $fl = strlen($fp);
+        if (substr($this->dir, 0, $fl) == $fp) {
+            $this->prefix = substr($this->dir, $fl);
+        } else {
+            $lp = Loader::$LocalPath.'/';
+            $ll = strlen($lp);
+            if (substr($this->dir, 0, $ll) == $lp) {
+                $this->prefix = substr($this->dir, $ll);
+            } else {
+                throw new RuntimeException(
+                    'unable to determine prefix for the '.get_class($this).
+                    ' module in '.$this->dir
+                );
+            }
+        }
 
         // Build the list of required/optional modules
         $this->required = self::collectStaticArray(
