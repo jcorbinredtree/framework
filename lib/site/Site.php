@@ -458,42 +458,59 @@ abstract class Site extends CallbackManager
     final private function dispatchException(Exception $ex)
     {
         if ($this->inException) {
-            ob_start();
+            print "Site::dispatchException called recursively:\n";
             debug_print_backtrace();
-            $trace = ob_get_clean();
-            die("Site::dispatchException called recursively:\n$trace");
+            exit(1);
         }
-        $this->inException = true;
-
-        @ob_end_clean();
-        ob_start();
-        $outTitle = null;
-
         try {
-            ob_start();
-            $this->dispatchCallback('onException', $this, $ex);
-            if (ob_get_length()) {
-                ob_end_flush();
-            } else {
-                @ob_end_clean();
-                $outTitle = 'Unhandled Exception';
-                print "<h1>$outTitle:</h1>\n<pre>$ex</pre>\n";
+            $this->inException = true;
+
+            while (ob_get_length() !== false) {
+                ob_end_clean();
             }
+
+            ob_start();
+            $outTitle = null;
+
+            try {
+                ob_start();
+                $this->dispatchCallback('onException', $this, $ex);
+                if (ob_get_length()) {
+                    ob_end_flush();
+                } else {
+                    ob_end_clean();
+                    $this->formatException($ex, 'Unhandled ');
+                }
+            } catch (Exception $rex) {
+                $outTitle = 'Broken exception handler';
+                $this->formatException($rex, 'Broken ');
+                $this->formatException($ex, 'Original ');
+            }
+
+            $mess = ob_get_clean();
+            if (isset($outTitle)) {
+                $this->printErrorPage($outTitle, $mess);
+            } else {
+                print $mess;
+            }
+
+            if (! $this->inCleanup) {
+                $this->cleanup();
+            }
+
+            $this->inException = false;
         } catch (Exception $rex) {
-            $outTitle = 'Broken exception handler';
-            print
-                "<h1>$outTitle:</h1><pre>$rex</pre>\n\n".
-                "<h1>Original exception:</h1>\n<pre>$ex</pre>\n";
+            print "$rex\nwhile handling\n$ex";
         }
+        exit(1);
+    }
 
-        $mess = ob_get_clean();
-        if (isset($outTitle)) {
-            $this->printErrorPage($outTitle, $mess);
-        } else {
-            print $mess;
-        }
-
-        $this->inException = false;
+    final private function formatException(Exception $ex, $title)
+    {
+        print
+            "<h2>$title ".get_class($ex).":</h2>\n".
+            "<h3>".$ex->getMessage()."</h3>\n".
+            "<pre>".$ex->getTraceAsString()."</pre>\n";
     }
 
     protected function printErrorPage($title, $body)
