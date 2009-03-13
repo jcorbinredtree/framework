@@ -36,6 +36,13 @@ abstract class CallbackManager
      */
     private $callbacks = array();
 
+    final public function hasCallback($name)
+    {
+        return
+            array_key_exists($name, $this->callbacks) &&
+            count($this->callbacks[$name]);
+    }
+
     final public function addCallback($name, $callable)
     {
         if (! array_key_exists($name, $this->callbacks)) {
