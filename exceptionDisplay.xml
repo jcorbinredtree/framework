@@ -1,12 +1,14 @@
 <template
   xmlns:core="urn:redtree:php-stl:core:v2.0">
 
-<core:param name="message" default="Unhandled Exception" />
+<core:param name="message" />
 <core:param name="exception" required="true" type="Exception" />
 
 <core:set var="exType" value="@{get_class(${exception})}" />
-<h1>${=message}</h1>
-<h2>${=exType}:</h2>
+<core:if test="@{isset($message)}">
+  <h2>${=message}</h2>
+</core:if>
+<h2>Unhandled ${=exType}:</h2>
 <h3>${=exception.getMessage()}</h3>
 <core:if test="@{${exception} instanceof PHPSTLNoSuchResource}">
   <h3>Template Providers:</h3>
@@ -16,28 +18,6 @@
     </core:forEach>
   </ul>
 </core:if>
-<h3>Stack trace:</h3>
-<ol start="0">@{="\n"}
-  <core:forEach list="${exception.getTrace()}" var="frame">
-    <li><?whitespace trim ?>
-      <core:if test="@{array_key_exists('file', ${frame})}">
-        <core:out format="sprintf:%s(%s)"
-          value="${frame['file']}, ${frame['line']}" />
-      <core:else />
-        [internal function]
-      </core:if>:@{=' '}
-
-      <core:if test="@{array_key_exists('class', ${frame})}">
-        ${=frame['class']}
-        ${=frame['type']}
-      </core:if>
-      ${=frame['function']}(
-      <core:forEach list="${frame['args']}" var="arg">
-        <core:out value="${arg}" format="repr" />
-        <core:if test="@{! ${loop.isLast()}}">@{=', '}</core:if>
-      </core:forEach>
-    )<?whitespace collapse ?></li>@{="\n"}
-  </core:forEach>
-</ol>
+<pre>${=exception.getTraceAsString()}</pre>
 
 </template>
