@@ -172,8 +172,8 @@ class SiteConfig
         }
 
         // Try to load cached configuration
+        $cache = $this->site->layout->getCacheArea('config').'/siteconfig';
         if ($loadcache) {
-            $cache = $this->site->layout->getCacheArea('config').'/siteconfig';
             if (file_exists($cache)) {
                 $cachemtime = filemtime($cache);
             } else {

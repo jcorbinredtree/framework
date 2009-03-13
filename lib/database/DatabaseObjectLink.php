@@ -137,8 +137,6 @@ abstract class DatabaseObjectLink extends DatabaseObjectAbstract
         return $r;
     }
 
-    abstract static protected function factory($data);
-
     public static $LinkOrderClause = array('{from_key}', '{to_key}');
 
     public function __construct($from, $to)
