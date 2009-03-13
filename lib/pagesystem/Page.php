@@ -39,12 +39,6 @@ require_once dirname(__FILE__).'/PageHeaders.php';
 class Page extends CallbackManager
 {
     /**
-     * The component responsible for this page, if any
-     * @var Component
-     */
-    public $component;
-
-    /**
      * Outgoing HTTP Header interface
      *
      * @var PageHeaders
@@ -519,9 +513,6 @@ class Page extends CallbackManager
     {
         $this->dispatchCallback('prerender', $this);
 
-        if (isset($this->component)) {
-            $this->component->render();
-        }
         $this->processBuffers();
 
         $output = $this->onRender();
