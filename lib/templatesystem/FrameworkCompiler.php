@@ -47,13 +47,14 @@ class FrameworkCompiler extends PHPSTLCompiler
         parent::writeTemplateHeader(array(
             'Framework Version' => Loader::$FrameworkVersion
         ));
+        $this->write('<?php $site = Site::Site(); ?>');
         $tsys = Site::getModule('TemplateSystem');
         if ($tsys->hasModule('PageSystem')) {
             $this->write('<?php '.
                 "if (isset(\$this->page)) {\n".
                 "  \$page = \$this->page;\n".
                 "} else {\n".
-                "  \$page = Site::getModule('PageSystem')->getCurrentPage();\n".
+                "  \$page = \$site->modules->get('PageSystem')->getCurrentPage();\n".
                 "}\n".
             ' ?>');
         }
