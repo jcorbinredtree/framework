@@ -236,6 +236,10 @@ abstract class Site extends CallbackManager
         }
         self::$TheSite = $this;
 
+        set_exception_handler(
+            array($this, 'dispatchException')
+        );
+
         $start = array(microtime(true), 'start');
         $this->timePoint('start');
 
@@ -286,8 +290,6 @@ abstract class Site extends CallbackManager
                 "<pre>".$ex->getMessage()."</pre>\n"
             );
             exit(1);
-        } catch (Exception $ex) {
-            $this->dispatchException($ex);
         }
 
         $this->timing = $this->isDebugMode();
@@ -414,9 +416,6 @@ abstract class Site extends CallbackManager
         } catch (SiteRedirectException $r) {
             @ob_end_clean();
             header("Location: $r->url");
-        } catch (Exception $ex) {
-            @ob_end_clean();
-            $this->dispatchException($ex);
         }
 
         $this->cleanup();
@@ -455,7 +454,7 @@ abstract class Site extends CallbackManager
      * If the callback further screws up or doesn't generate any output, a
      * minimal exception display is output
      */
-    final private function dispatchException(Exception $ex)
+    final public function dispatchException(Exception $ex)
     {
         if ($this->inException) {
             print "Site::dispatchException called recursively:\n";
