@@ -254,6 +254,9 @@ class Database extends SiteModule
      */
     public function getDSN()
     {
+        if (! array_key_exists($this->db, $this->dsnStrings)) {
+            $this->getPDO();
+        }
         return $this->dsnStrings[$this->db];
     }
 
