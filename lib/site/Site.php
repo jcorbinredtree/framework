@@ -236,6 +236,10 @@ abstract class Site extends CallbackManager
         }
         self::$TheSite = $this;
 
+        set_error_handler(
+            array($this, 'dispatchError'),
+            E_ALL | E_RECOVERABLE_ERROR
+        );
         set_exception_handler(
             array($this, 'dispatchException')
         );
@@ -395,7 +399,7 @@ abstract class Site extends CallbackManager
     {
         $args = array_slice(func_get_args(), 1);
         try {
-            @ob_start();
+            ob_start();
 
             CurrentPath::set(Loader::$Base);
 
@@ -412,9 +416,9 @@ abstract class Site extends CallbackManager
             $this->dispatchCallback('onSendResponse', $this);
             $this->dispatchCallback('onResponseSent', $this);
 
-            @ob_end_flush();
+            ob_end_flush();
         } catch (SiteRedirectException $r) {
-            @ob_end_clean();
+            ob_end_clean();
             header("Location: $r->url");
         }
 
@@ -510,6 +514,78 @@ abstract class Site extends CallbackManager
             "<h2>$title ".get_class($ex).":</h2>\n".
             "<h3>".$ex->getMessage()."</h3>\n".
             "<pre>".$ex->getTraceAsString()."</pre>\n";
+    }
+
+    /**
+     * Installed as an error handler immediatly in Site instantiation.
+     *
+     * Promotes errors to ErrorExceptions, and dispatches onNotice/onWarning
+     * for notices and warnings.
+     *
+     * @see set_error_handler
+     */
+    final public function dispatchError($code, $mess, $file=null, $line=null)
+    {
+        $mess = strip_tags($mess);
+
+        if (isset($file)) {
+            $at = " in $file";
+            if (isset($line)) {
+                $at = " at $line";
+            }
+        } else {
+            $at = '';
+        }
+
+        switch ($code) {
+        case E_WARNING:
+        case E_USER_WARNING:
+            if ($this->hasCallback('onWarning')) {
+                $this->dispatchCallback('onWarning', $mess, $file, $line);
+                return true;
+            }
+            break;
+        case E_NOTICE:
+        case E_USER_NOTICE:
+            if ($this->hasCallback('onNotice')) {
+                $this->dispatchCallback('onNotice', $mess, $file, $line);
+                return true;
+            }
+            break;
+        }
+
+        switch ($code) {
+            case E_NOTICE:
+                $type = 'notice';
+                break;
+            case E_WARNING:
+                $type = 'warning';
+                break;
+            case E_USER_ERROR:
+                $type = 'user_error';
+                break;
+            case E_ALL:
+                $type = 'all';
+                break;
+            case E_STRICT:
+                $type = 'strict';
+                break;
+            case E_RECOVERABLE_ERROR:
+                $type = 'recoverable_error';
+                break;
+            case E_DEPRECATED:
+                $type = 'deprecated';
+                break;
+            case E_USER_DEPRECATED:
+                $type = 'user_deprecated';
+                break;
+            default:
+                $type = "unknown($code)";
+                break;
+        }
+        throw new ErrorException("$type - $mess", 0, 75, $file, $line);
+
+        return true;
     }
 
     protected function printErrorPage($title, $body)

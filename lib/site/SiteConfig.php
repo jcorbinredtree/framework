@@ -217,7 +217,7 @@ class SiteConfig
         $this->data->set('__files', $this->files);
 
         // Cache merged configuration
-        @file_put_contents($cache, serialize($this->data));
+        file_put_contents($cache, serialize($this->data));
     }
 
     /**
