@@ -31,7 +31,10 @@ class NotFoundPage extends HTMLPage
         if (! isset($url)) {
             $url = $site->requestUrl;
         }
-        parent::__construct($site, null, 'page/nopage', array(
+        $template =
+            $site->modules->getModulePrefix('PageSystem').
+            '/page/nopage';
+        parent::__construct($site, null, $template, array(
             'status'     => '404 Not Found',
             'requestUrl' => $url
         ));
