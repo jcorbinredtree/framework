@@ -111,6 +111,18 @@ class StupidPath
         }
         return new StupidPath($path);
     }
+
+    public function rel2abs($path)
+    {
+        if (
+            (is_string($path) && $path[0] == '/') ||
+            (is_array($path) && $path[0] == '')
+        ) {
+            return new self($path);
+        } else {
+            return $this->down($path);
+        }
+    }
 }
 
 ?>
