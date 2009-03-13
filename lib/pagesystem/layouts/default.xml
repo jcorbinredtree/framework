@@ -3,8 +3,10 @@
   xmlns:page="urn:redtree:ui:page:v1.0"
   core:extends="${this.pageTemplate}">
 
+<core:param name="pageSystemPrefix" required="true" />
+
 <page:addAssets>
-  <stylesheet href="css/layouts/default.css" />
+  <stylesheet href="${pageSystemPrefix}/layouts/default.css" />
 </page:addAssets>
 
 <page:addToBuffer area="content">

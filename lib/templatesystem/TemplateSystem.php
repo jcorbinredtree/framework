@@ -45,7 +45,6 @@ class TemplateSystem extends SiteModule
         require_once "$this->dir/php-stl/PHPSTL.php";
         require_once "$this->dir/FrameworkCompiler.php";
         require_once "$this->dir/Template.php";
-        require_once "$this->dir/CurrentTemplateProvider.php";
         if ($this->hasModule('PageSystem')) {
             require_once "$this->dir/ContentPageTemplateProvider.php";
         }
@@ -79,8 +78,8 @@ class TemplateSystem extends SiteModule
 
         // TODO maybe we shouldn't add local paths here at all, leave that
         // up to the config
-        array_push($inc, Loader::$LocalPath.'/templates');
-        array_push($inc, Loader::$FrameworkPath.'/templates');
+        array_push($inc, Loader::$LocalPath);
+        array_push($inc, Loader::$FrameworkPath);
 
         $nos = false;
         if (array_key_exists('contentpage_noshared_content', $copt)) {
@@ -110,7 +109,6 @@ class TemplateSystem extends SiteModule
         if ($this->hasModule('PageSystem')) {
             $this->pstl->addProvider(new ContentPageTemplateProvider($this->pstl));
         }
-        $this->pstl->addProvider(new CurrentTemplateProvider($this->pstl));
     }
 
     public function getPHPSTL()

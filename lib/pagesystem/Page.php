@@ -105,7 +105,9 @@ class Page extends CallbackManager
      * @param site Site
      * @param type string the type of the page, defaults to 'text/plain'
      * @param template the template resource string used to render this page
-     * if set to the false value, then the $template property will not be set
+     * if set to the false value, then the $template property will not be set,
+     * either way the resulting template value will then be appended to the
+     * PageSystem module prefix
      * @see $template
      */
     public function __construct(Site $site, $type='text/plain', $template=null)
@@ -125,6 +127,10 @@ class Page extends CallbackManager
                 preg_replace('/\//', '_', $this->type)
             );
         }
+        $this->template =
+            $site->modules->getModulePrefix('PageSystem').
+            '/'.
+            $this->template;
         $this->headers = new PageHeaders();
         $this->headers->setContentType($this->type);
     }
@@ -555,8 +561,12 @@ class Page extends CallbackManager
      */
     protected function renderTemplate(PHPSTLTemplate &$template)
     {
+        $prefix = $this->site->modules->getModulePrefix('PageSystem');
         return $template->render(array_merge(
-            $this->data, array('page' => $this)
+            $this->data, array(
+                'pageSystemPrefix' => $prefix,
+                'page' => $this
+            )
         ));
     }
 }

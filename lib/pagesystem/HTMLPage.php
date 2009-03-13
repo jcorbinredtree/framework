@@ -147,7 +147,7 @@ class HTMLPage extends Page
      * Sets the page layout
      *
      * The value will be set to the 'pageLayout' data item, the $template
-     * property will be set to "layouts/$layout".
+     * property will be set to "PageSystemPrefix/layouts/$layout".
      *
      * @param layout string
      * @return void
@@ -155,7 +155,10 @@ class HTMLPage extends Page
     public function setLayout($layout)
     {
         $this->setData('pageLayout', $layout);
-        $this->template = "layouts/$layout";
+        $this->template = implode('/', array(
+            $this->site->modules->getModulePrefix('PageSystem'),
+            'layouts', $layout
+        ));
     }
 
     /**
