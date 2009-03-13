@@ -8,43 +8,23 @@
  *     becomes
  * http://example.com/some/path/index.php/to/the/site
  *     presuming that the site's document root is at /some/path on example.com
- *
- * Furthermore, all direct requests to the SITE/ directory should be denied.
- *
- * An example apache config:
-    <Directory /path/to/project>
-        RewriteEngine On
-        RewriteBase /project
-
-        RewriteCond %{REQUEST_FILENAME} !-d
-        RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteRule ^(.*)$ index.php [L]
-    </Directory>
-    <Directory /path/to/project/SITE>
-        Deny from all
-    </Directory>
  */
 
-function onConfig(Config &$config)
+// This site was developed against this version of the framework
+$FrameworkTargetVersion = '3.1';
+require_once 'framework/Loader.php';
+
+class CMSStageSite extends Site
 {
-    // This site was developed against this version of the framework
-    $config->setTargetVersion("3.0");
+    protected $mode = /* Site::MODE_TEST | */ Site::MODE_DEBUG;
 
-    $config->setDebugMode(true);
-    $config->setDatabaseInfo('mysql://name:pass@localhost/dbname');
-    $config->setDatabaseTestInfo('mysql://name:pass@localhost/dbname_test');
-    $config->addMailerOptions(array(
-        'From'      => 'client@example.com',
-        'FromName'  => 'Mr Person',
-        'Host'      => 'localhost'
-    ));
-
-    // $config->setDefaultComponent('SomeComponent');
-    // $config->setDefaultAction('home');
-
-    // $config->addUrlMapping('some/weird/mapping.html', array('SomeComponent', 'home', 'id=2'));
+    public static $Modules = array(
+        // 'I18N'
+        // 'Session'
+        'CMS'
+    );
 }
+Site::set('CMSStageSite')->handle();
 
-include 'SITE/framework/start.php';
-
+# vim:set sw=4 ts=4 expandtab:
 ?>
