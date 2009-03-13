@@ -8,7 +8,7 @@
 <h1>${=message}</h1>
 <h2>${=exType}:</h2>
 <h3>${=exception.getMessage()}</h3>
-<core:if test="${exception} instanceof PHPSTLNoSuchResource">
+<core:if test="@{${exception} instanceof PHPSTLNoSuchResource}">
   <h3>Template Providers:</h3>
   <ul>
     <core:forEach list="${exception.getPHPSTL().getProviders()}" var="provider">
